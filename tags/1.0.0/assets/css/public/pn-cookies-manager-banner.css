@@ -1,0 +1,513 @@
+/**
+ * Cookie Consent Banner - Public Styles
+ *
+ * Uses CSS custom properties set inline by the PHP template
+ * so admin-configured colors are applied dynamically.
+ *
+ * @package PN_COOKIES_MANAGER
+ * @since   1.0.0
+ */
+
+/* ========================================================================
+   OVERLAY
+   ======================================================================== */
+.pn-cookies-manager-banner-overlay{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.6);
+  z-index:999998;
+  opacity:0;
+  visibility:hidden;
+  transition:opacity .3s ease, visibility .3s ease;
+}
+.pn-cookies-manager-banner-overlay--visible{
+  opacity:1;
+  visibility:visible;
+}
+
+/* ========================================================================
+   BANNER CONTAINER
+   ======================================================================== */
+.pn-cookies-manager-banner{
+  position:fixed;
+  z-index:999999;
+  box-sizing:border-box;
+  padding:25px 30px;
+  background:var(--pn-cookies-manager-banner-bg, #ffffff);
+  color:var(--pn-cookies-manager-banner-text-color, #333333);
+  font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  opacity:0;
+  visibility:hidden;
+  transition:opacity .35s ease, visibility .35s ease, transform .35s ease;
+}
+.pn-cookies-manager-banner--visible{
+  opacity:1;
+  visibility:visible;
+}
+
+/* --- Position variants --- */
+.pn-cookies-manager-banner--bottom{
+  bottom:0;
+  left:0;
+  right:0;
+}
+.pn-cookies-manager-banner--top{
+  top:0;
+  left:0;
+  right:0;
+}
+.pn-cookies-manager-banner--center{
+  top:50%;
+  left:50%;
+  right:auto;
+  transform:translate(-50%, -50%);
+  max-width:520px;
+  border-radius:var(--pn-cookies-manager-banner-radius, 8px);
+  box-shadow:0 8px 30px rgba(0,0,0,0.2);
+}
+.pn-cookies-manager-banner--center.pn-cookies-manager-banner--visible{
+  transform:translate(-50%, -50%);
+}
+
+/* --- Layout variants --- */
+.pn-cookies-manager-banner--bar{
+  width:100%;
+}
+.pn-cookies-manager-banner--box{
+  max-width:480px;
+  border-radius:var(--pn-cookies-manager-banner-radius, 8px);
+  box-shadow:0 4px 20px rgba(0,0,0,0.15);
+}
+.pn-cookies-manager-banner--box.pn-cookies-manager-banner--bottom{
+  bottom:20px;
+}
+.pn-cookies-manager-banner--box.pn-cookies-manager-banner--top{
+  top:20px;
+}
+.pn-cookies-manager-banner--floating{
+  max-width:420px;
+  border-radius:var(--pn-cookies-manager-banner-radius, 8px);
+  box-shadow:0 8px 30px rgba(0,0,0,0.2);
+}
+.pn-cookies-manager-banner--floating.pn-cookies-manager-banner--bottom{
+  bottom:30px;
+}
+.pn-cookies-manager-banner--floating.pn-cookies-manager-banner--top{
+  top:30px;
+}
+
+/* --- Horizontal alignment (box/floating only) --- */
+.pn-cookies-manager-banner--align-right{
+  left:auto;
+  right:20px;
+}
+.pn-cookies-manager-banner--floating.pn-cookies-manager-banner--align-right{
+  right:30px;
+}
+.pn-cookies-manager-banner--align-left{
+  right:auto;
+  left:20px;
+}
+.pn-cookies-manager-banner--floating.pn-cookies-manager-banner--align-left{
+  left:30px;
+}
+.pn-cookies-manager-banner--align-center{
+  left:50%;
+  right:auto;
+  transform:translateX(-50%);
+}
+
+/* ========================================================================
+   BANNER CONTENT
+   ======================================================================== */
+.pn-cookies-manager-banner-title{
+  margin:0 0 10px 0;
+  font-size:18px;
+  font-weight:700;
+  color:var(--pn-cookies-manager-banner-text-color, #333333);
+}
+.pn-cookies-manager-banner-message{
+  margin:0;
+  font-size:14px;
+  line-height:1.6;
+  color:var(--pn-cookies-manager-banner-text-color, #333333);
+}
+.pn-cookies-manager-banner-privacy{
+  margin-top:10px;
+  font-size:13px;
+}
+.pn-cookies-manager-banner-privacy a{
+  color:var(--pn-cookies-manager-banner-text-color, #333333);
+  opacity:0.7;
+  text-decoration:underline;
+  transition:opacity .2s ease;
+}
+.pn-cookies-manager-banner-privacy a:hover{
+  opacity:1;
+}
+
+/* ========================================================================
+   BUTTONS
+   ======================================================================== */
+.pn-cookies-manager-banner-buttons{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:15px;
+}
+.pn-cookies-manager-banner-btn{
+  border:none;
+  padding:10px 22px;
+  cursor:pointer;
+  font-size:14px;
+  font-weight:600;
+  border-radius:var(--pn-cookies-manager-banner-radius, 8px);
+  transition:opacity .2s ease, transform .1s ease;
+  line-height:1.4;
+  text-decoration:none;
+  display:inline-block;
+  text-align:center;
+}
+.pn-cookies-manager-banner-btn:hover{
+  opacity:0.9;
+}
+.pn-cookies-manager-banner-btn:active{
+  transform:scale(0.97);
+}
+.pn-cookies-manager-banner-btn--accept{
+  background:var(--pn-cookies-manager-banner-btn-accept-bg, #803300ff);
+  color:var(--pn-cookies-manager-banner-btn-accept-color, #ffffff);
+}
+.pn-cookies-manager-banner-btn--reject{
+  background:var(--pn-cookies-manager-banner-btn-reject-bg, #e0e0e0);
+  color:var(--pn-cookies-manager-banner-btn-reject-color, #333333);
+}
+.pn-cookies-manager-banner-btn--save{
+  background:var(--pn-cookies-manager-banner-btn-reject-bg, #e0e0e0);
+  color:var(--pn-cookies-manager-banner-btn-reject-color, #333333);
+}
+.pn-cookies-manager-banner-btn--settings{
+  background:transparent;
+  color:var(--pn-cookies-manager-banner-btn-settings-color, #803300ff);
+  border:1px solid var(--pn-cookies-manager-banner-btn-settings-color, #803300ff);
+}
+
+/* ========================================================================
+   SETTINGS PANEL (Cookie Preferences Modal)
+   ======================================================================== */
+.pn-cookies-manager-settings-panel{
+  position:fixed;
+  top:0;
+  right:0;
+  width:100%;
+  max-width:520px;
+  height:100%;
+  z-index:1000000;
+  background:var(--pn-cookies-manager-banner-bg, #ffffff);
+  color:var(--pn-cookies-manager-banner-text-color, #333333);
+  box-shadow:-4px 0 20px rgba(0,0,0,0.15);
+  box-sizing:border-box;
+  display:flex;
+  flex-direction:column;
+  transform:translateX(100%);
+  transition:transform .35s ease;
+  font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+.pn-cookies-manager-settings-panel--visible{
+  transform:translateX(0);
+}
+.pn-cookies-manager-settings-panel-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:20px 25px;
+  border-bottom:1px solid rgba(0,0,0,0.1);
+  flex-shrink:0;
+}
+.pn-cookies-manager-settings-panel-title{
+  margin:0;
+  font-size:18px;
+  font-weight:700;
+}
+.pn-cookies-manager-settings-panel-close{
+  background:none;
+  border:none;
+  font-size:24px;
+  cursor:pointer;
+  color:var(--pn-cookies-manager-banner-text-color, #333333);
+  padding:0;
+  line-height:1;
+  opacity:0.6;
+  transition:opacity .2s ease;
+}
+.pn-cookies-manager-settings-panel-close:hover{
+  opacity:1;
+}
+.pn-cookies-manager-settings-panel-body{
+  flex:1;
+  overflow-y:auto;
+  padding:20px 25px;
+}
+.pn-cookies-manager-settings-panel-footer{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:8px;
+  padding:20px 25px;
+  border-top:1px solid rgba(0,0,0,0.1);
+  flex-shrink:0;
+}
+.pn-cookies-manager-settings-reset{
+  font-size:12px;
+  color:var(--pn-cookies-manager-banner-text-color,#333);
+  opacity:.6;
+  text-decoration:underline;
+  cursor:pointer;
+  margin-left:auto;
+}
+.pn-cookies-manager-settings-reset:hover{
+  opacity:1;
+}
+
+/* ========================================================================
+   CATEGORY TOGGLES
+   ======================================================================== */
+.pn-cookies-manager-category{
+  margin-bottom:20px;
+  border:1px solid rgba(0,0,0,0.1);
+  border-radius:var(--pn-cookies-manager-banner-radius, 8px);
+  overflow:hidden;
+}
+.pn-cookies-manager-category-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:14px 18px;
+  cursor:pointer;
+  user-select:none;
+  background:rgba(0,0,0,0.02);
+  transition:background .2s ease;
+}
+.pn-cookies-manager-category-header:hover{
+  background:rgba(0,0,0,0.05);
+}
+.pn-cookies-manager-category-info{
+  flex:1;
+  margin-right:12px;
+}
+.pn-cookies-manager-category-name{
+  font-size:15px;
+  font-weight:600;
+  margin:0;
+}
+.pn-cookies-manager-category-desc{
+  font-size:12px;
+  margin:4px 0 0 0;
+  opacity:0.7;
+}
+.pn-cookies-manager-category-toggle{
+  position:relative;
+  width:44px;
+  height:24px;
+  flex-shrink:0;
+}
+.pn-cookies-manager-category-toggle input{
+  opacity:0;
+  width:0;
+  height:0;
+  position:absolute;
+}
+.pn-cookies-manager-category-toggle-slider{
+  position:absolute;
+  cursor:pointer;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  background-color:#cccccc;
+  border-radius:24px;
+  transition:background-color .3s ease;
+}
+.pn-cookies-manager-category-toggle-slider::before{
+  content:"";
+  position:absolute;
+  height:18px;
+  width:18px;
+  left:3px;
+  bottom:3px;
+  background-color:#ffffff;
+  border-radius:50%;
+  transition:transform .3s ease;
+}
+.pn-cookies-manager-category-toggle input:checked + .pn-cookies-manager-category-toggle-slider{
+  background-color:var(--pn-cookies-manager-banner-btn-accept-bg, #803300ff);
+}
+.pn-cookies-manager-category-toggle input:checked + .pn-cookies-manager-category-toggle-slider::before{
+  transform:translateX(20px);
+}
+.pn-cookies-manager-category-toggle input:disabled + .pn-cookies-manager-category-toggle-slider{
+  opacity:0.6;
+  cursor:default;
+}
+.pn-cookies-manager-category-cookies{
+  display:none;
+  padding:0 18px 14px 18px;
+}
+.pn-cookies-manager-category--expanded .pn-cookies-manager-category-cookies{
+  display:block;
+}
+.pn-cookies-manager-category-arrow{
+  font-size:20px;
+  margin-left:12px;
+  margin-right:14px;
+  transition:transform .2s ease;
+  display:inline-block;
+  flex-shrink:0;
+  color:var(--pn-cookies-manager-banner-text-color, #333333);
+  opacity:0.5;
+}
+.pn-cookies-manager-category--expanded .pn-cookies-manager-category-arrow{
+  transform:rotate(180deg);
+}
+
+/* Cookie list table inside categories */
+.pn-cookies-manager-cookie-table{
+  width:100%;
+  font-size:13px;
+  border-collapse:collapse;
+}
+.pn-cookies-manager-cookie-table th{
+  text-align:left;
+  padding:6px 8px;
+  border-bottom:1px solid rgba(0,0,0,0.1);
+  font-weight:600;
+  font-size:12px;
+  opacity:0.6;
+}
+.pn-cookies-manager-cookie-table td{
+  padding:6px 8px;
+  border-bottom:1px solid rgba(0,0,0,0.05);
+  vertical-align:top;
+  word-break:break-word;
+}
+.pn-cookies-manager-cookie-table tr:last-child td{
+  border-bottom:none;
+}
+.pn-cookies-manager-category-empty{
+  margin:0;
+  font-size:11px;
+  opacity:0.55;
+  font-style:italic;
+}
+
+/* ========================================================================
+   RE-OPEN BUTTON (Floating)
+   ======================================================================== */
+.pn-cookies-manager-reopen-btn{
+  position:fixed;
+  bottom:20px;
+  left:20px;
+  z-index:999997;
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  border:none;
+  background:#ffffff;
+  color:var(--pn-cookies-manager-banner-reopen-color, #803300ff);
+  font-size:0;
+  line-height:1;
+  cursor:pointer;
+  box-shadow:0 2px 12px rgba(0,0,0,0.18);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:0;
+  visibility:hidden;
+  transition:opacity .3s ease, visibility .3s ease, transform .2s ease;
+}
+.pn-cookies-manager-reopen-btn--visible{
+  opacity:1;
+  visibility:visible;
+}
+.pn-cookies-manager-reopen-btn:hover{
+  transform:scale(1.1);
+}
+.pn-cookies-manager-reopen-btn .material-icons-outlined{
+  font-size:28px;
+}
+
+/* ========================================================================
+   ANIMATIONS
+   ======================================================================== */
+@keyframes pn-cookies-manager-fade-in{
+  from{ opacity:0; }
+  to{ opacity:1; }
+}
+@keyframes pn-cookies-manager-slide-up{
+  from{ transform:translateY(20px); opacity:0; }
+  to{ transform:translateY(0); opacity:1; }
+}
+
+/* ========================================================================
+   RESPONSIVE
+   ======================================================================== */
+@media (max-width: 768px){
+  .pn-cookies-manager-banner{
+    padding:20px;
+  }
+  .pn-cookies-manager-banner--box,
+  .pn-cookies-manager-banner--floating{
+    max-width:100%;
+    left:10px !important;
+    right:10px !important;
+    transform:none !important;
+  }
+  .pn-cookies-manager-banner--box.pn-cookies-manager-banner--bottom,
+  .pn-cookies-manager-banner--floating.pn-cookies-manager-banner--bottom{
+    bottom:10px;
+  }
+  .pn-cookies-manager-banner--box.pn-cookies-manager-banner--top,
+  .pn-cookies-manager-banner--floating.pn-cookies-manager-banner--top{
+    top:10px;
+  }
+  .pn-cookies-manager-banner--center{
+    max-width:calc(100% - 20px);
+    width:calc(100% - 20px);
+  }
+  .pn-cookies-manager-banner-buttons{
+    flex-direction:column;
+  }
+  .pn-cookies-manager-banner-btn{
+    width:100%;
+    text-align:center;
+  }
+  .pn-cookies-manager-settings-panel{
+    max-width:100%;
+  }
+  .pn-cookies-manager-settings-panel-footer{
+    flex-direction:column;
+  }
+  .pn-cookies-manager-settings-panel-footer .pn-cookies-manager-banner-btn{
+    width:100%;
+    text-align:center;
+  }
+  .pn-cookies-manager-settings-reset{
+    margin-left:0;
+    text-align:center;
+  }
+}
+
+@media (max-width: 480px){
+  .pn-cookies-manager-banner{
+    padding:15px;
+  }
+  .pn-cookies-manager-banner-title{
+    font-size:16px;
+  }
+  .pn-cookies-manager-banner-message{
+    font-size:13px;
+  }
+}
