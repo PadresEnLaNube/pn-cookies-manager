@@ -370,6 +370,15 @@ class PN_COOKIES_MANAGER_Settings {
       'description' => __('Display a dark overlay behind the banner to focus user attention.', 'pn-cookies-manager'),
     ];
 
+    $pn_cookies_manager_options['pn_cookies_manager_banner_hide_empty_categories'] = [
+      'id' => 'pn_cookies_manager_banner_hide_empty_categories',
+      'class' => 'pn-cookies-manager-input pn-cookies-manager-width-100-percent',
+      'input' => 'input',
+      'type' => 'checkbox',
+      'label' => __('Hide empty categories', 'pn-cookies-manager'),
+      'description' => __('Hide cookie categories that have no cookies registered in the Cookie Registry.', 'pn-cookies-manager'),
+    ];
+
     $pn_cookies_manager_options['pn_cookies_manager_banner_border_radius'] = [
       'id' => 'pn_cookies_manager_banner_border_radius',
       'class' => 'pn-cookies-manager-input pn-cookies-manager-width-100-percent',
@@ -783,6 +792,26 @@ class PN_COOKIES_MANAGER_Settings {
 
     $pn_cookies_manager_options['pn_cookies_manager_colors_section_end'] = [
       'id' => 'pn_cookies_manager_colors_section_end',
+      'section' => 'end',
+    ];
+
+    $pn_cookies_manager_options['pn_cookies_manager_role_section_start'] = [
+      'id' => 'pn_cookies_manager_role_section_start',
+      'section' => 'start',
+      'label' => __('User Roles', 'pn-cookies-manager'),
+      'description' => __('Manage user role assignments for this plugin.', 'pn-cookies-manager'),
+    ];
+
+    $pn_cookies_manager_options['pn_cookies_manager_role_selector_manager'] = [
+      'id' => 'pn_cookies_manager_role_selector_manager',
+      'input' => 'user_role_selector',
+      'label' => __('PN Cookies Manager', 'pn-cookies-manager'),
+      'role' => 'pn_cookies_manager_role_manager',
+      'role_label' => __('PN Cookies Manager', 'pn-cookies-manager'),
+    ];
+
+    $pn_cookies_manager_options['pn_cookies_manager_role_section_end'] = [
+      'id' => 'pn_cookies_manager_role_section_end',
       'section' => 'end',
     ];
 

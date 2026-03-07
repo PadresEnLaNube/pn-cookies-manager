@@ -728,6 +728,47 @@ class PN_COOKIES_MANAGER_Forms {
         </div>
         <?php
         break;
+      case 'user_role_selector':
+        if (!current_user_can('manage_options')) {
+          ?><div class="pn-cookies-manager-field"><p class="pn-cookies-manager-color-error"><?php esc_html_e('You do not have permission to manage user roles.', 'pn-cookies-manager'); ?></p></div><?php
+          break;
+        }
+        $users = get_users(['orderby' => 'display_name', 'order' => 'ASC']);
+        $target_role = isset($pn_cookies_manager_input['role']) ? $pn_cookies_manager_input['role'] : 'pn_cookies_manager_role_manager';
+        $role_label = isset($pn_cookies_manager_input['role_label']) ? $pn_cookies_manager_input['role_label'] : __('PN Cookies Manager', 'pn-cookies-manager');
+        $users_with_role = array_filter($users, function ($user) use ($target_role) { return in_array($target_role, (array) $user->roles); });
+        ?>
+        <div class="pn-cookies-manager-user-role-selector-wrapper" <?php echo wp_kses_post($pn_cookies_manager_parent_block); ?>>
+          <?php if (!empty($users_with_role)): ?>
+            <div class="pn-cookies-manager-mb-20 pn-cookies-manager-p-15 pn-cookies-manager-users-with-role-box">
+              <h4 class="pn-cookies-manager-mb-10"><?php echo esc_html(sprintf(__('Users with %s Role', 'pn-cookies-manager'), $role_label)); ?> <span class="pn-cookies-manager-role-badge"><?php echo count($users_with_role); ?></span></h4>
+              <div class="pn-cookies-manager-users-with-role-list">
+                <?php foreach ($users_with_role as $user): ?>
+                  <div class="pn-cookies-manager-user-role-item"><i class="material-icons-outlined">person</i> <strong><?php echo esc_html($user->display_name); ?></strong> <span class="pn-cookies-manager-color-gray">(<?php echo esc_html($user->user_email); ?>)</span></div>
+                <?php endforeach; ?>
+              </div>
+            </div>
+          <?php else: ?>
+            <div class="pn-cookies-manager-mb-20 pn-cookies-manager-p-15 pn-cookies-manager-alert-warning"><p><i class="material-icons-outlined pn-cookies-manager-vertical-align-middle">info</i> <?php echo esc_html(sprintf(__('No users currently have the %s role.', 'pn-cookies-manager'), $role_label)); ?></p></div>
+          <?php endif; ?>
+          <div class="pn-cookies-manager-mb-20">
+            <label for="pn_cookies_manager_user_select_<?php echo esc_attr($pn_cookies_manager_input['id']); ?>" class="pn-cookies-manager-mb-10 pn-cookies-manager-display-block"><?php esc_html_e('Select Users', 'pn-cookies-manager'); ?></label>
+            <select id="pn_cookies_manager_user_select_<?php echo esc_attr($pn_cookies_manager_input['id']); ?>" class="pn-cookies-manager-select pn-cookies-manager-width-100-percent pn-cookies-manager-user-role-select" multiple size="10" data-role="<?php echo esc_attr($target_role); ?>" data-role-label="<?php echo esc_attr($role_label); ?>">
+              <?php foreach ($users as $user): $has_role = in_array($target_role, (array) $user->roles); ?>
+                <option value="<?php echo esc_attr($user->ID); ?>" <?php echo $has_role ? 'data-has-role="true"' : ''; ?>><?php echo esc_html($user->display_name . ' (' . $user->user_email . ')'); ?><?php if ($has_role): ?> ✓<?php endif; ?></option>
+              <?php endforeach; ?>
+            </select>
+            <p class="pn-cookies-manager-font-size-small pn-cookies-manager-color-gray pn-cookies-manager-mt-5"><?php esc_html_e('Hold Ctrl (Windows) or Cmd (Mac) to select multiple users. Users with ✓ already have this role.', 'pn-cookies-manager'); ?></p>
+          </div>
+          <div class="pn-cookies-manager-role-actions pn-cookies-manager-mb-20">
+            <input type="hidden" class="pn-cookies-manager-role-nonce" value="<?php echo esc_attr(wp_create_nonce('pn-cookies-manager-role-assignment')); ?>">
+            <div class="pn-cookies-manager-display-inline-block pn-cookies-manager-mr-10"><button type="button" class="pn-cookies-manager-btn pn-cookies-manager-btn-mini pn-cookies-manager-assign-role-btn" data-input-id="<?php echo esc_attr($pn_cookies_manager_input['id']); ?>"><i class="material-icons-outlined pn-cookies-manager-vertical-align-middle">person_add</i> <?php echo esc_html(sprintf(__('Assign %s Role', 'pn-cookies-manager'), $role_label)); ?></button></div>
+            <div class="pn-cookies-manager-display-inline-block"><button type="button" class="pn-cookies-manager-btn pn-cookies-manager-btn-mini pn-cookies-manager-remove-role-btn" data-input-id="<?php echo esc_attr($pn_cookies_manager_input['id']); ?>"><i class="material-icons-outlined pn-cookies-manager-vertical-align-middle">person_remove</i> <?php echo esc_html(sprintf(__('Remove %s Role', 'pn-cookies-manager'), $role_label)); ?></button></div>
+          </div>
+          <div class="pn-cookies-manager-role-message pn-cookies-manager-mt-20 pn-cookies-manager-display-none-soft"></div>
+        </div>
+        <?php
+        break;
     }
   }
 

@@ -98,6 +98,69 @@ class PN_COOKIES_MANAGER_Ajax {
       }
 
       switch ($pn_cookies_manager_ajax_type) {
+        case 'pn_cookies_manager_assign_role':
+          if (!current_user_can('manage_options')) {
+            echo wp_json_encode([
+              'success' => false,
+              'message' => esc_html(__('You do not have permission to manage user roles.', 'pn-cookies-manager')),
+            ]);
+            exit;
+          }
+
+          $role_nonce = !empty($_POST['pn_cookies_manager_role_nonce']) ? sanitize_text_field(wp_unslash($_POST['pn_cookies_manager_role_nonce'])) : '';
+          if (!wp_verify_nonce($role_nonce, 'pn-cookies-manager-role-assignment')) {
+            echo wp_json_encode([
+              'success' => false,
+              'message' => esc_html(__('Security check failed for role assignment.', 'pn-cookies-manager')),
+            ]);
+            exit;
+          }
+
+          $user_ids = !empty($_POST['user_ids']) ? array_map('intval', (array) $_POST['user_ids']) : [];
+          $role = !empty($_POST['role']) ? sanitize_text_field(wp_unslash($_POST['role'])) : '';
+          $action_type = !empty($_POST['action_type']) ? sanitize_text_field(wp_unslash($_POST['action_type'])) : '';
+
+          $plugin_roles = ['pn_cookies_manager_role_manager'];
+          if (!in_array($role, $plugin_roles)) {
+            echo wp_json_encode([
+              'success' => false,
+              'message' => esc_html(__('Invalid role specified.', 'pn-cookies-manager')),
+            ]);
+            exit;
+          }
+
+          $role_labels = ['pn_cookies_manager_role_manager' => __('PN Cookies Manager', 'pn-cookies-manager')];
+
+          // Ensure role exists in WordPress
+          if (!get_role($role)) {
+            add_role($role, $role_labels[$role], ['read' => true]);
+          }
+
+          $processed = 0;
+          foreach ($user_ids as $uid) {
+            $user = get_userdata($uid);
+            if (!$user) continue;
+            if ($action_type === 'assign') {
+              $user->add_role($role);
+            } else {
+              $user->remove_role($role);
+            }
+            $processed++;
+          }
+
+          $label = $role_labels[$role];
+          if ($action_type === 'assign') {
+            $message = sprintf(__('%s role assigned to %d user(s) successfully.', 'pn-cookies-manager'), $label, $processed);
+          } else {
+            $message = sprintf(__('%s role removed from %d user(s) successfully.', 'pn-cookies-manager'), $label, $processed);
+          }
+
+          echo wp_json_encode([
+            'success' => true,
+            'message' => esc_html($message),
+          ]);
+          exit;
+          break;
         case 'pn_cookies_manager_calendar_view':
           $calendar_view = !empty($_POST['calendar_view']) ? sanitize_text_field(wp_unslash($_POST['calendar_view'])) : 'month';
           $calendar_year = !empty($_POST['calendar_year']) ? intval($_POST['calendar_year']) : gmdate('Y');

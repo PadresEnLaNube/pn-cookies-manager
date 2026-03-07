@@ -463,4 +463,32 @@
 
     pn_cookies_manager_toggle.siblings('.pn-cookies-manager-toggle-content').fadeToggle();
   });
+  $(document).on('click', '.pn-cookies-manager-assign-role-btn, .pn-cookies-manager-remove-role-btn', function (e) {
+    e.preventDefault(); e.stopPropagation();
+    var $button = $(this), isAssign = $button.hasClass('pn-cookies-manager-assign-role-btn');
+    var inputId = $button.data('input-id'), $select = $('#pn_cookies_manager_user_select_' + inputId);
+    var $nonce = $button.closest('.pn-cookies-manager-role-actions').find('.pn-cookies-manager-role-nonce');
+    var selectedUsers = $select.val();
+    if (!selectedUsers || selectedUsers.length === 0) { showPnCookiesManagerRoleMessage('Please select at least one user', 'error'); return; }
+    $button.prop('disabled', true);
+    $.ajax({
+      url: pn_cookies_manager_ajax.ajax_url, type: 'POST',
+      data: { action: 'pn_cookies_manager_ajax', pn_cookies_manager_ajax_type: 'pn_cookies_manager_assign_role', pn_cookies_manager_ajax_nonce: $('#pn_cookies_manager_nonce').val(), pn_cookies_manager_role_nonce: $nonce.val(), user_ids: selectedUsers, role: $select.data('role'), action_type: isAssign ? 'assign' : 'remove' },
+      success: function (response) {
+        try { var data = typeof response === 'string' ? JSON.parse(response) : response;
+          if (data.success) { showPnCookiesManagerRoleMessage(data.message, 'success'); $select.find('option:selected').each(function () { var $option = $(this); if (isAssign) { if (!$option.text().includes('✓')) { $option.text($option.text() + ' ✓'); $option.attr('data-has-role', 'true'); } } else { $option.text($option.text().replace(' ✓', '')); $option.removeAttr('data-has-role'); } }); $select.val(null).trigger('change'); setTimeout(function () { location.reload(); }, 1500); }
+          else { showPnCookiesManagerRoleMessage(data.message || data.error_content || 'An error occurred', 'error'); }
+        } catch (e) { showPnCookiesManagerRoleMessage('Error parsing server response', 'error'); }
+      },
+      error: function () { showPnCookiesManagerRoleMessage('Connection error. Please try again.', 'error'); },
+      complete: function () { $button.prop('disabled', false); }
+    });
+  });
+  $(document).on('mousedown', '.pn-cookies-manager-user-role-select', function (e) { e.stopPropagation(); });
+  function showPnCookiesManagerRoleMessage(message, type) {
+    var $message = $('.pn-cookies-manager-role-message');
+    var className = type === 'error' ? 'pn-cookies-manager-color-red' : 'pn-cookies-manager-color-green';
+    $message.removeClass('pn-cookies-manager-display-none-soft').html('<p class="' + className + '">' + message + '</p>');
+    setTimeout(function () { $message.addClass('pn-cookies-manager-display-none-soft'); }, 5000);
+  }
 })(jQuery);

@@ -1,3 +1,15 @@
 #adminmenu #toplevel_page_pn_cookies_manager_options .wp-menu-image img{
     padding:5px 0 0;
 }
+
+/* USER ROLE SELECTOR */
+.pn-cookies-manager-users-with-role-box { background: #f0f0f1; border-radius: 4px; }
+.pn-cookies-manager-users-with-role-box h4 { margin-top: 0; }
+.pn-cookies-manager-role-badge { background: var(--pn-cookies-manager-bg-color-main); color: white; padding: 2px 8px; border-radius: 3px; font-size: 12px; margin-left: 5px; }
+.pn-cookies-manager-user-role-item { padding: 5px 0; border-bottom: 1px solid #ddd; }
+.pn-cookies-manager-user-role-item .material-icons-outlined { font-size: 16px; vertical-align: middle; color: var(--pn-cookies-manager-color-main); }
+.pn-cookies-manager-user-role-item span { font-size: 13px; }
+.pn-cookies-manager-p-15 { padding: 15px; }
+.pn-cookies-manager-mt-5 { margin-top: 5px; }
+.pn-cookies-manager-color-gray { color: #666; }
+/* END USER ROLE SELECTOR */

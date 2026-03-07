@@ -121,6 +121,14 @@ foreach ($pn_cookies_manager_categories as $pn_cookies_manager_cat_key => $pn_co
   $pn_cookies_manager_categories_data[$pn_cookies_manager_cat_key] = array_merge($pn_cookies_manager_cat_data, ['cookies' => $pn_cookies_manager_cookies]);
 }
 
+// Hide empty categories if the option is enabled
+$pn_cookies_manager_hide_empty = get_option('pn_cookies_manager_banner_hide_empty_categories', '');
+if ($pn_cookies_manager_hide_empty === 'on') {
+  $pn_cookies_manager_categories_data = array_filter($pn_cookies_manager_categories_data, function ($pn_cookies_manager_cat) {
+    return !empty($pn_cookies_manager_cat['cookies']);
+  });
+}
+
 // Banner CSS classes
 $pn_cookies_manager_banner_classes = 'pn-cookies-manager-banner';
 $pn_cookies_manager_banner_classes .= ' pn-cookies-manager-banner--' . esc_attr($pn_cookies_manager_position);
