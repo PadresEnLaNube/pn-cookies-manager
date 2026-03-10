@@ -343,7 +343,7 @@ class PN_COOKIES_MANAGER_Settings {
         'box' => __('Compact box', 'pn-cookies-manager'),
         'floating' => __('Floating card', 'pn-cookies-manager'),
       ],
-      'value' => 'bar',
+      'value' => 'box',
     ];
 
     $pn_cookies_manager_options['pn_cookies_manager_banner_alignment'] = [
