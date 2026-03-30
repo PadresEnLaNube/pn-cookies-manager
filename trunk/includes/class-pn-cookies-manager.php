@@ -52,7 +52,7 @@ class PN_COOKIES_MANAGER {
 		if (defined('PN_COOKIES_MANAGER_VERSION')) {
 			$this->pn_cookies_manager_version = PN_COOKIES_MANAGER_VERSION;
 		} else {
-			$this->pn_cookies_manager_version = '1.0.15';
+			$this->pn_cookies_manager_version = '1.0.16';
 		}
 
 		$this->pn_cookies_manager_plugin_name = 'pn-cookies-manager';

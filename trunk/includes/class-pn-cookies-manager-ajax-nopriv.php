@@ -188,7 +188,7 @@ class PN_COOKIES_MANAGER_Ajax_Nopriv {
                     }
                   }
 
-                  do_action('pn_cookies_manager_form_save', 0, $pn_cookies_manager_key_value, $pn_cookies_manager_form_type, $pn_cookies_manager_form_subtype);
+                  do_action('pn_cookies_manager_form_save', 0, $pn_cookies_manager_key_value, $pn_cookies_manager_form_type, $pn_cookies_manager_form_subtype, '');
               }
 
               echo wp_json_encode(['error_key' => '']);exit;

@@ -820,13 +820,6 @@ class PN_COOKIES_MANAGER_Settings {
       'input' => 'input',
       'type' => 'nonce',
     ];
-    $pn_cookies_manager_options['pn_cookies_manager_submit'] = [
-      'id' => 'pn_cookies_manager_submit',
-      'input' => 'input',
-      'type' => 'submit',
-      'value' => __('Save options', 'pn-cookies-manager'),
-    ];
-
     return $pn_cookies_manager_options;
   }
 
@@ -860,7 +853,7 @@ class PN_COOKIES_MANAGER_Settings {
 	    <div class="pn-cookies-manager-options pn-cookies-manager-max-width-1000 pn-cookies-manager-margin-auto pn-cookies-manager-mt-50 pn-cookies-manager-mb-50">
         <img src="<?php echo esc_url(PN_COOKIES_MANAGER_URL . 'assets/media/banner-1544x500.png'); ?>" alt="<?php esc_html_e('Plugin main Banner', 'pn-cookies-manager'); ?>" title="<?php esc_html_e('Plugin main Banner', 'pn-cookies-manager'); ?>" class="pn-cookies-manager-width-100-percent pn-cookies-manager-border-radius-20 pn-cookies-manager-mb-30">
         <h1 class="pn-cookies-manager-mb-30"><?php esc_html_e('PN Cookies Manager Settings', 'pn-cookies-manager'); ?></h1>
-        <div class="pn-cookies-manager-options-fields pn-cookies-manager-mb-30">
+        <div class="pn-cookies-manager-options-fields pn-cookies-manager-mb-30 pn-cm-settings-pb-80">
           <form action="" method="post" id="pn-cookies-manager-form-setting" class="pn-cookies-manager-form pn-cookies-manager-p-30">
           <?php
             $options = self::pn_cookies_manager_get_options();
@@ -878,9 +871,54 @@ class PN_COOKIES_MANAGER_Settings {
               PN_COOKIES_MANAGER_Forms::pn_cookies_manager_input_wrapper_builder($pn_cookies_manager_option, 'option', 0, 0, 'half');
             }
           ?>
-          </form> 
+          <input type="submit" name="pn_cookies_manager_submit" id="pn_cookies_manager_submit" class="pn-cm-settings-hidden-submit" data-pn-cookies-manager-type="option" value="<?php esc_attr_e('Save options', 'pn-cookies-manager'); ?>">
+          </form>
         </div>
       </div>
+
+      <!-- Sticky settings footer bar -->
+      <div id="pn-cm-settings-footer" class="pn-cm-settings-footer">
+        <div class="pn-cm-settings-footer-inner">
+          <div class="pn-cm-settings-footer-left">
+            <span class="pn-cm-settings-footer-plugin-name">PN Cookies Manager</span>
+            <span class="pn-cm-settings-footer-version">v<?php echo esc_html(PN_COOKIES_MANAGER_VERSION); ?></span>
+          </div>
+          <div class="pn-cm-settings-footer-right">
+            <input type="file" id="pn-cm-settings-import-file" class="pn-cm-settings-hidden-input" accept=".json">
+            <button type="button" id="pn-cm-settings-import" class="pn-cm-settings-footer-icon-btn" title="<?php esc_attr_e('Import settings', 'pn-cookies-manager'); ?>">
+              <span class="material-icons-outlined">file_upload</span>
+            </button>
+            <button type="button" id="pn-cm-settings-export" class="pn-cm-settings-footer-icon-btn" title="<?php esc_attr_e('Export settings', 'pn-cookies-manager'); ?>">
+              <span class="material-icons-outlined">file_download</span>
+            </button>
+            <button type="button" id="pn-cm-settings-save" class="pn-cookies-manager-btn pn-cookies-manager-btn-mini">
+              <?php esc_html_e('Save options', 'pn-cookies-manager'); ?>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <?php
+      wp_enqueue_script(
+        'pn-cookies-manager-settings-footer',
+        PN_COOKIES_MANAGER_URL . 'assets/js/admin/pn-cookies-manager-settings-footer.js',
+        [],
+        PN_COOKIES_MANAGER_VERSION,
+        true
+      );
+
+      wp_localize_script('pn-cookies-manager-settings-footer', 'pnCmSettingsFooter', [
+        'ajaxUrl' => admin_url('admin-ajax.php'),
+        'nonce'   => wp_create_nonce('pn-cookies-manager-nonce'),
+        'i18n'    => [
+          'confirmImport'  => __('This will overwrite your current settings. Continue?', 'pn-cookies-manager'),
+          'importSuccess'  => __('Settings imported successfully. Reloading...', 'pn-cookies-manager'),
+          'importError'    => __('Error importing settings.', 'pn-cookies-manager'),
+          'invalidFile'    => __('Invalid JSON file.', 'pn-cookies-manager'),
+          'exportError'    => __('Error exporting settings.', 'pn-cookies-manager'),
+        ],
+      ]);
+	  ?>
 	  <?php
 	}
 
