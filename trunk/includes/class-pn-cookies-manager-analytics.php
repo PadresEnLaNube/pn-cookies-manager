@@ -254,6 +254,18 @@ class PN_COOKIES_MANAGER_Analytics {
 	 * @since 1.1.0
 	 */
 	public function pn_cookies_manager_analytics_page() {
+		// Handle clear analytics data request
+		if (
+			isset( $_POST['pncm_clear_analytics'] ) &&
+			isset( $_POST['_wpnonce'] ) &&
+			wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ), 'pncm_clear_analytics' ) &&
+			current_user_can( 'manage_pn_cookies_manager_options' )
+		) {
+			global $wpdb;
+			$wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}" . self::TABLE ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Analytics data has been cleared.', 'pn-cookies-manager' ) . '</p></div>';
+		}
+
 		// Determine period
 		$period     = isset( $_GET['pncm_period'] ) ? absint( $_GET['pncm_period'] ) : 30; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$valid      = [ 7, 30, 90, 0 ];
@@ -404,6 +416,16 @@ class PN_COOKIES_MANAGER_Analytics {
 						<span class="pncm-analytics-legend__item"><span class="pncm-analytics-legend__color pncm-analytics-legend__color--custom"></span> <?php esc_html_e( 'Custom', 'pn-cookies-manager' ); ?></span>
 					</div>
 				<?php endif; ?>
+			</div>
+
+			<!-- Clear data -->
+			<div class="pncm-analytics-clear pn-cookies-manager-mb-30">
+				<form method="post">
+					<?php wp_nonce_field( 'pncm_clear_analytics' ); ?>
+					<button type="submit" name="pncm_clear_analytics" value="1" class="pncm-analytics-clear__btn" onclick="return confirm('<?php echo esc_js( __( 'Are you sure you want to delete all analytics data? This action cannot be undone.', 'pn-cookies-manager' ) ); ?>');">
+						<?php esc_html_e( 'Clear analytics data', 'pn-cookies-manager' ); ?>
+					</button>
+				</form>
 			</div>
 
 		</div>

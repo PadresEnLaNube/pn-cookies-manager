@@ -247,6 +247,30 @@
 	background: #dba617;
 }
 
+/* Clear data
+   ========================================================================== */
+.pncm-analytics-clear {
+	text-align: right;
+}
+
+.pncm-analytics-clear__btn {
+	display: inline-block;
+	padding: 8px 18px;
+	border: 1px solid #d63638;
+	border-radius: 6px;
+	background: #fff;
+	color: #d63638;
+	font-size: 13px;
+	font-weight: 500;
+	cursor: pointer;
+	transition: all 0.15s ease;
+}
+
+.pncm-analytics-clear__btn:hover {
+	background: #d63638;
+	color: #fff;
+}
+
 /* Empty state */
 .pncm-analytics-empty {
 	color: #646970;

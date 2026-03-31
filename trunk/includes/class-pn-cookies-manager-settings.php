@@ -688,6 +688,16 @@ class PN_COOKIES_MANAGER_Settings {
       'value' => 'on',
     ];
 
+    $pn_cookies_manager_options['pn_cookies_manager_analytics_enabled'] = [
+      'id' => 'pn_cookies_manager_analytics_enabled',
+      'class' => 'pn-cookies-manager-input pn-cookies-manager-width-100-percent',
+      'input' => 'input',
+      'type' => 'checkbox',
+      'label' => __('Consent Analytics', 'pn-cookies-manager'),
+      'description' => __('Enable consent analytics to track user cookie preferences (accept, reject, custom). When disabled, consent clicks will not be recorded and the Analytics submenu will be hidden.', 'pn-cookies-manager'),
+      'value' => 'on',
+    ];
+
     $pn_cookies_manager_options['pn_cookies_manager_options_remove'] = [
       'id' => 'pn_cookies_manager_options_remove',
       'class' => 'pn-cookies-manager-input pn-cookies-manager-width-100-percent',

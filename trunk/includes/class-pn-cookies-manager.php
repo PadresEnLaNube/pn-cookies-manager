@@ -52,7 +52,7 @@ class PN_COOKIES_MANAGER {
 		if (defined('PN_COOKIES_MANAGER_VERSION')) {
 			$this->pn_cookies_manager_version = PN_COOKIES_MANAGER_VERSION;
 		} else {
-			$this->pn_cookies_manager_version = '1.0.16';
+			$this->pn_cookies_manager_version = '1.0.17';
 		}
 
 		$this->pn_cookies_manager_plugin_name = 'pn-cookies-manager';
@@ -327,6 +327,10 @@ class PN_COOKIES_MANAGER {
 	 * @access   private
 	 */
 	private function pn_cookies_manager_load_analytics() {
+		if ( get_option( 'pn_cookies_manager_analytics_enabled', 'on' ) !== 'on' ) {
+			return;
+		}
+
 		$plugin_analytics = new PN_COOKIES_MANAGER_Analytics();
 		$this->pn_cookies_manager_loader->pn_cookies_manager_add_action('admin_menu', $plugin_analytics, 'pn_cookies_manager_admin_menu');
 		$this->pn_cookies_manager_loader->pn_cookies_manager_add_action('admin_enqueue_scripts', $plugin_analytics, 'pn_cookies_manager_enqueue_analytics_assets');

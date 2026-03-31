@@ -93,8 +93,9 @@ class PN_COOKIES_MANAGER_Public {
 		wp_enqueue_script($this->plugin_name . '-banner', PN_COOKIES_MANAGER_URL . 'assets/js/public/pn-cookies-manager-banner.js', ['jquery'], $this->version, ['in_footer' => true, 'strategy' => 'defer']);
 
 		$gcm_enabled = get_option('pn_cookies_manager_google_consent_mode', 'on');
+		$analytics_enabled = get_option('pn_cookies_manager_analytics_enabled', 'on') === 'on';
 
-		wp_localize_script($this->plugin_name . '-banner', 'pncm_banner_config', [
+		$banner_config = [
 			'cookie_name'      => 'pncm_consent',
 			'cookie_expiry'    => intval(get_option('pn_cookies_manager_cookie_expiry', '182')),
 			'gcm_enabled'      => $gcm_enabled ? '1' : '',
@@ -103,9 +104,14 @@ class PN_COOKIES_MANAGER_Public {
 			'accept_text'      => get_option('pn_cookies_manager_banner_accept_text', __('Accept all', 'pn-cookies-manager')),
 			'reject_text'      => get_option('pn_cookies_manager_banner_reject_text', __('Reject all', 'pn-cookies-manager')),
 			'save_text'        => __('Save preferences', 'pn-cookies-manager'),
-			'ajax_url'         => admin_url('admin-ajax.php'),
-			'analytics_nonce'  => wp_create_nonce('pncm_log_consent'),
-		]);
+		];
+
+		if ( $analytics_enabled ) {
+			$banner_config['ajax_url']        = admin_url('admin-ajax.php');
+			$banner_config['analytics_nonce'] = wp_create_nonce('pncm_log_consent');
+		}
+
+		wp_localize_script($this->plugin_name . '-banner', 'pncm_banner_config', $banner_config);
 
 		// Google Consent Mode v2 default — non-OB fallback path.
 		// When the output buffer is active it injects earlier (right after <head>),
