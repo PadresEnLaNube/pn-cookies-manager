@@ -853,7 +853,7 @@ class PN_COOKIES_MANAGER_Settings {
       esc_html__('Settings', 'pn-cookies-manager'), 
       esc_html__('Settings', 'pn-cookies-manager'), 
       'manage_pn_cookies_manager_options', 
-      'pn-cookies-manager-options', 
+      'pn_cookies_manager_options',
       [$this, 'pn_cookies_manager_options'], 
     );
 	}
@@ -863,7 +863,7 @@ class PN_COOKIES_MANAGER_Settings {
 	    <div class="pn-cookies-manager-options pn-cookies-manager-max-width-1000 pn-cookies-manager-margin-auto pn-cookies-manager-mt-50 pn-cookies-manager-mb-50">
         <img src="<?php echo esc_url(PN_COOKIES_MANAGER_URL . 'assets/media/banner-1544x500.png'); ?>" alt="<?php esc_html_e('Plugin main Banner', 'pn-cookies-manager'); ?>" title="<?php esc_html_e('Plugin main Banner', 'pn-cookies-manager'); ?>" class="pn-cookies-manager-width-100-percent pn-cookies-manager-border-radius-20 pn-cookies-manager-mb-30">
         <h1 class="pn-cookies-manager-mb-30"><?php esc_html_e('PN Cookies Manager Settings', 'pn-cookies-manager'); ?></h1>
-        <div class="pn-cookies-manager-options-fields pn-cookies-manager-mb-30 pn-cm-settings-pb-80">
+        <div class="pn-cookies-manager-options-fields pn-cookies-manager-mb-30 pn-cookies-manager-settings-pb-80">
           <form action="" method="post" id="pn-cookies-manager-form-setting" class="pn-cookies-manager-form pn-cookies-manager-p-30">
           <?php
             $options = self::pn_cookies_manager_get_options();
@@ -881,27 +881,27 @@ class PN_COOKIES_MANAGER_Settings {
               PN_COOKIES_MANAGER_Forms::pn_cookies_manager_input_wrapper_builder($pn_cookies_manager_option, 'option', 0, 0, 'half');
             }
           ?>
-          <input type="submit" name="pn_cookies_manager_submit" id="pn_cookies_manager_submit" class="pn-cm-settings-hidden-submit" data-pn-cookies-manager-type="option" value="<?php esc_attr_e('Save options', 'pn-cookies-manager'); ?>">
+          <input type="submit" name="pn_cookies_manager_submit" id="pn_cookies_manager_submit" class="pn-cookies-manager-settings-hidden-submit" data-pn-cookies-manager-type="option" value="<?php esc_attr_e('Save options', 'pn-cookies-manager'); ?>">
           </form>
         </div>
       </div>
 
       <!-- Sticky settings footer bar -->
-      <div id="pn-cm-settings-footer" class="pn-cm-settings-footer">
-        <div class="pn-cm-settings-footer-inner">
-          <div class="pn-cm-settings-footer-left">
-            <span class="pn-cm-settings-footer-plugin-name">PN Cookies Manager</span>
-            <span class="pn-cm-settings-footer-version">v<?php echo esc_html(PN_COOKIES_MANAGER_VERSION); ?></span>
+      <div id="pn-cookies-manager-settings-footer" class="pn-cookies-manager-settings-footer">
+        <div class="pn-cookies-manager-settings-footer-inner">
+          <div class="pn-cookies-manager-settings-footer-left">
+            <span class="pn-cookies-manager-settings-footer-plugin-name">PN Cookies Manager</span>
+            <span class="pn-cookies-manager-settings-footer-version">v<?php echo esc_html(PN_COOKIES_MANAGER_VERSION); ?></span>
           </div>
-          <div class="pn-cm-settings-footer-right">
-            <input type="file" id="pn-cm-settings-import-file" class="pn-cm-settings-hidden-input" accept=".json">
-            <button type="button" id="pn-cm-settings-import" class="pn-cm-settings-footer-icon-btn" title="<?php esc_attr_e('Import settings', 'pn-cookies-manager'); ?>">
+          <div class="pn-cookies-manager-settings-footer-right">
+            <input type="file" id="pn-cookies-manager-settings-import-file" class="pn-cookies-manager-settings-hidden-input" accept=".json">
+            <button type="button" id="pn-cookies-manager-settings-import" class="pn-cookies-manager-settings-footer-icon-btn" title="<?php esc_attr_e('Import settings', 'pn-cookies-manager'); ?>">
               <span class="material-icons-outlined">file_upload</span>
             </button>
-            <button type="button" id="pn-cm-settings-export" class="pn-cm-settings-footer-icon-btn" title="<?php esc_attr_e('Export settings', 'pn-cookies-manager'); ?>">
+            <button type="button" id="pn-cookies-manager-settings-export" class="pn-cookies-manager-settings-footer-icon-btn" title="<?php esc_attr_e('Export settings', 'pn-cookies-manager'); ?>">
               <span class="material-icons-outlined">file_download</span>
             </button>
-            <button type="button" id="pn-cm-settings-save" class="pn-cookies-manager-btn pn-cookies-manager-btn-mini">
+            <button type="button" id="pn-cookies-manager-settings-save" class="pn-cookies-manager-btn pn-cookies-manager-btn-mini">
               <?php esc_html_e('Save options', 'pn-cookies-manager'); ?>
             </button>
           </div>
@@ -917,7 +917,7 @@ class PN_COOKIES_MANAGER_Settings {
         true
       );
 
-      wp_localize_script('pn-cookies-manager-settings-footer', 'pnCmSettingsFooter', [
+      wp_localize_script('pn-cookies-manager-settings-footer', 'pncmSettingsFooter', [
         'ajaxUrl' => admin_url('admin-ajax.php'),
         'nonce'   => wp_create_nonce('pn-cookies-manager-nonce'),
         'i18n'    => [

@@ -1278,7 +1278,7 @@ msgstr "Guardar Cookie"
 
 #: includes/class-pn-cookies-manager-settings.php:1173
 msgid "Save options"
-msgstr "Opciones de guardado"
+msgstr "Guardar opciones"
 
 #: templates/pn-cookies-manager-banner.php:132
 #: includes/class-pn-cookies-manager-settings.php:438
