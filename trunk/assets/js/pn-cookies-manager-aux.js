@@ -2,8 +2,8 @@
 	'use strict';
 
   $(document).ready(function() {
-    if($('.pn-cookies-manager-tooltip').length && $.fn.PN_COOKIES_MANAGER_Tooltip) {
-      $('.pn-cookies-manager-tooltip').PN_COOKIES_MANAGER_Tooltip({maxWidth: 300, delayTouch:[0, 4000]});
+    if(window.PN_COOKIES_MANAGER_Tooltips) {
+      PN_COOKIES_MANAGER_Tooltips.init();
     }
 
     if ($('.pn-cookies-manager-select').length && $.fn.PN_COOKIES_MANAGER_Selector) {

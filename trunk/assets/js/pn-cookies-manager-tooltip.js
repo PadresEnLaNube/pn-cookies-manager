@@ -1,188 +1,113 @@
 (function($) {
     'use strict';
 
-    class PN_COOKIES_MANAGER_Tooltip {
-        constructor(element, options = {}) {
-            this.element = element;
-            this.$element = $(element);
-            this.options = {
-                maxWidth: 300,
-                position: 'top',
-                delayTouch: [0, 4000],
-                ...options
-            };
+    var $tooltipBox = null;
+    var hideTimeout = null;
+    var touchTimeout = null;
 
-            this.isVisible = false;
-            this.tooltip = null;
-            this.touchTimeout = null;
-            this.init();
+    function createTooltipBox() {
+        if (!$tooltipBox) {
+            $tooltipBox = $('<div class="hostpn-tooltip-box"></div>');
+            $('body').append($tooltipBox);
         }
+        return $tooltipBox;
+    }
 
-        init() {
-            this.content = this.$element.attr('title') || '';
-            this.$element.removeAttr('title');
+    function positionTooltip(element) {
+        var box = createTooltipBox();
+        var rect = element.getBoundingClientRect();
+        var boxWidth = box.outerWidth();
+        var boxHeight = box.outerHeight();
+        var spaceAbove = rect.top;
+        var left = rect.left + (rect.width / 2) - (boxWidth / 2);
 
-            if (!this.content) return;
+        if (left < 4) left = 4;
+        if (left + boxWidth > window.innerWidth - 4) left = window.innerWidth - boxWidth - 4;
 
-            this.createTooltip();
-            this.bindEvents();
-        }
-
-        createTooltip() {
-            this.tooltip = $(
-                '<div class="pn-cookies-manager-tooltip-box pn-cookies-manager-tooltip-box--top">' +
-                    '<div class="pn-cookies-manager-tooltip-box__content"></div>' +
-                    '<div class="pn-cookies-manager-tooltip-box__arrow"></div>' +
-                '</div>'
-            );
-
-            this.tooltip.find('.pn-cookies-manager-tooltip-box__content').text(this.content);
-            this.tooltip.css('max-width', this.options.maxWidth + 'px');
-
-            $('body').append(this.tooltip);
-        }
-
-        bindEvents() {
-            this.$element.on('mouseenter.pncmTooltip', () => this.show());
-            this.$element.on('mouseleave.pncmTooltip', () => this.hide());
-
-            this.$element.on('touchstart.pncmTooltip', () => {
-                if (this.isVisible) {
-                    this.hide();
-                } else {
-                    this.show();
-                    if (this.options.delayTouch[1] > 0) {
-                        clearTimeout(this.touchTimeout);
-                        this.touchTimeout = setTimeout(() => this.hide(), this.options.delayTouch[1]);
-                    }
-                }
-            });
-        }
-
-        show() {
-            if (!this.tooltip || this.isVisible) return;
-
-            this.position();
-            this.tooltip.addClass('pn-cookies-manager-tooltip-box--visible');
-            this.isVisible = true;
-        }
-
-        hide() {
-            if (!this.tooltip || !this.isVisible) return;
-
-            this.tooltip.removeClass('pn-cookies-manager-tooltip-box--visible');
-            this.isVisible = false;
-            clearTimeout(this.touchTimeout);
-        }
-
-        position() {
-            var elemRect = this.element.getBoundingClientRect();
-
-            // Temporarily show for measuring
-            this.tooltip.css({ visibility: 'hidden', opacity: 0 }).addClass('pn-cookies-manager-tooltip-box--visible');
-            var tooltipRect = this.tooltip[0].getBoundingClientRect();
-            this.tooltip.removeClass('pn-cookies-manager-tooltip-box--visible').css({ visibility: '', opacity: '' });
-
-            var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            var scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
-
-            var top, left;
-            var position = this.options.position;
-
-            // Top position (default)
-            top = elemRect.top + scrollTop - tooltipRect.height - 10;
-            left = elemRect.left + scrollLeft + (elemRect.width / 2) - (tooltipRect.width / 2);
-
-            // Flip to bottom if not enough space above
-            if (top - scrollTop < 5) {
-                position = 'bottom';
-                top = elemRect.bottom + scrollTop + 10;
-            }
-
-            // Clamp horizontal position
-            if (left < scrollLeft + 5) {
-                left = scrollLeft + 5;
-            } else if (left + tooltipRect.width > scrollLeft + window.innerWidth - 5) {
-                left = scrollLeft + window.innerWidth - tooltipRect.width - 5;
-            }
-
-            this.tooltip
-                .removeClass('pn-cookies-manager-tooltip-box--top pn-cookies-manager-tooltip-box--bottom')
-                .addClass('pn-cookies-manager-tooltip-box--' + position);
-
-            this.tooltip.css({
-                top: top + 'px',
-                left: left + 'px'
-            });
-        }
-
-        destroy() {
-            this.$element.off('.pncmTooltip');
-            if (this.content) {
-                this.$element.attr('title', this.content);
-            }
-            if (this.tooltip) {
-                this.tooltip.remove();
-            }
-            clearTimeout(this.touchTimeout);
-            this.$element.removeData('pncm-tooltip');
+        if (spaceAbove >= boxHeight + 10) {
+            box.removeClass('hostpn-tooltip-box--bottom');
+            box.css({ top: rect.top - boxHeight - 8, left: left });
+        } else {
+            box.addClass('hostpn-tooltip-box--bottom');
+            box.css({ top: rect.bottom + 8, left: left });
         }
     }
 
-    // jQuery plugin
-    $.fn.PN_COOKIES_MANAGER_Tooltip = function(options) {
-        return this.each(function() {
-            if (!$(this).data('pncm-tooltip')) {
-                $(this).data('pncm-tooltip', new PN_COOKIES_MANAGER_Tooltip(this, options));
-            }
-        });
+    function getTooltipContent(el) {
+        var $el = $(el);
+        var contentSelector = $el.attr('data-hostpn-tooltip-content');
+        if (contentSelector) {
+            var $source = $(contentSelector);
+            if ($source.length) return $source.html();
+        }
+        var text = $el.attr('data-hostpn-tooltip');
+        if (text) return $('<span>').text(text).html();
+        return null;
+    }
+
+    function showTooltip(el) {
+        clearTimeout(hideTimeout);
+        clearTimeout(touchTimeout);
+        var content = getTooltipContent(el);
+        if (!content) return;
+        var box = createTooltipBox();
+        box.html(content);
+        box.addClass('hostpn-tooltip-box--visible');
+        positionTooltip(el);
+    }
+
+    function hideTooltip() {
+        clearTimeout(touchTimeout);
+        if ($tooltipBox) {
+            $tooltipBox.removeClass('hostpn-tooltip-box--visible hostpn-tooltip-box--bottom');
+        }
+    }
+
+    window.PN_COOKIES_MANAGER_Tooltips = {
+        init: function(selector) {
+            selector = selector || '.pn-cookies-manager-tooltip';
+            $(selector).each(function() {
+                var $el = $(this);
+                if ($el.attr('title') && !$el.attr('data-hostpn-tooltip')) {
+                    $el.attr('data-hostpn-tooltip', $el.attr('title'));
+                    $el.removeAttr('title');
+                }
+            });
+        },
+        show: function(element) {
+            var el = element instanceof $ ? element[0] : element;
+            if (el) showTooltip(el);
+        },
+        hide: function() { hideTooltip(); }
     };
 
-    // Global: hide all tooltips on outside click/touch
-    $(document).on('mousedown touchstart', function(e) {
-        if (!$(e.target).closest('.pn-cookies-manager-tooltip').length &&
-            !$(e.target).closest('.pn-cookies-manager-tooltip-box').length) {
-            $('.pn-cookies-manager-tooltip-box--visible').each(function() {
-                $(this).removeClass('pn-cookies-manager-tooltip-box--visible');
-            });
-            $('.pn-cookies-manager-tooltip').each(function() {
-                var instance = $(this).data('pncm-tooltip');
-                if (instance) {
-                    instance.isVisible = false;
-                    clearTimeout(instance.touchTimeout);
-                }
-            });
+    $(document).on('mouseenter', '.pn-cookies-manager-tooltip', function() {
+        var $el = $(this);
+        if ($el.attr('title') && !$el.attr('data-hostpn-tooltip')) {
+            $el.attr('data-hostpn-tooltip', $el.attr('title'));
+            $el.removeAttr('title');
         }
+        showTooltip(this);
     });
-
-    // Hide tooltips on scroll
-    $(window).on('scroll', function() {
-        $('.pn-cookies-manager-tooltip-box--visible').each(function() {
-            $(this).removeClass('pn-cookies-manager-tooltip-box--visible');
-        });
-        $('.pn-cookies-manager-tooltip').each(function() {
-            var instance = $(this).data('pncm-tooltip');
-            if (instance) {
-                instance.isVisible = false;
-                clearTimeout(instance.touchTimeout);
-            }
-        });
-    });
-
-    // Hide tooltips on ESC key
-    $(document).on('keyup', function(e) {
-        if (e.key === 'Escape') {
-            $('.pn-cookies-manager-tooltip-box--visible').each(function() {
-                $(this).removeClass('pn-cookies-manager-tooltip-box--visible');
-            });
-            $('.pn-cookies-manager-tooltip').each(function() {
-                var instance = $(this).data('pncm-tooltip');
-                if (instance) {
-                    instance.isVisible = false;
-                    clearTimeout(instance.touchTimeout);
-                }
-            });
+    $(document).on('mouseleave', '.pn-cookies-manager-tooltip', function() { hideTooltip(); });
+    $(document).on('focusin', '.pn-cookies-manager-tooltip', function() {
+        var $el = $(this);
+        if ($el.attr('title') && !$el.attr('data-hostpn-tooltip')) {
+            $el.attr('data-hostpn-tooltip', $el.attr('title'));
+            $el.removeAttr('title');
         }
+        showTooltip(this);
+    });
+    $(document).on('focusout', '.pn-cookies-manager-tooltip', function() { hideTooltip(); });
+    $(document).on('touchstart', '.pn-cookies-manager-tooltip', function(e) {
+        var $el = $(this);
+        if ($el.attr('title') && !$el.attr('data-hostpn-tooltip')) {
+            $el.attr('data-hostpn-tooltip', $el.attr('title'));
+            $el.removeAttr('title');
+        }
+        showTooltip(this);
+        touchTimeout = setTimeout(function() { hideTooltip(); }, 4000);
     });
 
+    $(document).ready(function() { PN_COOKIES_MANAGER_Tooltips.init(); });
 })(jQuery);

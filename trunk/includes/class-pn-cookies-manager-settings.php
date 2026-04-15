@@ -886,6 +886,51 @@ class PN_COOKIES_MANAGER_Settings {
         </div>
       </div>
 
+      <?php
+      /* ── Recommended companion plugins ─────────────────────────── */
+      if (!function_exists('get_plugins')) {
+        require_once ABSPATH . 'wp-admin/includes/plugin.php';
+      }
+      $pn_family = [
+        'pn-customers-manager' => [
+          'name' => 'PN Customers Manager',
+          'desc' => __('CRM, funnels, contact messages, WhatsApp & Instagram AI.', 'pn-cookies-manager'),
+          'file' => 'pn-customers-manager/pn-customers-manager.php',
+          'icon' => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 800 720"><path d="m 360,-240 v -80 H 680 V -604 Q 680,-721 598.5,-802.5 517,-884 400,-884 283,-884 201.5,-802.5 120,-721 120,-604 v 244 H 80 Q 47,-360 23.5,-383.5 0,-407 0,-440 v -80 Q 0,-541 10.5,-559.5 21,-578 40,-589 l 3,-53 q 8,-68 39.5,-126 31.5,-58 79,-101 47.5,-43 109,-67 61.5,-24 129.5,-24 68,0 129,24 61,24 109,66.5 48,42.5 79,100.5 31,58 40,126 l 3,52 q 19,9 29.5,27 10.5,18 10.5,38 v 92 q 0,20 -10.5,38 -10.5,18 -29.5,27 v 49 q 0,33 -23.5,56.5 Q 713,-240 680,-240 Z m -80,-280 q -17,0 -28.5,-11.5 Q 240,-543 240,-560 q 0,-17 11.5,-28.5 11.5,-11.5 28.5,-11.5 17,0 28.5,11.5 11.5,11.5 11.5,28.5 0,17 -11.5,28.5 Q 297,-520 280,-520 Z m 240,0 q -17,0 -28.5,-11.5 Q 480,-543 480,-560 q 0,-17 11.5,-28.5 11.5,-11.5 28.5,-11.5 17,0 28.5,11.5 11.5,11.5 11.5,28.5 0,17 -11.5,28.5 Q 537,-520 520,-520 Z m -359,-62 q -7,-106 64,-182 71,-76 177,-76 89,0 156.5,56.5 Q 626,-727 640,-639 549,-640 472.5,-688 396,-736 355,-818 339,-738 287.5,-675.5 236,-613 161,-582 Z" fill="#0000aa"/></svg>',
+          'settings' => 'admin.php?page=pn_customers_manager_options',
+        ],
+        'mailpn' => [
+          'name' => 'MailPN',
+          'desc' => __('Email campaigns, automations, SMTP and newsletter management.', 'pn-cookies-manager'),
+          'file' => 'mailpn/mailpn.php',
+          'icon' => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 840 720"><path d="m558-240-170-170 56-56 114 114 226-226 56 56zM400-680 720-880H80zm0 80-320-200v400h206l80 80H80Q47-320 23.5-343.5 0-367 0-400V-880Q0-913 23.5-936.5 47-960 80-960h640q33 0 56.5 23.5 23.5 23.5 23.5 56.5v174l-80 80v-174zm0 0zm0-80zm0 80z" fill="#ffcc00"/></svg>',
+          'settings' => 'admin.php?page=mailpn_options',
+        ],
+        'userspn' => [
+          'name' => 'UsersPN',
+          'desc' => __('User profiles, directories, role management and analytics.', 'pn-cookies-manager'),
+          'file' => 'userspn/userspn.php',
+          'icon' => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q53 0 100-15.5t86-44.5q-39-29-86-44.5T480-280q-53 0-100 15.5T294-220q39 29 86 44.5T480-160Zm0-360q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm0-60Zm0 360Z" fill="#00aa44"/></svg>',
+          'settings' => 'admin.php?page=userspn_options',
+        ],
+        'pn-tasks-manager' => [
+          'name' => 'PN Tasks Manager',
+          'desc' => __('Task boards, assignments, deadlines and team collaboration.', 'pn-cookies-manager'),
+          'file' => 'pn-tasks-manager/pn-tasks-manager.php',
+          'icon' => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="m438-240 226-226-58-58-169 169-84-84-57 57 142 142ZM240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520ZM240-800v200-200 640-640Z" fill="#552200"/></svg>',
+          'settings' => 'admin.php?page=pn_tasks_manager_options',
+        ],
+      ];
+      $pn_recommended  = ['mailpn', 'userspn'];
+      $installed       = get_plugins();
+      $rp_badge_count  = 0;
+      foreach ($pn_recommended as $rp_slug) {
+        if (isset($pn_family[$rp_slug]) && !isset($installed[$pn_family[$rp_slug]['file']])) {
+          $rp_badge_count++;
+        }
+      }
+      ?>
+
       <!-- Sticky settings footer bar -->
       <div id="pn-cookies-manager-settings-footer" class="pn-cookies-manager-settings-footer">
         <div class="pn-cookies-manager-settings-footer-inner">
@@ -894,11 +939,17 @@ class PN_COOKIES_MANAGER_Settings {
             <span class="pn-cookies-manager-settings-footer-version">v<?php echo esc_html(PN_COOKIES_MANAGER_VERSION); ?></span>
           </div>
           <div class="pn-cookies-manager-settings-footer-right">
+            <button type="button" id="pn-cookies-manager-settings-recommended" class="pn-cookies-manager-settings-footer-icon-btn pn-cookies-manager-rp-btn pn-cookies-manager-tooltip" title="<?php esc_attr_e('Recommended plugins', 'pn-cookies-manager'); ?>">
+              <span class="material-icons-outlined">add</span>
+              <?php if ($rp_badge_count > 0) : ?>
+                <span class="pn-cookies-manager-rp-badge"><?php echo (int) $rp_badge_count; ?></span>
+              <?php endif; ?>
+            </button>
             <input type="file" id="pn-cookies-manager-settings-import-file" class="pn-cookies-manager-settings-hidden-input" accept=".json">
-            <button type="button" id="pn-cookies-manager-settings-import" class="pn-cookies-manager-settings-footer-icon-btn" title="<?php esc_attr_e('Import settings', 'pn-cookies-manager'); ?>">
+            <button type="button" id="pn-cookies-manager-settings-import" class="pn-cookies-manager-settings-footer-icon-btn pn-cookies-manager-tooltip" title="<?php esc_attr_e('Import settings', 'pn-cookies-manager'); ?>">
               <span class="material-icons-outlined">file_upload</span>
             </button>
-            <button type="button" id="pn-cookies-manager-settings-export" class="pn-cookies-manager-settings-footer-icon-btn" title="<?php esc_attr_e('Export settings', 'pn-cookies-manager'); ?>">
+            <button type="button" id="pn-cookies-manager-settings-export" class="pn-cookies-manager-settings-footer-icon-btn pn-cookies-manager-tooltip" title="<?php esc_attr_e('Export settings', 'pn-cookies-manager'); ?>">
               <span class="material-icons-outlined">file_download</span>
             </button>
             <button type="button" id="pn-cookies-manager-settings-save" class="pn-cookies-manager-btn pn-cookies-manager-btn-mini">
@@ -908,7 +959,61 @@ class PN_COOKIES_MANAGER_Settings {
         </div>
       </div>
 
+      <!-- Recommended plugins popup -->
+      <div class="pn-cookies-manager-popup-overlay pn-cookies-manager-display-none-soft" style="z-index:1000000;"></div>
+      <div id="pn-cookies-manager-recommended-plugins" class="pn-cookies-manager-popup pn-cookies-manager-popup-size-medium pn-cookies-manager-display-none-soft" style="z-index:1000001;">
+        <div class="pn-cookies-manager-popup-content" style="padding:30px;">
+          <h3 style="margin:0 0 8px;"><?php esc_html_e('Recommended Plugins', 'pn-cookies-manager'); ?></h3>
+          <p style="color:#787c82;margin:0 0 20px;"><?php esc_html_e('Enhance your workflow with these companion plugins.', 'pn-cookies-manager'); ?></p>
+          <div class="pn-cookies-manager-rp-list">
+            <?php foreach ($pn_family as $slug => $plugin) :
+              $is_installed = isset($installed[$plugin['file']]);
+              $is_active    = $is_installed && is_plugin_active($plugin['file']);
+              $is_recommended = in_array($slug, $pn_recommended, true);
+            ?>
+              <div class="pn-cookies-manager-rp-card">
+                <div class="pn-cookies-manager-rp-icon"><?php echo $plugin['icon']; ?></div>
+                <div class="pn-cookies-manager-rp-info">
+                  <div class="pn-cookies-manager-rp-name">
+                    <?php echo esc_html($plugin['name']); ?>
+                    <?php if ($is_recommended) : ?>
+                      <span class="pn-cookies-manager-rp-recommended"><?php esc_html_e('Recommended', 'pn-cookies-manager'); ?></span>
+                    <?php endif; ?>
+                  </div>
+                  <div class="pn-cookies-manager-rp-desc"><?php echo esc_html($plugin['desc']); ?></div>
+                </div>
+                <div class="pn-cookies-manager-rp-action">
+                  <?php if ($is_active) : ?>
+                    <span class="pn-cookies-manager-rp-active-badge"><?php esc_html_e('Active', 'pn-cookies-manager'); ?></span>
+                  <?php elseif ($is_installed) : ?>
+                    <button type="button" class="pn-cookies-manager-btn pn-cookies-manager-btn-mini pn-cookies-manager-btn-transparent pn-cookies-manager-rp-activate" data-slug="<?php echo esc_attr($slug); ?>">
+                      <?php esc_html_e('Activate', 'pn-cookies-manager'); ?>
+                    </button>
+                  <?php else : ?>
+                    <button type="button" class="pn-cookies-manager-btn pn-cookies-manager-btn-mini pn-cookies-manager-rp-install" data-slug="<?php echo esc_attr($slug); ?>">
+                      <?php esc_html_e('Install', 'pn-cookies-manager'); ?>
+                    </button>
+                  <?php endif; ?>
+                </div>
+              </div>
+            <?php endforeach; ?>
+          </div>
+        </div>
+      </div>
+
       <?php
+      /* ── Settings pages map (for post-activate redirect) ── */
+      $settings_pages = [];
+      foreach ($pn_family as $s => $p) {
+        $settings_pages[$s] = admin_url($p['settings']);
+      }
+
+      wp_enqueue_style('pn-cookies-manager-popups', PN_COOKIES_MANAGER_URL . 'assets/css/pn-cookies-manager-popups.css', [], PN_COOKIES_MANAGER_VERSION);
+      wp_enqueue_script('pn-cookies-manager-popups', PN_COOKIES_MANAGER_URL . 'assets/js/pn-cookies-manager-popups.js', ['jquery'], PN_COOKIES_MANAGER_VERSION, true);
+
+      wp_enqueue_style('pn-cookies-manager-tooltip', PN_COOKIES_MANAGER_URL . 'assets/css/pn-cookies-manager-tooltip.css', [], PN_COOKIES_MANAGER_VERSION);
+      wp_enqueue_script('pn-cookies-manager-tooltip', PN_COOKIES_MANAGER_URL . 'assets/js/pn-cookies-manager-tooltip.js', ['jquery'], PN_COOKIES_MANAGER_VERSION, true);
+
       wp_enqueue_script(
         'pn-cookies-manager-settings-footer',
         PN_COOKIES_MANAGER_URL . 'assets/js/admin/pn-cookies-manager-settings-footer.js',
@@ -918,14 +1023,21 @@ class PN_COOKIES_MANAGER_Settings {
       );
 
       wp_localize_script('pn-cookies-manager-settings-footer', 'pncmSettingsFooter', [
-        'ajaxUrl' => admin_url('admin-ajax.php'),
-        'nonce'   => wp_create_nonce('pn-cookies-manager-nonce'),
-        'i18n'    => [
+        'ajaxUrl'       => admin_url('admin-ajax.php'),
+        'nonce'         => wp_create_nonce('pn-cookies-manager-nonce'),
+        'settingsPages' => $settings_pages,
+        'i18n'          => [
           'confirmImport'  => __('This will overwrite your current settings. Continue?', 'pn-cookies-manager'),
           'importSuccess'  => __('Settings imported successfully. Reloading...', 'pn-cookies-manager'),
           'importError'    => __('Error importing settings.', 'pn-cookies-manager'),
           'invalidFile'    => __('Invalid JSON file.', 'pn-cookies-manager'),
           'exportError'    => __('Error exporting settings.', 'pn-cookies-manager'),
+          'installing'     => __('Installing...', 'pn-cookies-manager'),
+          'activating'     => __('Activating...', 'pn-cookies-manager'),
+          'installError'   => __('Error installing plugin.', 'pn-cookies-manager'),
+          'activateError'  => __('Error activating plugin.', 'pn-cookies-manager'),
+          'active'         => __('Active', 'pn-cookies-manager'),
+          'activate'       => __('Activate', 'pn-cookies-manager'),
         ],
       ]);
 	  ?>

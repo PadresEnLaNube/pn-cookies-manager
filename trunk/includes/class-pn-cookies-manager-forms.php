@@ -791,7 +791,7 @@ class PN_COOKIES_MANAGER_Forms {
             <div class="pn-cookies-manager-content pn-cookies-manager-pl-10 pn-cookies-manager-toggle-content pn-cookies-manager-mb-20 pn-cookies-manager-display-none-soft">
               <?php if (array_key_exists('description', $input_array) && !empty($input_array['description'])): ?>
                 <div class="pn-cookies-manager-section-info-block pn-cookies-manager-mb-20">
-                  <i class="material-icons-outlined pn-cookies-manager-section-info-icon">info_outline</i>
+                  <i class="material-icons-outlined pn-cookies-manager-section-info-icon">info</i>
                   <small><?php echo wp_kses_post($input_array['description']); ?></small>
                 </div>
               <?php endif ?>
@@ -856,7 +856,7 @@ class PN_COOKIES_MANAGER_Forms {
           <div class="pn-cookies-manager-content pn-cookies-manager-pl-10 pn-cookies-manager-toggle-content pn-cookies-manager-mb-20 pn-cookies-manager-display-none-soft">
             <?php if (array_key_exists('description', $input_array) && !empty($input_array['description'])): ?>
               <div class="pn-cookies-manager-section-info-block pn-cookies-manager-mb-20">
-                <i class="material-icons-outlined pn-cookies-manager-section-info-icon">info_outline</i>
+                <i class="material-icons-outlined pn-cookies-manager-section-info-icon">info</i>
                 <small><?php echo wp_kses_post($input_array['description']); ?></small>
               </div>
             <?php endif ?>

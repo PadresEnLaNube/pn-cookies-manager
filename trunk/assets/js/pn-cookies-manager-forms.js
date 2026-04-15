@@ -315,7 +315,7 @@
             pn_cookies_manager_audios_block.append('<div class="pn-cookies-manager-audio pn-cookies-manager-tooltip" title="' + $(this)[0].title + '"><i class="dashicons dashicons-media-audio"></i></div>');
           });
 
-          $('.pn-cookies-manager-tooltip').PN_COOKIES_MANAGER_Tooltip({maxWidth: 300, delayTouch:[0, 4000]});
+          if(window.PN_COOKIES_MANAGER_Tooltips) { PN_COOKIES_MANAGER_Tooltips.init(); }
           pn_cookies_manager_input_btn.text((pn_cookies_manager_audios_block.attr('data-pn-cookies-manager-multiple') == 'true') ? pn_cookies_manager_i18n.select_audios : pn_cookies_manager_i18n.select_audio);
           pn_cookies_manager_audios_input.val(ids);
         });
@@ -378,7 +378,7 @@
             pn_cookies_manager_videos_block.append('<div class="pn-cookies-manager-video pn-cookies-manager-tooltip" title="' + $(this)[0].title + '"><i class="dashicons dashicons-media-video"></i></div>');
           });
 
-          $('.pn-cookies-manager-tooltip').PN_COOKIES_MANAGER_Tooltip({maxWidth: 300, delayTouch:[0, 4000]});
+          if(window.PN_COOKIES_MANAGER_Tooltips) { PN_COOKIES_MANAGER_Tooltips.init(); }
           pn_cookies_manager_input_btn.text((pn_cookies_manager_videos_block.attr('data-pn-cookies-manager-multiple') == 'true') ? pn_cookies_manager_i18n.select_videos : pn_cookies_manager_i18n.select_video);
           pn_cookies_manager_videos_input.val(ids);
         });

@@ -1,68 +1,34 @@
-/**
- * Custom Tooltip Styles
- *
- * Replaces Tooltipster with a lightweight custom tooltip
- * using BEM naming convention.
- *
- * @package PN_COOKIES_MANAGER
- * @since   1.0.0
- */
-
-/* ========================================================================
-   TOOLTIP BOX (floating element)
-   ======================================================================== */
-.pn-cookies-manager-tooltip-box{
-  position:absolute;
-  z-index:1000001;
-  pointer-events:none;
-  opacity:0;
-  visibility:hidden;
-  transition:opacity .25s ease, visibility .25s ease;
+.hostpn-tooltip-box {
+    position: fixed;
+    z-index: 9997;
+    max-width: 300px;
+    background: #232323;
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 1.4;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    box-sizing: border-box;
+    word-wrap: break-word;
 }
-.pn-cookies-manager-tooltip-box--visible{
-  opacity:1;
-  visibility:visible;
+.hostpn-tooltip-box--visible {
+    opacity: 1;
 }
-
-/* ========================================================================
-   CONTENT
-   ======================================================================== */
-.pn-cookies-manager-tooltip-box__content{
-  background:#565656;
-  color:#fff;
-  font-size:13px;
-  line-height:18px;
-  padding:6px 14px;
-  border-radius:4px;
-  box-sizing:border-box;
-  word-wrap:break-word;
-  font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+.hostpn-tooltip-box::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #232323;
 }
-
-/* ========================================================================
-   ARROW
-   ======================================================================== */
-.pn-cookies-manager-tooltip-box__arrow{
-  position:absolute;
-  width:0;
-  height:0;
-  border:8px solid transparent;
-}
-
-/* Arrow when tooltip is ABOVE the element (--top) */
-.pn-cookies-manager-tooltip-box--top .pn-cookies-manager-tooltip-box__arrow{
-  bottom:-8px;
-  left:50%;
-  transform:translateX(-50%);
-  border-top-color:#565656;
-  border-bottom:none;
-}
-
-/* Arrow when tooltip is BELOW the element (--bottom) */
-.pn-cookies-manager-tooltip-box--bottom .pn-cookies-manager-tooltip-box__arrow{
-  top:-8px;
-  left:50%;
-  transform:translateX(-50%);
-  border-bottom-color:#565656;
-  border-top:none;
+.hostpn-tooltip-box--bottom::after {
+    top: auto;
+    bottom: 100%;
+    border-top-color: transparent;
+    border-bottom-color: #232323;
 }
