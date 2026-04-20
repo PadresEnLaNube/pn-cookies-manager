@@ -52,7 +52,7 @@ class PN_COOKIES_MANAGER {
 		if (defined('PN_COOKIES_MANAGER_VERSION')) {
 			$this->pn_cookies_manager_version = PN_COOKIES_MANAGER_VERSION;
 		} else {
-			$this->pn_cookies_manager_version = '1.0.25';
+			$this->pn_cookies_manager_version = '1.0.26';
 		}
 
 		$this->pn_cookies_manager_plugin_name = 'pn-cookies-manager';
@@ -336,6 +336,7 @@ class PN_COOKIES_MANAGER {
 		$this->pn_cookies_manager_loader->pn_cookies_manager_add_action('admin_enqueue_scripts', $plugin_analytics, 'pn_cookies_manager_enqueue_analytics_assets');
 		$this->pn_cookies_manager_loader->pn_cookies_manager_add_action('wp_ajax_pncm_log_consent', $plugin_analytics, 'pn_cookies_manager_log_consent');
 		$this->pn_cookies_manager_loader->pn_cookies_manager_add_action('wp_ajax_nopriv_pncm_log_consent', $plugin_analytics, 'pn_cookies_manager_log_consent');
+		$this->pn_cookies_manager_loader->pn_cookies_manager_add_action('wp_ajax_pncm_get_analytics', $plugin_analytics, 'pn_cookies_manager_ajax_get_analytics');
 	}
 
 	/**

@@ -90,6 +90,19 @@ class PN_COOKIES_MANAGER_Analytics {
 			PN_COOKIES_MANAGER_VERSION,
 			'all'
 		);
+
+		wp_enqueue_script(
+			'pn-cookies-manager-analytics',
+			PN_COOKIES_MANAGER_URL . 'assets/js/pn-cookies-manager-analytics.js',
+			[ 'jquery' ],
+			PN_COOKIES_MANAGER_VERSION,
+			true
+		);
+
+		wp_localize_script( 'pn-cookies-manager-analytics', 'pncm_analytics', [
+			'ajax_url' => admin_url( 'admin-ajax.php' ),
+			'nonce'    => wp_create_nonce( 'pncm_analytics_nonce' ),
+		] );
 	}
 
 	/**
@@ -224,10 +237,11 @@ class PN_COOKIES_MANAGER_Analytics {
 	 * Get daily rows for the chart.
 	 *
 	 * @since 1.1.0
-	 * @param int $days Number of days.
+	 * @param int    $days  Number of days.
+	 * @param string $order SQL order direction (ASC or DESC).
 	 * @return array
 	 */
-	private function pn_cookies_manager_get_daily( $days = 30 ) {
+	private function pn_cookies_manager_get_daily( $days = 30, $order = 'DESC' ) {
 		global $wpdb;
 		$table_name = $wpdb->prefix . self::TABLE;
 
@@ -237,15 +251,177 @@ class PN_COOKIES_MANAGER_Analytics {
 			$where = $wpdb->prepare( 'WHERE date_stat >= %s', $since );
 		}
 
+		$order_sql = $order === 'ASC' ? 'ASC' : 'DESC';
+
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$rows = $wpdb->get_results(
 			"SELECT date_stat, total_accept, total_reject, total_custom
 			 FROM {$table_name} {$where}
-			 ORDER BY date_stat ASC",
+			 ORDER BY date_stat {$order_sql}",
 			ARRAY_A
 		);
 
 		return $rows ? $rows : [];
+	}
+
+	/**
+	 * AJAX handler: return analytics content for a given period.
+	 *
+	 * @since 1.1.0
+	 */
+	public function pn_cookies_manager_ajax_get_analytics() {
+		check_ajax_referer( 'pncm_analytics_nonce', 'nonce' );
+
+		if ( ! current_user_can( 'manage_pn_cookies_manager_options' ) ) {
+			wp_send_json_error( 'Unauthorized', 403 );
+		}
+
+		$period = isset( $_POST['period'] ) ? absint( $_POST['period'] ) : 30;
+		$valid  = [ 7, 30, 90, 0 ];
+		if ( ! in_array( $period, $valid, true ) ) {
+			$period = 30;
+		}
+
+		$order = isset( $_POST['order'] ) && $_POST['order'] === 'ASC' ? 'ASC' : 'DESC';
+
+		wp_send_json_success( $this->pn_cookies_manager_render_analytics_content( $period, $order ) );
+	}
+
+	/**
+	 * Render the dynamic analytics content (cards, categories, chart).
+	 *
+	 * @since 1.1.0
+	 * @param int    $period Number of days.
+	 * @param string $order  Sort direction for daily chart (ASC or DESC).
+	 * @return string HTML.
+	 */
+	private function pn_cookies_manager_render_analytics_content( $period, $order = 'DESC' ) {
+		$stats = $this->pn_cookies_manager_get_stats( $period );
+		$daily = $this->pn_cookies_manager_get_daily( $period, $order );
+		$next_order = $order === 'DESC' ? 'ASC' : 'DESC';
+
+		$categories = [
+			'functional'  => __( 'Functional', 'pn-cookies-manager' ),
+			'analytics'   => __( 'Analytics', 'pn-cookies-manager' ),
+			'performance' => __( 'Performance', 'pn-cookies-manager' ),
+			'advertising' => __( 'Advertising', 'pn-cookies-manager' ),
+		];
+
+		ob_start();
+		?>
+		<!-- Summary cards -->
+		<div class="pncm-analytics-cards pn-cookies-manager-mb-30">
+			<div class="pncm-analytics-card pncm-analytics-card--accept">
+				<span class="pncm-analytics-card__number"><?php echo esc_html( number_format_i18n( $stats['total_accept'] ) ); ?></span>
+				<span class="pncm-analytics-card__label"><?php esc_html_e( 'Accept All', 'pn-cookies-manager' ); ?></span>
+			</div>
+			<div class="pncm-analytics-card pncm-analytics-card--reject">
+				<span class="pncm-analytics-card__number"><?php echo esc_html( number_format_i18n( $stats['total_reject'] ) ); ?></span>
+				<span class="pncm-analytics-card__label"><?php esc_html_e( 'Reject All', 'pn-cookies-manager' ); ?></span>
+			</div>
+			<div class="pncm-analytics-card pncm-analytics-card--custom">
+				<span class="pncm-analytics-card__number"><?php echo esc_html( number_format_i18n( $stats['total_custom'] ) ); ?></span>
+				<span class="pncm-analytics-card__label"><?php esc_html_e( 'Custom', 'pn-cookies-manager' ); ?></span>
+			</div>
+		</div>
+
+		<!-- Category acceptance rates -->
+		<div class="pncm-analytics-categories pn-cookies-manager-mb-30">
+			<h2 class="pn-cookies-manager-mb-20"><?php esc_html_e( 'Category Acceptance Rates', 'pn-cookies-manager' ); ?></h2>
+
+			<?php foreach ( $categories as $key => $name ) :
+				$accepted  = intval( $stats[ "cat_{$key}_accepted" ] );
+				$rejected  = intval( $stats[ "cat_{$key}_rejected" ] );
+				$cat_total = $accepted + $rejected;
+				$pct       = $cat_total > 0 ? round( ( $accepted / $cat_total ) * 100 ) : 0;
+			?>
+				<div class="pncm-analytics-category pn-cookies-manager-mb-15">
+					<div class="pncm-analytics-category__header">
+						<span class="pncm-analytics-category__name"><?php echo esc_html( $name ); ?></span>
+						<span class="pncm-analytics-category__numbers">
+							<?php
+							printf(
+								/* translators: 1: accepted count, 2: rejected count, 3: acceptance percentage */
+								esc_html__( '%1$s accepted / %2$s rejected (%3$s%%)', 'pn-cookies-manager' ),
+								esc_html( number_format_i18n( $accepted ) ),
+								esc_html( number_format_i18n( $rejected ) ),
+								esc_html( $pct )
+							);
+							?>
+						</span>
+					</div>
+					<div class="pncm-analytics-bar">
+						<div class="pncm-analytics-bar__fill pncm-analytics-bar__fill--accepted" style="width: <?php echo esc_attr( $pct ); ?>%;"></div>
+					</div>
+				</div>
+			<?php endforeach; ?>
+		</div>
+
+		<!-- Daily trend chart -->
+		<div class="pncm-analytics-chart-section pn-cookies-manager-mb-30">
+			<div class="pncm-analytics-chart-header pn-cookies-manager-mb-20">
+				<h2><?php esc_html_e( 'Daily Trend', 'pn-cookies-manager' ); ?></h2>
+				<a href="#" class="pncm-analytics-order-btn" data-order="<?php echo esc_attr( $next_order ); ?>" title="<?php echo esc_attr( $next_order === 'ASC' ? __( 'Sort oldest first', 'pn-cookies-manager' ) : __( 'Sort newest first', 'pn-cookies-manager' ) ); ?>">
+					<?php echo $order === 'DESC' ? '&#8595;' : '&#8593;'; ?>
+				</a>
+			</div>
+
+			<?php if ( empty( $daily ) ) : ?>
+				<p class="pncm-analytics-empty"><?php esc_html_e( 'No data recorded yet.', 'pn-cookies-manager' ); ?></p>
+			<?php else :
+				$max_day = 1;
+				foreach ( $daily as $d ) {
+					$day_total = intval( $d['total_accept'] ) + intval( $d['total_reject'] ) + intval( $d['total_custom'] );
+					if ( $day_total > $max_day ) {
+						$max_day = $day_total;
+					}
+				}
+			?>
+				<div class="pncm-analytics-chart">
+					<?php foreach ( $daily as $d ) :
+						$a = intval( $d['total_accept'] );
+						$r = intval( $d['total_reject'] );
+						$c = intval( $d['total_custom'] );
+						$day_total = $a + $r + $c;
+						$bar_pct   = $max_day > 0 ? round( ( $day_total / $max_day ) * 100 ) : 0;
+
+						$seg_a = $day_total > 0 ? round( ( $a / $day_total ) * 100 ) : 0;
+						$seg_r = $day_total > 0 ? round( ( $r / $day_total ) * 100 ) : 0;
+						$seg_c = 100 - $seg_a - $seg_r;
+
+						$date_label = wp_date( get_option( 'date_format' ), strtotime( $d['date_stat'] ) );
+					?>
+						<div class="pncm-analytics-chart__row">
+							<span class="pncm-analytics-chart__label"><?php echo esc_html( $date_label ); ?></span>
+							<div class="pncm-analytics-chart__bar-wrapper" style="width: <?php echo esc_attr( $bar_pct ); ?>%;">
+								<?php if ( $a > 0 ) : ?>
+									<?php /* translators: %d: number of "accept all" consent actions */ ?>
+								<div class="pncm-analytics-chart__bar pncm-analytics-chart__bar--accept" style="width: <?php echo esc_attr( $seg_a ); ?>%;" title="<?php echo esc_attr( sprintf( __( 'Accept: %d', 'pn-cookies-manager' ), $a ) ); ?>"></div>
+								<?php endif; ?>
+								<?php if ( $r > 0 ) : ?>
+									<?php /* translators: %d: number of "reject all" consent actions */ ?>
+								<div class="pncm-analytics-chart__bar pncm-analytics-chart__bar--reject" style="width: <?php echo esc_attr( $seg_r ); ?>%;" title="<?php echo esc_attr( sprintf( __( 'Reject: %d', 'pn-cookies-manager' ), $r ) ); ?>"></div>
+								<?php endif; ?>
+								<?php if ( $c > 0 ) : ?>
+									<?php /* translators: %d: number of custom consent actions */ ?>
+								<div class="pncm-analytics-chart__bar pncm-analytics-chart__bar--custom" style="width: <?php echo esc_attr( $seg_c ); ?>%;" title="<?php echo esc_attr( sprintf( __( 'Custom: %d', 'pn-cookies-manager' ), $c ) ); ?>"></div>
+								<?php endif; ?>
+							</div>
+							<span class="pncm-analytics-chart__total"><?php echo esc_html( $day_total ); ?></span>
+						</div>
+					<?php endforeach; ?>
+				</div>
+
+				<!-- Legend -->
+				<div class="pncm-analytics-legend">
+					<span class="pncm-analytics-legend__item"><span class="pncm-analytics-legend__color pncm-analytics-legend__color--accept"></span> <?php esc_html_e( 'Accept All', 'pn-cookies-manager' ); ?></span>
+					<span class="pncm-analytics-legend__item"><span class="pncm-analytics-legend__color pncm-analytics-legend__color--reject"></span> <?php esc_html_e( 'Reject All', 'pn-cookies-manager' ); ?></span>
+					<span class="pncm-analytics-legend__item"><span class="pncm-analytics-legend__color pncm-analytics-legend__color--custom"></span> <?php esc_html_e( 'Custom', 'pn-cookies-manager' ); ?></span>
+				</div>
+			<?php endif; ?>
+		</div>
+		<?php
+		return ob_get_clean();
 	}
 
 	/**
@@ -267,24 +443,11 @@ class PN_COOKIES_MANAGER_Analytics {
 		}
 
 		// Determine period
-		$period     = isset( $_GET['pncm_period'] ) ? absint( $_GET['pncm_period'] ) : 30; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$valid      = [ 7, 30, 90, 0 ];
+		$period = isset( $_GET['pncm_period'] ) ? absint( $_GET['pncm_period'] ) : 30; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$valid  = [ 7, 30, 90, 0 ];
 		if ( ! in_array( $period, $valid, true ) ) {
 			$period = 30;
 		}
-
-		$stats = $this->pn_cookies_manager_get_stats( $period );
-		$daily = $this->pn_cookies_manager_get_daily( $period );
-		$total = intval( $stats['total_accept'] ) + intval( $stats['total_reject'] ) + intval( $stats['total_custom'] );
-
-		$categories = [
-			'functional'  => __( 'Functional', 'pn-cookies-manager' ),
-			'analytics'   => __( 'Analytics', 'pn-cookies-manager' ),
-			'performance' => __( 'Performance', 'pn-cookies-manager' ),
-			'advertising' => __( 'Advertising', 'pn-cookies-manager' ),
-		];
-
-		$base_url = admin_url( 'admin.php?page=pn-cookies-manager-analytics' );
 
 		$periods = [
 			7  => __( 'Last 7 days', 'pn-cookies-manager' ),
@@ -295,127 +458,21 @@ class PN_COOKIES_MANAGER_Analytics {
 		?>
 		<div class="pn-cookies-manager-options pn-cookies-manager-max-width-1000 pn-cookies-manager-margin-auto pn-cookies-manager-mt-50 pn-cookies-manager-mb-50">
 
-			<img src="<?php echo esc_url( PN_COOKIES_MANAGER_URL . 'assets/media/banner-1544x500.png' ); ?>" alt="<?php esc_attr_e( 'Plugin main Banner', 'pn-cookies-manager' ); ?>" title="<?php esc_attr_e( 'Plugin main Banner', 'pn-cookies-manager' ); ?>" class="pn-cookies-manager-width-100-percent pn-cookies-manager-border-radius-20 pn-cookies-manager-mb-30">
-
 			<h1 class="pn-cookies-manager-mb-30"><?php esc_html_e( 'Cookies Manager - Analytics', 'pn-cookies-manager' ); ?></h1>
 
 			<!-- Period selector -->
 			<div class="pncm-analytics-period pn-cookies-manager-mb-30">
 				<?php foreach ( $periods as $d => $label ) : ?>
-					<a href="<?php echo esc_url( add_query_arg( 'pncm_period', $d, $base_url ) ); ?>"
+					<a href="#" data-period="<?php echo esc_attr( $d ); ?>"
 					   class="pncm-analytics-period__btn<?php echo $period === $d ? ' pncm-analytics-period__btn--active' : ''; ?>">
 						<?php echo esc_html( $label ); ?>
 					</a>
 				<?php endforeach; ?>
 			</div>
 
-			<!-- Summary cards -->
-			<div class="pncm-analytics-cards pn-cookies-manager-mb-30">
-				<div class="pncm-analytics-card pncm-analytics-card--accept">
-					<span class="pncm-analytics-card__number"><?php echo esc_html( number_format_i18n( $stats['total_accept'] ) ); ?></span>
-					<span class="pncm-analytics-card__label"><?php esc_html_e( 'Accept All', 'pn-cookies-manager' ); ?></span>
-				</div>
-				<div class="pncm-analytics-card pncm-analytics-card--reject">
-					<span class="pncm-analytics-card__number"><?php echo esc_html( number_format_i18n( $stats['total_reject'] ) ); ?></span>
-					<span class="pncm-analytics-card__label"><?php esc_html_e( 'Reject All', 'pn-cookies-manager' ); ?></span>
-				</div>
-				<div class="pncm-analytics-card pncm-analytics-card--custom">
-					<span class="pncm-analytics-card__number"><?php echo esc_html( number_format_i18n( $stats['total_custom'] ) ); ?></span>
-					<span class="pncm-analytics-card__label"><?php esc_html_e( 'Custom', 'pn-cookies-manager' ); ?></span>
-				</div>
-			</div>
-
-			<!-- Category acceptance rates -->
-			<div class="pncm-analytics-categories pn-cookies-manager-mb-30">
-				<h2 class="pn-cookies-manager-mb-20"><?php esc_html_e( 'Category Acceptance Rates', 'pn-cookies-manager' ); ?></h2>
-
-				<?php foreach ( $categories as $key => $name ) :
-					$accepted = intval( $stats[ "cat_{$key}_accepted" ] );
-					$rejected = intval( $stats[ "cat_{$key}_rejected" ] );
-					$cat_total = $accepted + $rejected;
-					$pct = $cat_total > 0 ? round( ( $accepted / $cat_total ) * 100 ) : 0;
-				?>
-					<div class="pncm-analytics-category pn-cookies-manager-mb-15">
-						<div class="pncm-analytics-category__header">
-							<span class="pncm-analytics-category__name"><?php echo esc_html( $name ); ?></span>
-							<span class="pncm-analytics-category__numbers">
-								<?php
-								printf(
-									/* translators: 1: accepted count, 2: rejected count, 3: acceptance percentage */
-									esc_html__( '%1$s accepted / %2$s rejected (%3$s%%)', 'pn-cookies-manager' ),
-									esc_html( number_format_i18n( $accepted ) ),
-									esc_html( number_format_i18n( $rejected ) ),
-									esc_html( $pct )
-								);
-								?>
-							</span>
-						</div>
-						<div class="pncm-analytics-bar">
-							<div class="pncm-analytics-bar__fill pncm-analytics-bar__fill--accepted" style="width: <?php echo esc_attr( $pct ); ?>%;"></div>
-						</div>
-					</div>
-				<?php endforeach; ?>
-			</div>
-
-			<!-- Daily trend chart -->
-			<div class="pncm-analytics-chart-section pn-cookies-manager-mb-30">
-				<h2 class="pn-cookies-manager-mb-20"><?php esc_html_e( 'Daily Trend', 'pn-cookies-manager' ); ?></h2>
-
-				<?php if ( empty( $daily ) ) : ?>
-					<p class="pncm-analytics-empty"><?php esc_html_e( 'No data recorded yet.', 'pn-cookies-manager' ); ?></p>
-				<?php else :
-					// Find max daily total for scaling
-					$max_day = 1;
-					foreach ( $daily as $d ) {
-						$day_total = intval( $d['total_accept'] ) + intval( $d['total_reject'] ) + intval( $d['total_custom'] );
-						if ( $day_total > $max_day ) {
-							$max_day = $day_total;
-						}
-					}
-				?>
-					<div class="pncm-analytics-chart">
-						<?php foreach ( $daily as $d ) :
-							$a = intval( $d['total_accept'] );
-							$r = intval( $d['total_reject'] );
-							$c = intval( $d['total_custom'] );
-							$day_total = $a + $r + $c;
-							$bar_pct   = $max_day > 0 ? round( ( $day_total / $max_day ) * 100 ) : 0;
-
-							// Segment widths within the bar
-							$seg_a = $day_total > 0 ? round( ( $a / $day_total ) * 100 ) : 0;
-							$seg_r = $day_total > 0 ? round( ( $r / $day_total ) * 100 ) : 0;
-							$seg_c = 100 - $seg_a - $seg_r;
-
-							$date_label = wp_date( get_option( 'date_format' ), strtotime( $d['date_stat'] ) );
-						?>
-							<div class="pncm-analytics-chart__row">
-								<span class="pncm-analytics-chart__label"><?php echo esc_html( $date_label ); ?></span>
-								<div class="pncm-analytics-chart__bar-wrapper" style="width: <?php echo esc_attr( $bar_pct ); ?>%;">
-									<?php if ( $a > 0 ) : ?>
-										<?php /* translators: %d: number of "accept all" consent actions */ ?>
-									<div class="pncm-analytics-chart__bar pncm-analytics-chart__bar--accept" style="width: <?php echo esc_attr( $seg_a ); ?>%;" title="<?php echo esc_attr( sprintf( __( 'Accept: %d', 'pn-cookies-manager' ), $a ) ); ?>"></div>
-									<?php endif; ?>
-									<?php if ( $r > 0 ) : ?>
-										<?php /* translators: %d: number of "reject all" consent actions */ ?>
-									<div class="pncm-analytics-chart__bar pncm-analytics-chart__bar--reject" style="width: <?php echo esc_attr( $seg_r ); ?>%;" title="<?php echo esc_attr( sprintf( __( 'Reject: %d', 'pn-cookies-manager' ), $r ) ); ?>"></div>
-									<?php endif; ?>
-									<?php if ( $c > 0 ) : ?>
-										<?php /* translators: %d: number of custom consent actions */ ?>
-									<div class="pncm-analytics-chart__bar pncm-analytics-chart__bar--custom" style="width: <?php echo esc_attr( $seg_c ); ?>%;" title="<?php echo esc_attr( sprintf( __( 'Custom: %d', 'pn-cookies-manager' ), $c ) ); ?>"></div>
-									<?php endif; ?>
-								</div>
-								<span class="pncm-analytics-chart__total"><?php echo esc_html( $day_total ); ?></span>
-							</div>
-						<?php endforeach; ?>
-					</div>
-
-					<!-- Legend -->
-					<div class="pncm-analytics-legend">
-						<span class="pncm-analytics-legend__item"><span class="pncm-analytics-legend__color pncm-analytics-legend__color--accept"></span> <?php esc_html_e( 'Accept All', 'pn-cookies-manager' ); ?></span>
-						<span class="pncm-analytics-legend__item"><span class="pncm-analytics-legend__color pncm-analytics-legend__color--reject"></span> <?php esc_html_e( 'Reject All', 'pn-cookies-manager' ); ?></span>
-						<span class="pncm-analytics-legend__item"><span class="pncm-analytics-legend__color pncm-analytics-legend__color--custom"></span> <?php esc_html_e( 'Custom', 'pn-cookies-manager' ); ?></span>
-					</div>
-				<?php endif; ?>
+			<!-- Dynamic content wrapper -->
+			<div id="pncm-analytics-content">
+				<?php echo $this->pn_cookies_manager_render_analytics_content( $period ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</div>
 
 			<!-- Clear data -->
