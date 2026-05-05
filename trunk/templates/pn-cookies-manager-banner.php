@@ -31,6 +31,10 @@ $pn_cookies_manager_reject_text  = get_option('pn_cookies_manager_banner_reject_
 $pn_cookies_manager_settings_text = get_option('pn_cookies_manager_banner_settings_text', '');
 $pn_cookies_manager_overlay      = get_option('pn_cookies_manager_banner_overlay', '');
 
+// Icon position options
+$pn_cookies_manager_icon_v_pos   = get_option('pn_cookies_manager_icon_position_vertical', 'bottom');
+$pn_cookies_manager_icon_h_pos   = get_option('pn_cookies_manager_icon_position_horizontal', 'left');
+
 // Colors
 $pn_cookies_manager_bg_color          = get_option('pn_cookies_manager_banner_bg_color', '#ffffff');
 $pn_cookies_manager_text_color        = get_option('pn_cookies_manager_banner_text_color', '#333333');
@@ -242,6 +246,11 @@ $pn_cookies_manager_save_text = __('Save preferences', 'pn-cookies-manager');
 </div>
 
 <!-- Re-open Cookie Settings Button -->
-<button type="button" class="pn-cookies-manager-reopen-btn" aria-label="<?php esc_attr_e('Cookie settings', 'pn-cookies-manager'); ?>">
+<?php
+$pn_cookies_manager_reopen_classes = 'pn-cookies-manager-reopen-btn';
+$pn_cookies_manager_reopen_classes .= ' pn-cookies-manager-reopen-btn--' . esc_attr($pn_cookies_manager_icon_v_pos);
+$pn_cookies_manager_reopen_classes .= ' pn-cookies-manager-reopen-btn--' . esc_attr($pn_cookies_manager_icon_h_pos);
+?>
+<button type="button" class="<?php echo esc_attr($pn_cookies_manager_reopen_classes); ?>" aria-label="<?php esc_attr_e('Cookie settings', 'pn-cookies-manager'); ?>">
   <i class="material-icons-outlined" aria-hidden="true">cookie</i>
 </button>

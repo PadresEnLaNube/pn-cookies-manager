@@ -308,12 +308,53 @@ class PN_COOKIES_MANAGER_Settings {
       'input' => 'banner_preview_button',
     ];
 
-    // --- Banner Design subsection ---
-    $pn_cookies_manager_options['pn_cookies_manager_banner_design_section_start'] = [
-      'id' => 'pn_cookies_manager_banner_design_section_start',
+    // --- Icon Position subsection ---
+    $pn_cookies_manager_options['pn_cookies_manager_icon_position_section_start'] = [
+      'id' => 'pn_cookies_manager_icon_position_section_start',
       'section' => 'start',
-      'label' => __('Design', 'pn-cookies-manager'),
-      'description' => __('Configure the position, layout and appearance of the banner.', 'pn-cookies-manager'),
+      'label' => __('Icon Position', 'pn-cookies-manager'),
+      'description' => __('Configure the position of the floating cookie icon that reopens the banner.', 'pn-cookies-manager'),
+    ];
+
+    $pn_cookies_manager_options['pn_cookies_manager_icon_position_vertical'] = [
+      'id' => 'pn_cookies_manager_icon_position_vertical',
+      'class' => 'pn-cookies-manager-select pn-cookies-manager-width-100-percent',
+      'input' => 'select',
+      'label' => __('Vertical position', 'pn-cookies-manager'),
+      'description' => __('Select the vertical position of the cookie icon.', 'pn-cookies-manager'),
+      'placeholder' => __('Select option', 'pn-cookies-manager'),
+      'options' => [
+        'bottom' => __('Bottom', 'pn-cookies-manager'),
+        'top' => __('Top', 'pn-cookies-manager'),
+      ],
+      'value' => 'bottom',
+    ];
+
+    $pn_cookies_manager_options['pn_cookies_manager_icon_position_horizontal'] = [
+      'id' => 'pn_cookies_manager_icon_position_horizontal',
+      'class' => 'pn-cookies-manager-select pn-cookies-manager-width-100-percent',
+      'input' => 'select',
+      'label' => __('Horizontal position', 'pn-cookies-manager'),
+      'description' => __('Select the horizontal position of the cookie icon.', 'pn-cookies-manager'),
+      'placeholder' => __('Select option', 'pn-cookies-manager'),
+      'options' => [
+        'left' => __('Left', 'pn-cookies-manager'),
+        'right' => __('Right', 'pn-cookies-manager'),
+      ],
+      'value' => 'left',
+    ];
+
+    $pn_cookies_manager_options['pn_cookies_manager_icon_position_section_end'] = [
+      'id' => 'pn_cookies_manager_icon_position_section_end',
+      'section' => 'end',
+    ];
+
+    // --- Banner Position subsection ---
+    $pn_cookies_manager_options['pn_cookies_manager_banner_position_section_start'] = [
+      'id' => 'pn_cookies_manager_banner_position_section_start',
+      'section' => 'start',
+      'label' => __('Banner Position', 'pn-cookies-manager'),
+      'description' => __('Configure the position and layout of the cookie consent banner.', 'pn-cookies-manager'),
     ];
 
     $pn_cookies_manager_options['pn_cookies_manager_banner_position'] = [
@@ -359,6 +400,19 @@ class PN_COOKIES_MANAGER_Settings {
         'center' => __('Center', 'pn-cookies-manager'),
       ],
       'value' => 'right',
+    ];
+
+    $pn_cookies_manager_options['pn_cookies_manager_banner_position_section_end'] = [
+      'id' => 'pn_cookies_manager_banner_position_section_end',
+      'section' => 'end',
+    ];
+
+    // --- Banner Design subsection ---
+    $pn_cookies_manager_options['pn_cookies_manager_banner_design_section_start'] = [
+      'id' => 'pn_cookies_manager_banner_design_section_start',
+      'section' => 'start',
+      'label' => __('Design', 'pn-cookies-manager'),
+      'description' => __('Configure the appearance and styling of the banner.', 'pn-cookies-manager'),
     ];
 
     $pn_cookies_manager_options['pn_cookies_manager_banner_overlay'] = [

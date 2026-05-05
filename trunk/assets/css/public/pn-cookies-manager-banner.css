@@ -419,8 +419,6 @@
    ======================================================================== */
 .pn-cookies-manager-reopen-btn{
   position:fixed;
-  bottom:20px;
-  left:20px;
   z-index:999997;
   width:48px;
   height:48px;
@@ -439,6 +437,23 @@
   visibility:hidden;
   transition:opacity .3s ease, visibility .3s ease, transform .2s ease;
 }
+
+/* Vertical positioning */
+.pn-cookies-manager-reopen-btn--bottom{
+  bottom:20px;
+}
+.pn-cookies-manager-reopen-btn--top{
+  top:20px;
+}
+
+/* Horizontal positioning */
+.pn-cookies-manager-reopen-btn--left{
+  left:20px;
+}
+.pn-cookies-manager-reopen-btn--right{
+  right:20px;
+}
+
 .pn-cookies-manager-reopen-btn--visible{
   opacity:1;
   visibility:visible;

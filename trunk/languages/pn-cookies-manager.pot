@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PN Cookies Manager\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-11 10:13+0000\n"
+"POT-Creation-Date: 2026-05-05 08:32+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -17,7 +17,7 @@ msgstr ""
 "X-Domain: pn-cookies-manager"
 
 #. 1: accepted count, 2: rejected count, 3: acceptance percentage
-#: includes/class-pn-cookies-manager-analytics.php:333
+#: includes/class-pn-cookies-manager-analytics.php:345
 #, php-format
 msgid "%1$s accepted / %2$s rejected (%3$s%%)"
 msgstr ""
@@ -26,6 +26,16 @@ msgstr ""
 #: includes/class-pn-cookies-manager-validation.php:48
 #, php-format
 msgid "%s is required."
+msgstr ""
+
+#: includes/class-pn-cookies-manager-ajax.php:153
+#, php-format
+msgid "%s role assigned to %d user(s) successfully."
+msgstr ""
+
+#: includes/class-pn-cookies-manager-ajax.php:155
+#, php-format
+msgid "%s role removed from %d user(s) successfully."
 msgstr ""
 
 #: includes/class-pn-cookies-manager-settings.php:263
@@ -75,36 +85,47 @@ msgstr ""
 msgid "90 days"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-analytics.php:304
-#: includes/class-pn-cookies-manager-analytics.php:399
+#: includes/class-pn-cookies-manager-analytics.php:316
+#: includes/class-pn-cookies-manager-analytics.php:417
 msgid "Accept All"
 msgstr ""
 
-#: templates/pn-cookies-manager-banner.php:54
-#: includes/class-pn-cookies-manager-settings.php:385
-#: includes/class-pn-cookies-manager-settings.php:825
-#: includes/public/class-pn-cookies-manager-public.php:77
+#: templates/pn-cookies-manager-banner.php:58
+#: includes/class-pn-cookies-manager-settings.php:513
+#: includes/public/class-pn-cookies-manager-public.php:104
+#: includes/admin/class-pn-cookies-manager-admin.php:77
 msgid "Accept all"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:888
+#: includes/class-pn-cookies-manager-settings.php:576
 msgid "Accept button background"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:824
+#: includes/class-pn-cookies-manager-settings.php:512
 msgid "Accept button text"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:897
+#: includes/class-pn-cookies-manager-settings.php:585
 msgid "Accept button text color"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-analytics.php:383
+#. %d: number of "accept all" consent actions
+#: includes/class-pn-cookies-manager-analytics.php:399
 msgid "Accept: %d"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-post-type-cookie.php:675
-msgid "Access Denied"
+#: includes/class-pn-cookies-manager-settings.php:1044
+#: includes/class-pn-cookies-manager-settings.php:1094
+msgid "Activate"
+msgstr ""
+
+#: includes/class-pn-cookies-manager-settings.php:1090
+msgid "Activating..."
+msgstr ""
+
+#: includes/class-pn-cookies-manager-settings.php:1041
+#: includes/class-pn-cookies-manager-settings.php:1093
+msgid "Active"
 msgstr ""
 
 #: includes/class-pn-cookies-manager-forms.php:445
@@ -135,18 +156,6 @@ msgstr ""
 msgid "Add images"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-post-type-cookie.php:127
-#: includes/class-pn-cookies-manager-post-type-cookie.php:128
-#: includes/class-pn-cookies-manager-post-type-cookie.php:455
-#: includes/class-pn-cookies-manager-post-type-cookie.php:627
-#: includes/class-pn-cookies-manager-post-type-cookie.php:685
-msgid "Add new Cookie"
-msgstr ""
-
-#: includes/class-pn-cookies-manager-taxonomies-cookie.php:30
-msgid "Add New Cookie category"
-msgstr ""
-
 #: includes/class-pn-cookies-manager-forms.php:424
 msgid "Add video"
 msgstr ""
@@ -155,22 +164,14 @@ msgstr ""
 msgid "Add videos"
 msgstr ""
 
-#: templates/pn-cookies-manager-banner.php:86
-#: includes/class-pn-cookies-manager-analytics.php:272
-#: includes/class-pn-cookies-manager-settings.php:302
-#: includes/class-pn-cookies-manager-settings.php:983
+#: templates/pn-cookies-manager-banner.php:90
+#: includes/class-pn-cookies-manager-analytics.php:307
+#: includes/class-pn-cookies-manager-settings.php:671
+#: includes/admin/class-pn-cookies-manager-admin.php:70
 msgid "Advertising"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-taxonomies-cookie.php:25
-msgid "All Cookie categories"
-msgstr ""
-
-#: includes/class-pn-cookies-manager-post-type-cookie.php:125
-msgid "All Cookies"
-msgstr ""
-
-#: includes/class-pn-cookies-manager-analytics.php:281
+#: includes/class-pn-cookies-manager-analytics.php:456
 msgid "All time"
 msgstr ""
 
@@ -178,76 +179,96 @@ msgstr ""
 msgid "already added"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-common.php:181
+#: includes/class-pn-cookies-manager-settings.php:822
+msgid "Alternative background color"
+msgstr ""
+
+#: includes/class-pn-cookies-manager-settings.php:832
+msgid "Alternative border color"
+msgstr ""
+
+#: includes/class-pn-cookies-manager-settings.php:812
+msgid "Alternative color"
+msgstr ""
+
+#: includes/class-pn-cookies-manager-common.php:182
 msgid "An error has occurred. Please try again in a few minutes."
 msgstr ""
 
-#: templates/pn-cookies-manager-banner.php:76
+#: templates/pn-cookies-manager-banner.php:80
 #: includes/class-pn-cookies-manager-analytics.php:67
 #: includes/class-pn-cookies-manager-analytics.php:68
-#: includes/class-pn-cookies-manager-analytics.php:270
-#: includes/class-pn-cookies-manager-settings.php:300
-#: includes/class-pn-cookies-manager-settings.php:975
+#: includes/class-pn-cookies-manager-analytics.php:305
+#: includes/class-pn-cookies-manager-settings.php:663
+#: includes/admin/class-pn-cookies-manager-admin.php:68
 msgid "Analytics"
+msgstr ""
+
+#: includes/class-pn-cookies-manager-analytics.php:442
+msgid "Analytics data has been cleared."
+msgstr ""
+
+#: includes/class-pn-cookies-manager-analytics.php:482
+msgid ""
+"Are you sure you want to delete all analytics data? This action cannot be "
+"undone."
+msgstr ""
+
+#: includes/class-pn-cookies-manager-forms.php:764
+#, php-format
+msgid "Assign %s Role"
 msgstr ""
 
 #: includes/class-pn-cookies-manager-forms.php:296
 msgid "Atleast 8 Character"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:769
-msgid "Main blue color"
-msgstr ""
-
-#: includes/class-pn-cookies-manager-settings.php:870
+#: includes/class-pn-cookies-manager-settings.php:558
 msgid "Banner background color"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:713
+#: includes/class-pn-cookies-manager-settings.php:379
 msgid "Banner layout"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:802
+#: includes/class-pn-cookies-manager-settings.php:490
 msgid "Banner message"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:698
+#: includes/class-pn-cookies-manager-settings.php:356
+msgid "Banner Position"
+msgstr ""
+
+#: includes/class-pn-cookies-manager-settings.php:364
 msgid "Banner position"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:879
+#: includes/class-pn-cookies-manager-settings.php:567
 msgid "Banner text color"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:792
+#: includes/class-pn-cookies-manager-settings.php:480
 msgid "Banner title"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:759
-msgid "Alternative border color"
-msgstr ""
-
-#: includes/class-pn-cookies-manager-settings.php:729
-msgid "Main border color"
-msgstr ""
-
-#: includes/class-pn-cookies-manager-settings.php:753
+#: includes/class-pn-cookies-manager-settings.php:441
 msgid "Border radius (px)"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:702
+#: includes/class-pn-cookies-manager-settings.php:327
+#: includes/class-pn-cookies-manager-settings.php:368
 msgid "Bottom"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-analytics.php:318
+#: includes/class-pn-cookies-manager-analytics.php:330
 msgid "Category Acceptance Rates"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:734
+#: includes/class-pn-cookies-manager-settings.php:400
 msgid "Center"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:704
+#: includes/class-pn-cookies-manager-settings.php:370
 msgid "Center (modal)"
 msgstr ""
 
@@ -255,24 +276,20 @@ msgstr ""
 msgid "Clear"
 msgstr ""
 
-#: templates/pn-cookies-manager-banner.php:186
+#: includes/class-pn-cookies-manager-analytics.php:483
+msgid "Clear analytics data"
+msgstr ""
+
+#: templates/pn-cookies-manager-banner.php:183
 msgid "Close"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:739
-msgid "Alternative color"
-msgstr ""
-
-#: includes/class-pn-cookies-manager-settings.php:944
+#: includes/class-pn-cookies-manager-settings.php:632
 msgid ""
 "Color of the floating cookie icon that lets users re-open cookie settings."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:709
-msgid "Main color"
-msgstr ""
-
-#: includes/class-pn-cookies-manager-settings.php:861
+#: includes/class-pn-cookies-manager-settings.php:549
 msgid "Colors"
 msgstr ""
 
@@ -280,374 +297,328 @@ msgstr ""
 msgid "Common cookies:"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:718
+#: includes/class-pn-cookies-manager-settings.php:384
 msgid "Compact box"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:678
+#: includes/class-pn-cookies-manager-settings.php:415
+msgid "Configure the appearance and styling of the banner."
+msgstr ""
+
+#: includes/class-pn-cookies-manager-settings.php:303
 msgid "Configure the design and content of the cookie consent banner."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:1076
+#: includes/class-pn-cookies-manager-settings.php:774
 msgid "Configure the design of the plugin."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:691
-msgid "Configure the position, layout and appearance of the banner."
+#: includes/class-pn-cookies-manager-settings.php:357
+msgid "Configure the position and layout of the cookie consent banner."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:1044
+#: includes/class-pn-cookies-manager-settings.php:316
+msgid ""
+"Configure the position of the floating cookie icon that reopens the banner."
+msgstr ""
+
+#: includes/class-pn-cookies-manager-settings.php:732
 msgid "Configure the system settings."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-common.php:218
+#: includes/class-pn-cookies-manager-common.php:219
 msgid "Connection error"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-common.php:219
+#: includes/class-pn-cookies-manager-common.php:220
 msgid "Connection error: Could not connect to server"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:766
+#: includes/class-pn-cookies-manager-settings.php:750
+msgid "Consent Analytics"
+msgstr ""
+
+#: includes/class-pn-cookies-manager-settings.php:454
 msgid "Consent cookie duration (days)"
 msgstr ""
 
-#: templates/pn-cookies-manager-banner.php:212
-#: includes/class-pn-cookies-manager-settings.php:488
+#: templates/pn-cookies-manager-banner.php:210
+#: includes/admin/class-pn-cookies-manager-admin.php:82
 msgid "Cookie"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-post-type-cookie.php:88
-#: includes/class-pn-cookies-manager-post-type-cookie.php:89
-msgid "Cookie audio url"
-msgstr ""
-
-#: includes/class-pn-cookies-manager-settings.php:677
+#: includes/class-pn-cookies-manager-settings.php:302
 msgid "Cookie Banner"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-taxonomies-cookie.php:32
-msgid "Cookie categories"
-msgstr ""
-
-#: templates/pn-cookies-manager-banner.php:154
+#: templates/pn-cookies-manager-banner.php:151
 msgid "Cookie consent"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-post-type-cookie.php:51
-#: includes/class-pn-cookies-manager-post-type-cookie.php:52
-msgid "Cookie date"
-msgstr ""
-
-#: includes/class-pn-cookies-manager-post-type-cookie.php:33
-#: includes/class-pn-cookies-manager-post-type-cookie.php:34
-#: includes/class-pn-cookies-manager-post-type-cookie.php:140
-msgid "Cookie description"
-msgstr ""
-
-#: includes/class-pn-cookies-manager-post-type-cookie.php:170
-msgid "Cookie details"
-msgstr ""
-
-#: includes/class-pn-cookies-manager-settings.php:1008
+#: includes/class-pn-cookies-manager-settings.php:696
 msgid "Cookie ID"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-post-type-cookie.php:68
-#: includes/class-pn-cookies-manager-post-type-cookie.php:69
-msgid "Cookie multimedia content"
-msgstr ""
-
-#: templates/pn-cookies-manager-banner.php:183
+#: templates/pn-cookies-manager-banner.php:180
 msgid "Cookie preferences"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:961
+#: includes/class-pn-cookies-manager-settings.php:649
 msgid "Cookie Registry"
 msgstr ""
 
-#: templates/pn-cookies-manager-banner.php:60
-#: templates/pn-cookies-manager-banner.php:251
-#: includes/class-pn-cookies-manager-settings.php:387
-#: includes/class-pn-cookies-manager-settings.php:847
-#: includes/public/class-pn-cookies-manager-public.php:76
+#: templates/pn-cookies-manager-banner.php:64
+#: templates/pn-cookies-manager-banner.php:254
+#: includes/class-pn-cookies-manager-settings.php:535
+#: includes/public/class-pn-cookies-manager-public.php:103
+#: includes/admin/class-pn-cookies-manager-admin.php:79
 msgid "Cookie settings"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-post-type-cookie.php:59
-#: includes/class-pn-cookies-manager-post-type-cookie.php:60
-msgid "Cookie time"
-msgstr ""
-
-#: includes/class-pn-cookies-manager-post-type-cookie.php:23
-#: includes/class-pn-cookies-manager-post-type-cookie.php:24
-msgid "Cookie title"
-msgstr ""
-
-#: includes/class-pn-cookies-manager-post-type-cookie.php:78
-#: includes/class-pn-cookies-manager-post-type-cookie.php:79
-msgid "Cookie url"
-msgstr ""
-
-#: includes/class-pn-cookies-manager-post-type-cookie.php:98
-#: includes/class-pn-cookies-manager-post-type-cookie.php:99
-msgid "Cookie video url"
-msgstr ""
-
-#: includes/class-pn-cookies-manager-post-type-cookie.php:123
-#: includes/class-pn-cookies-manager-post-type-cookie.php:139
-msgid "Cookies"
-msgstr ""
-
-#: includes/class-pn-cookies-manager-settings.php:1186
-#: includes/class-pn-cookies-manager-settings.php:1187
+#: includes/class-pn-cookies-manager-settings.php:897
+#: includes/class-pn-cookies-manager-settings.php:898
 msgid "Cookies Manager"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-analytics.php:288
+#: includes/class-pn-cookies-manager-analytics.php:461
 msgid "Cookies Manager - Analytics"
 msgstr ""
 
-#. Name of the plugin
-#: includes/class-pn-cookies-manager-activator.php:22
-msgid "PN Cookies Manager"
-msgstr ""
-
-#: includes/class-pn-cookies-manager-settings.php:1208
-msgid "PN Cookies Manager Settings"
-msgstr ""
-
-#: includes/class-pn-cookies-manager-settings.php:972
+#: includes/class-pn-cookies-manager-settings.php:660
 msgid ""
 "Cookies that enable enhanced functionality and personalization, such as "
 "language preferences or region."
 msgstr ""
 
-#: templates/pn-cookies-manager-banner.php:72
-#: includes/class-pn-cookies-manager-settings.php:299
+#: templates/pn-cookies-manager-banner.php:76
+#: includes/admin/class-pn-cookies-manager-admin.php:67
 msgid "Cookies that enable enhanced functionality and personalization."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:976
+#: includes/class-pn-cookies-manager-settings.php:664
 msgid ""
 "Cookies used to collect information about how visitors use the website, such "
 "as Google Analytics."
 msgstr ""
 
-#: templates/pn-cookies-manager-banner.php:77
-#: includes/class-pn-cookies-manager-settings.php:300
+#: templates/pn-cookies-manager-banner.php:81
+#: includes/admin/class-pn-cookies-manager-admin.php:68
 msgid "Cookies used to collect information about how visitors use the website."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:984
+#: includes/class-pn-cookies-manager-settings.php:672
 msgid ""
 "Cookies used to deliver relevant ads and track ad campaign performance, such "
 "as Facebook Pixel."
 msgstr ""
 
-#: templates/pn-cookies-manager-banner.php:87
-#: includes/class-pn-cookies-manager-settings.php:302
+#: templates/pn-cookies-manager-banner.php:91
+#: includes/admin/class-pn-cookies-manager-admin.php:70
 msgid "Cookies used to deliver relevant ads and track campaign performance."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:980
+#: includes/class-pn-cookies-manager-settings.php:668
 msgid ""
 "Cookies used to monitor and improve the performance and speed of the website."
 msgstr ""
 
-#: templates/pn-cookies-manager-banner.php:82
-#: includes/class-pn-cookies-manager-settings.php:301
+#: templates/pn-cookies-manager-banner.php:86
+#: includes/admin/class-pn-cookies-manager-admin.php:69
 msgid "Cookies used to monitor and improve website performance."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-common.php:204
+#: includes/class-pn-cookies-manager-common.php:205
 msgid "Copied"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-post-type-cookie.php:496
-msgid "Create an account"
+#: includes/class-pn-cookies-manager-settings.php:951
+msgid "CRM, funnels, contact messages, WhatsApp & Instagram AI."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-post-type-cookie.php:693
-msgid "Create Cookie"
-msgstr ""
-
-#: includes/class-pn-cookies-manager-analytics.php:312
-#: includes/class-pn-cookies-manager-analytics.php:401
+#: includes/class-pn-cookies-manager-analytics.php:324
+#: includes/class-pn-cookies-manager-analytics.php:419
 msgid "Custom"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-analytics.php:389
+#. %d: number of custom consent actions
+#: includes/class-pn-cookies-manager-analytics.php:407
 msgid "Custom: %d"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:862
+#: includes/class-pn-cookies-manager-settings.php:550
 msgid "Customize the banner color scheme."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:784
+#: includes/class-pn-cookies-manager-settings.php:472
 msgid ""
 "Customize the banner texts. Leave empty to use the default translatable "
 "texts. If you enter a custom value, it will be displayed as-is and will not "
 "be translated."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-analytics.php:350
+#: includes/class-pn-cookies-manager-analytics.php:363
 msgid "Daily Trend"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:827
+#: includes/class-pn-cookies-manager-settings.php:515
 msgid "Default: \"Accept all\" (translatable)."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:849
+#: includes/class-pn-cookies-manager-settings.php:537
 msgid "Default: \"Cookie settings\" (translatable)."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:838
+#: includes/class-pn-cookies-manager-settings.php:526
 msgid "Default: \"Reject all\" (translatable)."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:805
+#: includes/class-pn-cookies-manager-settings.php:493
 msgid ""
 "Default: \"We use cookies to improve your experience...\" (translatable)."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:795
+#: includes/class-pn-cookies-manager-settings.php:483
 msgid "Default: \"We use cookies\" (translatable)."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:1024
+#: includes/class-pn-cookies-manager-settings.php:712
 msgid "Describe the purpose of this cookie."
 msgstr ""
 
-#: templates/pn-cookies-manager-banner.php:214
-#: includes/class-pn-cookies-manager-settings.php:490
-#: includes/class-pn-cookies-manager-settings.php:1023
+#: templates/pn-cookies-manager-banner.php:212
+#: includes/class-pn-cookies-manager-settings.php:711
+#: includes/admin/class-pn-cookies-manager-admin.php:84
 msgid "Description"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:690
-#: includes/class-pn-cookies-manager-settings.php:1075
+#: includes/class-pn-cookies-manager-settings.php:414
+#: includes/class-pn-cookies-manager-settings.php:773
 msgid "Design"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:745
+#: includes/class-pn-cookies-manager-settings.php:424
 msgid "Display a dark overlay behind the banner to focus user attention."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-post-type-cookie.php:591
-msgid "Duplicate Cookie"
-msgstr ""
-
-#: templates/pn-cookies-manager-banner.php:213
-#: includes/class-pn-cookies-manager-settings.php:489
-#: includes/class-pn-cookies-manager-settings.php:1016
+#: templates/pn-cookies-manager-banner.php:211
+#: includes/class-pn-cookies-manager-settings.php:704
+#: includes/admin/class-pn-cookies-manager-admin.php:83
 msgid "Duration"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:1017
+#: includes/class-pn-cookies-manager-settings.php:705
 msgid "e.g. 2 years, 30 days, session"
 msgstr ""
 
 #: includes/class-pn-cookies-manager-forms.php:441
-#: includes/class-pn-cookies-manager-common.php:193
+#: includes/class-pn-cookies-manager-common.php:194
 msgid "Edit audio"
 msgstr ""
 
 #: includes/class-pn-cookies-manager-forms.php:441
-#: includes/class-pn-cookies-manager-common.php:194
+#: includes/class-pn-cookies-manager-common.php:195
 msgid "Edit audios"
-msgstr ""
-
-#: includes/class-pn-cookies-manager-post-type-cookie.php:129
-#: includes/class-pn-cookies-manager-post-type-cookie.php:579
-#: includes/class-pn-cookies-manager-post-type-cookie.php:663
-msgid "Edit Cookie"
-msgstr ""
-
-#: templates/public/single-pn_cookies_manager_cookie.php:52
-#: templates/public/single-pncm_cookie.php:52
-msgid "Edit cookie"
-msgstr ""
-
-#: includes/class-pn-cookies-manager-taxonomies-cookie.php:28
-msgid "Edit Cookie category"
-msgstr ""
-
-#: includes/class-pn-cookies-manager-forms.php:462
-#: includes/class-pn-cookies-manager-common.php:197
-msgid "Edit file"
 msgstr ""
 
 #: includes/class-pn-cookies-manager-forms.php:462
 #: includes/class-pn-cookies-manager-common.php:198
+msgid "Edit file"
+msgstr ""
+
+#: includes/class-pn-cookies-manager-forms.php:462
+#: includes/class-pn-cookies-manager-common.php:199
 msgid "Edit files"
 msgstr ""
 
 #: includes/class-pn-cookies-manager-forms.php:399
-#: includes/class-pn-cookies-manager-common.php:185
+#: includes/class-pn-cookies-manager-common.php:186
 msgid "Edit image"
 msgstr ""
 
 #: includes/class-pn-cookies-manager-forms.php:399
-#: includes/class-pn-cookies-manager-common.php:186
+#: includes/class-pn-cookies-manager-common.php:187
 msgid "Edit images"
 msgstr ""
 
 #: includes/class-pn-cookies-manager-forms.php:420
-#: includes/class-pn-cookies-manager-common.php:189
+#: includes/class-pn-cookies-manager-common.php:190
 msgid "Edit video"
 msgstr ""
 
 #: includes/class-pn-cookies-manager-forms.php:420
-#: includes/class-pn-cookies-manager-common.php:190
+#: includes/class-pn-cookies-manager-common.php:191
 msgid "Edit videos"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-post-type-cookie.php:711
-msgid "Editing Cookie"
+#: includes/class-pn-cookies-manager-settings.php:958
+msgid "Email campaigns, automations, SMTP and newsletter management."
 msgstr ""
 
-#: templates/public/single-pn_cookies_manager_cookie.php:128
-#: templates/public/single-pncm_cookie.php:128
-msgid "Elaboration steps"
+#: includes/class-pn-cookies-manager-settings.php:751
+msgid ""
+"Enable consent analytics to track user cookie preferences (accept, reject, "
+"custom). When disabled, consent clicks will not be recorded and the "
+"Analytics submenu will be hidden."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:1053
+#: includes/class-pn-cookies-manager-settings.php:741
 msgid ""
 "Enable Google Additional Consent Mode (v2). When active, the plugin will "
 "send consent signals (ad_storage, analytics_storage, ad_user_data, "
 "ad_personalization) to Google services based on user preferences."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-common.php:217
+#: includes/class-pn-cookies-manager-settings.php:1021
+msgid "Enhance your workflow with these companion plugins."
+msgstr ""
+
+#: includes/class-pn-cookies-manager-settings.php:1092
+msgid "Error activating plugin."
+msgstr ""
+
+#: includes/class-pn-cookies-manager-settings.php:1088
+msgid "Error exporting settings."
+msgstr ""
+
+#: includes/class-pn-cookies-manager-settings.php:1086
+msgid "Error importing settings."
+msgstr ""
+
+#: includes/class-pn-cookies-manager-common.php:218
 msgid "Error in transcription"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-common.php:223
+#: includes/class-pn-cookies-manager-settings.php:1091
+msgid "Error installing plugin."
+msgstr ""
+
+#: includes/class-pn-cookies-manager-common.php:224
 msgid "Error processing audio"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:544
+#: includes/admin/class-pn-cookies-manager-admin.php:86
 msgid "Error saving options. Please try again."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-common.php:211
+#: includes/class-pn-cookies-manager-common.php:212
 msgid "Error: Could not access microphone"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:968
+#: includes/class-pn-cookies-manager-settings.php:656
 msgid ""
 "Essential cookies required for the website to function. These cannot be "
 "disabled by users."
 msgstr ""
 
-#: templates/pn-cookies-manager-banner.php:67
-#: includes/class-pn-cookies-manager-settings.php:298
+#: templates/pn-cookies-manager-banner.php:71
+#: includes/admin/class-pn-cookies-manager-admin.php:66
 msgid ""
 "Essential cookies required for the website to function. These cannot be "
 "disabled."
+msgstr ""
+
+#: includes/class-pn-cookies-manager-settings.php:1006
+msgid "Export settings"
 msgstr ""
 
 #: includes/class-pn-cookies-manager-settings.php:148
@@ -656,30 +627,18 @@ msgid ""
 "ads."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-post-type-cookie.php:452
-msgid "Filter..."
-msgstr ""
-
-#: includes/class-pn-cookies-manager-settings.php:719
+#: includes/class-pn-cookies-manager-settings.php:385
 msgid "Floating card"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:749
-msgid "Alternative background color"
-msgstr ""
-
-#: includes/class-pn-cookies-manager-settings.php:719
-msgid "Main background color"
-msgstr ""
-
-#: includes/class-pn-cookies-manager-settings.php:717
+#: includes/class-pn-cookies-manager-settings.php:383
 msgid "Full-width bar"
 msgstr ""
 
-#: templates/pn-cookies-manager-banner.php:71
-#: includes/class-pn-cookies-manager-analytics.php:269
-#: includes/class-pn-cookies-manager-settings.php:299
-#: includes/class-pn-cookies-manager-settings.php:971
+#: templates/pn-cookies-manager-banner.php:75
+#: includes/class-pn-cookies-manager-analytics.php:304
+#: includes/class-pn-cookies-manager-settings.php:659
+#: includes/admin/class-pn-cookies-manager-admin.php:67
 msgid "Functional"
 msgstr ""
 
@@ -714,7 +673,7 @@ msgid ""
 "collection on high traffic sites."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:1052
+#: includes/class-pn-cookies-manager-settings.php:740
 msgid "Google Consent Mode v2"
 msgstr ""
 
@@ -735,15 +694,25 @@ msgid ""
 "Shopping free listings."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:779
-msgid "Main grey color"
+#: includes/class-pn-cookies-manager-settings.php:433
+msgid ""
+"Hide cookie categories that have no cookies registered in the Cookie "
+"Registry."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:728
+#: includes/class-pn-cookies-manager-settings.php:432
+msgid "Hide empty categories"
+msgstr ""
+
+#: includes/class-pn-cookies-manager-settings.php:394
 msgid "Horizontal alignment"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:729
+#: includes/class-pn-cookies-manager-settings.php:337
+msgid "Horizontal position"
+msgstr ""
+
+#: includes/class-pn-cookies-manager-settings.php:395
 msgid "Horizontal position for compact box and floating card layouts."
 msgstr ""
 
@@ -759,12 +728,7 @@ msgid ""
 "are attributed to the same session."
 msgstr ""
 
-#: templates/public/single-pn_cookies_manager_cookie.php:137
-#: templates/public/single-pncm_cookie.php:137
-msgid "hours"
-msgstr ""
-
-#: includes/class-pn-cookies-manager-settings.php:771
+#: includes/class-pn-cookies-manager-settings.php:459
 msgid ""
 "How many days the user consent cookie is stored. The GDPR (via CNIL/EDPB "
 "guidelines) recommends a maximum of 13 months (~395 days). Default: 182 days "
@@ -779,10 +743,18 @@ msgstr ""
 msgid "https://padresenlanube.com/plugins/pn-cookies-manager/"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:1063
+#: includes/class-pn-cookies-manager-settings.php:315
+msgid "Icon Position"
+msgstr ""
+
+#: includes/class-pn-cookies-manager-settings.php:761
 msgid ""
 "If you activate this option the plugin will remove all options on "
 "deactivation. Please, be careful. This process cannot be undone."
+msgstr ""
+
+#: includes/class-pn-cookies-manager-settings.php:1003
+msgid "Import settings"
 msgstr ""
 
 #: includes/class-pn-cookies-manager-settings.php:44
@@ -791,40 +763,52 @@ msgid ""
 "customization."
 msgstr ""
 
-#: templates/public/single-pn_cookies_manager_cookie.php:103
-#: templates/public/single-pncm_cookie.php:103
-msgid "Ingredients"
+#: includes/class-pn-cookies-manager-settings.php:1048
+msgid "Install"
+msgstr ""
+
+#: includes/class-pn-cookies-manager-settings.php:1089
+msgid "Installing..."
+msgstr ""
+
+#: includes/class-pn-cookies-manager-settings.php:1087
+msgid "Invalid JSON file."
+msgstr ""
+
+#: includes/class-pn-cookies-manager-ajax.php:127
+msgid "Invalid role specified."
 msgstr ""
 
 #: includes/class-pn-cookies-manager-validation.php:157
 msgid "Invalid selection format."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-common.php:214
+#: includes/class-pn-cookies-manager-common.php:215
 msgid "Invalid server response"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-common.php:213
+#: includes/class-pn-cookies-manager-common.php:214
 msgid "Invalid server response format"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-analytics.php:279
+#: includes/class-pn-cookies-manager-analytics.php:454
 msgid "Last 30 days"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-analytics.php:278
+#: includes/class-pn-cookies-manager-analytics.php:453
 msgid "Last 7 days"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-analytics.php:280
+#: includes/class-pn-cookies-manager-analytics.php:455
 msgid "Last 90 days"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:733
+#: includes/class-pn-cookies-manager-settings.php:341
+#: includes/class-pn-cookies-manager-settings.php:399
 msgid "Left"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:816
+#: includes/class-pn-cookies-manager-settings.php:504
 msgid "Link to your privacy policy page."
 msgstr ""
 
@@ -838,41 +822,65 @@ msgstr ""
 msgid "Lowercase & Uppercase"
 msgstr ""
 
+#: includes/class-pn-cookies-manager-settings.php:792
+msgid "Main background color"
+msgstr ""
+
+#: includes/class-pn-cookies-manager-settings.php:842
+msgid "Main blue color"
+msgstr ""
+
+#: includes/class-pn-cookies-manager-settings.php:802
+msgid "Main border color"
+msgstr ""
+
+#: includes/class-pn-cookies-manager-settings.php:782
+msgid "Main color"
+msgstr ""
+
+#: includes/class-pn-cookies-manager-settings.php:852
+msgid "Main grey color"
+msgstr ""
+
 #. Description of the plugin
 msgid ""
 "Manage cookies on your website. Configure cookie consent banners, categorize "
 "cookies, and ensure compliance with privacy regulations."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:721
+#: includes/class-pn-cookies-manager-settings.php:866
+msgid "Manage user role assignments for this plugin."
+msgstr ""
+
+#: includes/class-pn-cookies-manager-settings.php:794
 msgid "Maps to --pn-cookies-manager-bg-color-main"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:751
+#: includes/class-pn-cookies-manager-settings.php:824
 msgid "Maps to --pn-cookies-manager-bg-color-main-alt"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:731
+#: includes/class-pn-cookies-manager-settings.php:804
 msgid "Maps to --pn-cookies-manager-border-color-main"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:761
+#: includes/class-pn-cookies-manager-settings.php:834
 msgid "Maps to --pn-cookies-manager-border-color-main-alt"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:711
+#: includes/class-pn-cookies-manager-settings.php:784
 msgid "Maps to --pn-cookies-manager-color-main"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:741
+#: includes/class-pn-cookies-manager-settings.php:814
 msgid "Maps to --pn-cookies-manager-color-main-alt"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:771
+#: includes/class-pn-cookies-manager-settings.php:844
 msgid "Maps to --pn-cookies-manager-color-main-blue"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:781
+#: includes/class-pn-cookies-manager-settings.php:854
 msgid "Maps to --pn-cookies-manager-color-main-grey"
 msgstr ""
 
@@ -893,16 +901,6 @@ msgid ""
 "Microsoft Clarity cookie that persists the Clarity User ID and preferences."
 msgstr ""
 
-#: templates/public/single-pn_cookies_manager_cookie.php:137
-#: templates/public/single-pncm_cookie.php:137
-msgid "minutes"
-msgstr ""
-
-#: templates/public/single-pn_cookies_manager_cookie.php:48
-#: templates/public/single-pncm_cookie.php:48
-msgid "More cookies"
-msgstr ""
-
 #: includes/class-pn-cookies-manager-forms.php:526
 #: includes/class-pn-cookies-manager-forms.php:561
 msgid "Move down"
@@ -913,35 +911,26 @@ msgstr ""
 msgid "Move up"
 msgstr ""
 
-#: templates/pn-cookies-manager-banner.php:66
-#: includes/class-pn-cookies-manager-settings.php:298
-#: includes/class-pn-cookies-manager-settings.php:967
+#: templates/pn-cookies-manager-banner.php:70
+#: includes/class-pn-cookies-manager-settings.php:655
+#: includes/admin/class-pn-cookies-manager-admin.php:66
 msgid "Necessary"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-taxonomies-cookie.php:31
-msgid "New Cookie category"
-msgstr ""
-
-#: templates/public/single-pn_cookies_manager_cookie.php:194
-#: templates/public/single-pncm_cookie.php:194
-msgid "Next"
-msgstr ""
-
-#: includes/class-pn-cookies-manager-forms.php:903
+#: includes/class-pn-cookies-manager-forms.php:943
 msgid "No"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-common.php:212
+#: includes/class-pn-cookies-manager-common.php:213
 msgid "No audio to transcribe"
 msgstr ""
 
-#: templates/pn-cookies-manager-banner.php:230
-#: includes/class-pn-cookies-manager-settings.php:507
+#: templates/pn-cookies-manager-banner.php:228
+#: includes/admin/class-pn-cookies-manager-admin.php:85
 msgid "No cookies registered in this category."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-analytics.php:353
+#: includes/class-pn-cookies-manager-analytics.php:370
 msgid "No data recorded yet."
 msgstr ""
 
@@ -949,24 +938,21 @@ msgstr ""
 msgid "No file found"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-forms.php:895
+#: includes/class-pn-cookies-manager-forms.php:935
 msgid "No file uploaded"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-forms.php:985
+#: includes/class-pn-cookies-manager-forms.php:1025
 msgid "No images uploaded"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-common.php:216
+#: includes/class-pn-cookies-manager-common.php:217
 msgid "No transcription received from server"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-post-type-cookie.php:132
-msgid "Not Cookie found"
-msgstr ""
-
-#: includes/class-pn-cookies-manager-post-type-cookie.php:133
-msgid "Not Cookie found in Trash"
+#: includes/class-pn-cookies-manager-forms.php:752
+#, php-format
+msgid "No users currently have the %s role."
 msgstr ""
 
 #: includes/class-pn-cookies-manager-forms.php:288
@@ -990,7 +976,7 @@ msgstr ""
 msgid "Order element"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-common.php:201
+#: includes/class-pn-cookies-manager-common.php:202
 msgid "Ordered element"
 msgstr ""
 
@@ -998,30 +984,18 @@ msgstr ""
 msgid "Padres en la Nube"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-post-type-cookie.php:124
-msgid "Parent Cookie"
-msgstr ""
-
-#: includes/class-pn-cookies-manager-taxonomies-cookie.php:26
-msgid "Parent Cookie category"
-msgstr ""
-
-#: includes/class-pn-cookies-manager-taxonomies-cookie.php:27
-msgid "Parent Cookie category:"
-msgstr ""
-
 #: includes/class-pn-cookies-manager-forms.php:280
 msgid "Password strength checker"
 msgstr ""
 
-#: templates/pn-cookies-manager-banner.php:81
-#: includes/class-pn-cookies-manager-analytics.php:271
-#: includes/class-pn-cookies-manager-settings.php:301
-#: includes/class-pn-cookies-manager-settings.php:979
+#: templates/pn-cookies-manager-banner.php:85
+#: includes/class-pn-cookies-manager-analytics.php:306
+#: includes/class-pn-cookies-manager-settings.php:667
+#: includes/admin/class-pn-cookies-manager-admin.php:69
 msgid "Performance"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-common.php:220
+#: includes/class-pn-cookies-manager-common.php:221
 msgid "Permission error: Security verification failed"
 msgstr ""
 
@@ -1029,12 +1003,7 @@ msgstr ""
 msgid "Play audio"
 msgstr ""
 
-#: templates/public/single-pn_cookies_manager_cookie.php:131
-#: templates/public/single-pncm_cookie.php:131
-msgid "Play cookie"
-msgstr ""
-
-#: includes/class-pn-cookies-manager-common.php:182
+#: includes/class-pn-cookies-manager-common.php:183
 msgid "Please create a new user or login to save the information."
 msgstr ""
 
@@ -1062,24 +1031,25 @@ msgstr ""
 msgid "Please select valid options."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-analytics.php:286
-#: includes/class-pn-cookies-manager-settings.php:1207
-#: includes/class-pn-cookies-manager-settings.php:1207
+#: includes/class-pn-cookies-manager-settings.php:918
 msgid "Plugin main Banner"
+msgstr ""
+
+#. Name of the plugin
+#: includes/class-pn-cookies-manager-ajax.php:132
+#: includes/class-pn-cookies-manager-activator.php:22
+#: includes/class-pn-cookies-manager-forms.php:738
+#: includes/class-pn-cookies-manager-settings.php:872
+#: includes/class-pn-cookies-manager-settings.php:874
+msgid "PN Cookies Manager"
+msgstr ""
+
+#: includes/class-pn-cookies-manager-settings.php:919
+msgid "PN Cookies Manager Settings"
 msgstr ""
 
 #: includes/class-pn-cookies-manager-settings.php:64
 msgid "Polylang plugin cookie that stores the language preference of the user."
-msgstr ""
-
-#: includes/class-pn-cookies-manager-post-type-cookie.php:121
-msgctxt "Post Type general name"
-msgid "Cookie"
-msgstr ""
-
-#: includes/class-pn-cookies-manager-post-type-cookie.php:122
-msgctxt "Post Type singular name"
-msgid "Cookie"
 msgstr ""
 
 #: includes/class-pn-cookies-manager-settings.php:32
@@ -1090,77 +1060,86 @@ msgstr ""
 msgid "Preview Banner"
 msgstr ""
 
-#: templates/public/single-pn_cookies_manager_cookie.php:191
-#: templates/public/single-pncm_cookie.php:191
-msgid "Previous"
-msgstr ""
-
-#: templates/pn-cookies-manager-banner.php:164
-#: includes/class-pn-cookies-manager-settings.php:427
+#: templates/pn-cookies-manager-banner.php:161
+#: includes/admin/class-pn-cookies-manager-admin.php:80
 msgid "Privacy Policy"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:813
+#: includes/class-pn-cookies-manager-settings.php:501
 msgid "Privacy policy URL"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:942
+#: includes/class-pn-cookies-manager-settings.php:630
 msgid "Re-open button icon color"
 msgstr ""
 
 #: includes/class-pn-cookies-manager-forms.php:597
-#: includes/class-pn-cookies-manager-common.php:207
+#: includes/class-pn-cookies-manager-common.php:208
 msgid "Ready to record"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-common.php:210
+#: includes/class-pn-cookies-manager-settings.php:1034
+msgid "Recommended"
+msgstr ""
+
+#: includes/class-pn-cookies-manager-settings.php:1020
+msgid "Recommended Plugins"
+msgstr ""
+
+#: includes/class-pn-cookies-manager-settings.php:996
+msgid "Recommended plugins"
+msgstr ""
+
+#: includes/class-pn-cookies-manager-common.php:211
 msgid "Recording completed. Ready to transcribe."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-common.php:209
+#: includes/class-pn-cookies-manager-common.php:210
 msgid "Recording stopped. Ready to play or transcribe."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-common.php:208
+#: includes/class-pn-cookies-manager-common.php:209
 msgid "Recording..."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:962
+#: includes/class-pn-cookies-manager-settings.php:650
 msgid ""
 "Register each cookie used on your website and assign it to a category. Users "
 "will be able to accept or reject cookies by category."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-analytics.php:308
-#: includes/class-pn-cookies-manager-analytics.php:400
+#: includes/class-pn-cookies-manager-analytics.php:320
+#: includes/class-pn-cookies-manager-analytics.php:418
 msgid "Reject All"
 msgstr ""
 
-#: templates/pn-cookies-manager-banner.php:57
-#: includes/class-pn-cookies-manager-settings.php:386
-#: includes/class-pn-cookies-manager-settings.php:836
-#: includes/public/class-pn-cookies-manager-public.php:78
+#: templates/pn-cookies-manager-banner.php:61
+#: includes/class-pn-cookies-manager-settings.php:524
+#: includes/public/class-pn-cookies-manager-public.php:105
+#: includes/admin/class-pn-cookies-manager-admin.php:78
 msgid "Reject all"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:906
+#: includes/class-pn-cookies-manager-settings.php:594
 msgid "Reject button background"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:835
+#: includes/class-pn-cookies-manager-settings.php:523
 msgid "Reject button text"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:915
+#: includes/class-pn-cookies-manager-settings.php:603
 msgid "Reject button text color"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-analytics.php:386
+#. %d: number of "reject all" consent actions
+#: includes/class-pn-cookies-manager-analytics.php:403
 msgid "Reject: %d"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-post-type-cookie.php:603
-msgid "Remove Cookie"
+#: includes/class-pn-cookies-manager-forms.php:765
+#, php-format
+msgid "Remove %s Role"
 msgstr ""
 
 #: includes/class-pn-cookies-manager-forms.php:536
@@ -1168,46 +1147,44 @@ msgstr ""
 msgid "Remove element"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:1062
+#: includes/class-pn-cookies-manager-settings.php:760
 msgid "Remove plugin options on deactivation"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-common.php:184
+#: includes/class-pn-cookies-manager-common.php:185
 msgid "Removed successfully"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-forms.php:766
-#: includes/class-pn-cookies-manager-forms.php:833
+#: includes/class-pn-cookies-manager-forms.php:806
+#: includes/class-pn-cookies-manager-forms.php:873
 msgid "Required field"
 msgstr ""
 
-#: templates/pn-cookies-manager-banner.php:245
+#: templates/pn-cookies-manager-banner.php:243
 msgid "Reset cookies"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:732
+#: includes/class-pn-cookies-manager-settings.php:342
+#: includes/class-pn-cookies-manager-settings.php:398
 msgid "Right"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:758
+#: includes/class-pn-cookies-manager-settings.php:446
 msgid "Roundness of the banner and button corners."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-post-type-cookie.php:721
-msgid "Save Cookie"
-msgstr ""
-
-#: includes/class-pn-cookies-manager-settings.php:1173
+#: includes/class-pn-cookies-manager-settings.php:938
+#: includes/class-pn-cookies-manager-settings.php:1010
 msgid "Save options"
 msgstr ""
 
-#: templates/pn-cookies-manager-banner.php:132
-#: includes/class-pn-cookies-manager-settings.php:438
-#: includes/public/class-pn-cookies-manager-public.php:79
+#: templates/pn-cookies-manager-banner.php:144
+#: includes/public/class-pn-cookies-manager-public.php:106
+#: includes/admin/class-pn-cookies-manager-admin.php:81
 msgid "Save preferences"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-common.php:183
+#: includes/class-pn-cookies-manager-common.php:184
 msgid "Saved successfully"
 msgstr ""
 
@@ -1215,24 +1192,17 @@ msgstr ""
 msgid "Saving..."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-taxonomies-cookie.php:24
-msgid "Search Cookie categories"
-msgstr ""
-
-#: includes/class-pn-cookies-manager-post-type-cookie.php:131
-#: includes/class-pn-cookies-manager-post-type-cookie.php:453
-msgid "Search Cookies"
+#: includes/class-pn-cookies-manager-ajax.php:114
+msgid "Security check failed for role assignment."
 msgstr ""
 
 #: includes/class-pn-cookies-manager-ajax.php:34
 #: includes/class-pn-cookies-manager-ajax-nopriv.php:33
-#: includes/class-pn-cookies-manager-post-type-cookie.php:231
 msgid "Security check failed: Invalid nonce."
 msgstr ""
 
 #: includes/class-pn-cookies-manager-ajax.php:25
 #: includes/class-pn-cookies-manager-ajax-nopriv.php:24
-#: includes/class-pn-cookies-manager-post-type-cookie.php:222
 msgid "Security check failed: Nonce is required."
 msgstr ""
 
@@ -1240,58 +1210,72 @@ msgstr ""
 msgid "Select all"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-common.php:195
+#: includes/class-pn-cookies-manager-common.php:196
 msgid "Select audio"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-common.php:196
+#: includes/class-pn-cookies-manager-common.php:197
 msgid "Select audios"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-common.php:199
+#: includes/class-pn-cookies-manager-common.php:200
 msgid "Select file"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-common.php:200
+#: includes/class-pn-cookies-manager-common.php:201
 msgid "Select files"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-common.php:187
+#: includes/class-pn-cookies-manager-common.php:188
 msgid "Select image"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-common.php:188
+#: includes/class-pn-cookies-manager-common.php:189
 msgid "Select images"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-common.php:202
-#: includes/class-pn-cookies-manager-settings.php:700
-#: includes/class-pn-cookies-manager-settings.php:715
-#: includes/class-pn-cookies-manager-settings.php:730
+#: includes/class-pn-cookies-manager-common.php:203
+#: includes/class-pn-cookies-manager-settings.php:325
+#: includes/class-pn-cookies-manager-settings.php:339
+#: includes/class-pn-cookies-manager-settings.php:366
+#: includes/class-pn-cookies-manager-settings.php:381
+#: includes/class-pn-cookies-manager-settings.php:396
 msgid "Select option"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-common.php:203
+#: includes/class-pn-cookies-manager-common.php:204
 msgid "Select options"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:714
+#: includes/class-pn-cookies-manager-settings.php:338
+msgid "Select the horizontal position of the cookie icon."
+msgstr ""
+
+#: includes/class-pn-cookies-manager-settings.php:380
 msgid "Select the layout style for the banner."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-common.php:191
-msgid "Select video"
+#: includes/class-pn-cookies-manager-settings.php:324
+msgid "Select the vertical position of the cookie icon."
+msgstr ""
+
+#: includes/class-pn-cookies-manager-forms.php:755
+msgid "Select Users"
 msgstr ""
 
 #: includes/class-pn-cookies-manager-common.php:192
+msgid "Select video"
+msgstr ""
+
+#: includes/class-pn-cookies-manager-common.php:193
 msgid "Select videos"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:699
+#: includes/class-pn-cookies-manager-settings.php:365
 msgid "Select where the cookie banner will be displayed on the page."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-common.php:221
+#: includes/class-pn-cookies-manager-common.php:222
 msgid "Server error: Internal server problem"
 msgstr ""
 
@@ -1305,26 +1289,38 @@ msgstr ""
 msgid "Session"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:1196
-#: includes/class-pn-cookies-manager-settings.php:1197
-#: includes/class-pn-cookies-manager-settings.php:1358
+#: includes/class-pn-cookies-manager-settings.php:907
+#: includes/class-pn-cookies-manager-settings.php:908
+#: includes/class-pn-cookies-manager-settings.php:1226
 msgid "Settings"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:924
+#: includes/class-pn-cookies-manager-settings.php:612
 msgid "Settings button background"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:846
+#: includes/class-pn-cookies-manager-settings.php:534
 msgid "Settings button text"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:933
+#: includes/class-pn-cookies-manager-settings.php:621
 msgid "Settings button text color"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:744
+#: includes/class-pn-cookies-manager-settings.php:1085
+msgid "Settings imported successfully. Reloading..."
+msgstr ""
+
+#: includes/class-pn-cookies-manager-settings.php:423
 msgid "Show background overlay"
+msgstr ""
+
+#: includes/class-pn-cookies-manager-analytics.php:364
+msgid "Sort newest first"
+msgstr ""
+
+#: includes/class-pn-cookies-manager-analytics.php:364
+msgid "Sort oldest first"
 msgstr ""
 
 #: includes/class-pn-cookies-manager-forms.php:292
@@ -1351,23 +1347,12 @@ msgstr ""
 msgid "Stores the user language preference in WordPress."
 msgstr ""
 
-#: templates/public/single-pn_cookies_manager_cookie.php:203
-#: templates/public/single-pncm_cookie.php:203
-msgid "Suggestions"
-msgstr ""
-
-#: includes/class-pn-cookies-manager-settings.php:1043
+#: includes/class-pn-cookies-manager-settings.php:731
 msgid "System"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-taxonomies-cookie.php:22
-msgctxt "Taxonomy general name"
-msgid "Cookie category"
-msgstr ""
-
-#: includes/class-pn-cookies-manager-taxonomies-cookie.php:23
-msgctxt "Taxonomy singular name"
-msgid "Cookie category"
+#: includes/class-pn-cookies-manager-settings.php:972
+msgid "Task boards, assignments, deadlines and team collaboration."
 msgstr ""
 
 #. %d: Minimum number of characters required
@@ -1380,12 +1365,16 @@ msgstr ""
 msgid "Text must be at most %d characters long."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:783
+#: includes/class-pn-cookies-manager-settings.php:471
 msgid "Texts"
 msgstr ""
 
 #: includes/class-pn-cookies-manager-validation.php:49
 msgid "This field"
+msgstr ""
+
+#: includes/class-pn-cookies-manager-settings.php:1084
+msgid "This will overwrite your current settings. Continue?"
 msgstr ""
 
 #: includes/class-pn-cookies-manager-settings.php:154
@@ -1394,13 +1383,9 @@ msgid ""
 "advertising campaigns."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-settings.php:703
+#: includes/class-pn-cookies-manager-settings.php:328
+#: includes/class-pn-cookies-manager-settings.php:369
 msgid "Top"
-msgstr ""
-
-#: templates/public/single-pn_cookies_manager_cookie.php:137
-#: templates/public/single-pncm_cookie.php:137
-msgid "Total time"
 msgstr ""
 
 #: includes/class-pn-cookies-manager-forms.php:647
@@ -1411,36 +1396,40 @@ msgstr ""
 msgid "Transcribed text will appear here..."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-common.php:215
+#: includes/class-pn-cookies-manager-common.php:216
 msgid "Transcription completed"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-common.php:222
+#: includes/class-pn-cookies-manager-common.php:223
 msgid "Unknown error"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-post-type-cookie.php:130
-msgid "Update Cookie"
+#: includes/class-pn-cookies-manager-settings.php:965
+msgid "User profiles, directories, role management and analytics."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-taxonomies-cookie.php:29
-msgid "Update Cookie category"
+#: includes/class-pn-cookies-manager-settings.php:865
+msgid "User Roles"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-post-type-cookie.php:126
-#: includes/class-pn-cookies-manager-post-type-cookie.php:567
-msgid "View Cookie"
+#: includes/class-pn-cookies-manager-forms.php:744
+#, php-format
+msgid "Users with %s Role"
 msgstr ""
 
-#: templates/pn-cookies-manager-banner.php:48
-#: includes/class-pn-cookies-manager-settings.php:382
-#: includes/class-pn-cookies-manager-settings.php:793
+#: includes/class-pn-cookies-manager-settings.php:323
+msgid "Vertical position"
+msgstr ""
+
+#: templates/pn-cookies-manager-banner.php:52
+#: includes/class-pn-cookies-manager-settings.php:481
+#: includes/admin/class-pn-cookies-manager-admin.php:75
 msgid "We use cookies"
 msgstr ""
 
-#: templates/pn-cookies-manager-banner.php:51
-#: includes/class-pn-cookies-manager-settings.php:383
-#: includes/class-pn-cookies-manager-settings.php:803
+#: templates/pn-cookies-manager-banner.php:55
+#: includes/class-pn-cookies-manager-settings.php:491
+#: includes/admin/class-pn-cookies-manager-admin.php:76
 msgid ""
 "We use cookies to improve your experience. By continuing to browse, you "
 "accept our use of cookies."
@@ -1464,18 +1453,11 @@ msgid ""
 "WPML plugin cookie that stores the current language selected by the user."
 msgstr ""
 
-#: includes/class-pn-cookies-manager-forms.php:903
+#: includes/class-pn-cookies-manager-forms.php:943
 msgid "Yes"
 msgstr ""
 
-#: includes/class-pn-cookies-manager-post-type-cookie.php:675
-msgid "You must be logged in to create a new asset."
-msgstr ""
-
-#: includes/class-pn-cookies-manager-post-type-cookie.php:495
-msgid "You must be registered on the platform to access this tool."
-msgstr ""
-
-#: includes/class-pn-cookies-manager-post-type-cookie.php:494
-msgid "You need an account"
+#: includes/class-pn-cookies-manager-ajax.php:105
+#: includes/class-pn-cookies-manager-forms.php:733
+msgid "You do not have permission to manage user roles."
 msgstr ""

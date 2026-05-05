@@ -758,7 +758,6 @@ class PN_COOKIES_MANAGER_Forms {
                 <option value="<?php echo esc_attr($user->ID); ?>" <?php echo $has_role ? 'data-has-role="true"' : ''; ?>><?php echo esc_html($user->display_name . ' (' . $user->user_email . ')'); ?><?php if ($has_role): ?> ✓<?php endif; ?></option>
               <?php endforeach; ?>
             </select>
-            <p class="pn-cookies-manager-font-size-small pn-cookies-manager-color-gray pn-cookies-manager-mt-5"><?php esc_html_e('Hold Ctrl (Windows) or Cmd (Mac) to select multiple users. Users with ✓ already have this role.', 'pn-cookies-manager'); ?></p>
           </div>
           <div class="pn-cookies-manager-role-actions pn-cookies-manager-mb-20">
             <input type="hidden" class="pn-cookies-manager-role-nonce" value="<?php echo esc_attr(wp_create_nonce('pn-cookies-manager-role-assignment')); ?>">
