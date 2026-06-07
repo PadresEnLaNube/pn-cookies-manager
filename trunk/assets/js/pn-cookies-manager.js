@@ -361,11 +361,13 @@
 
       if (pn_cookies_manager_action.popup != '') {
         $(window).on('load', function(e) {
+          var isLoggedIn = $('body').hasClass('pn-cookies-manager-body-logged-in');
+          var requestedTab = pn_cookies_manager_action.tab;
+          if (requestedTab === 'register' && isLoggedIn) { return; }
           PN_COOKIES_MANAGER_Popups.open($('#' + pn_cookies_manager_action.popup));
-
-          if (typeof pn_cookies_manager_action.tab != '') {
-            $('.userspn-tab-links[data-userspn-id="userspn-tab-' + pn_cookies_manager_action.tab + '"]').click();
-            $('#userspn-' + pn_cookies_manager_action.tab + ' input#userspn_email').focus();
+          if (requestedTab && requestedTab != '') {
+            $('.userspn-tab-links[data-userspn-id="userspn-tab-' + requestedTab + '"]').click();
+            $('#userspn-' + requestedTab + ' input#userspn_email').focus();
           } else {
             $('.userspn-tab-links[data-userspn-id="userspn-tab-login"]').click();
             $('#userspn-login input#user_login').focus();

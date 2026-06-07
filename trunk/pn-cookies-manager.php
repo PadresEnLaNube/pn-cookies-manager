@@ -15,6 +15,7 @@
  * Description:       Manage cookies on your website. Configure cookie consent banners, categorize cookies, and ensure compliance with privacy regulations.
  * Version:           1.0.28
  * Requires at least: 3.5
+ * Tested up to:      7.0
  * Requires PHP:      7.2
  * Author:            Padres en la Nube
  * Author URI:        https://padresenlanube.com/
