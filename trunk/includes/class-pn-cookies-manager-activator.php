@@ -35,5 +35,9 @@ class PN_COOKIES_MANAGER_Activator {
     // Create analytics table
     require_once plugin_dir_path( __FILE__ ) . 'class-pn-cookies-manager-analytics.php';
     PN_COOKIES_MANAGER_Analytics::pn_cookies_manager_create_table();
+
+    // Create cookie scanner table
+    require_once plugin_dir_path( __FILE__ ) . 'class-pn-cookies-manager-scanner.php';
+    PN_COOKIES_MANAGER_Scanner::create_scanner_table();
   }
 }

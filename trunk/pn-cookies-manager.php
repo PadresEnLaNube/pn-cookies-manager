@@ -13,7 +13,7 @@
  * Plugin Name:       PN Cookies Manager
  * Plugin URI:        https://padresenlanube.com/plugins/pn-cookies-manager/
  * Description:       Manage cookies on your website. Configure cookie consent banners, categorize cookies, and ensure compliance with privacy regulations.
- * Version:           1.0.30
+ * Version:           1.0.45
  * Requires at least: 3.5
  * Tested up to:      7.0
  * Requires PHP:      7.2
@@ -35,7 +35,7 @@ if (!defined('WPINC')) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define('PN_COOKIES_MANAGER_VERSION', '1.0.30');
+define('PN_COOKIES_MANAGER_VERSION', '1.0.45');
 define('PN_COOKIES_MANAGER_DIR', plugin_dir_path(__FILE__));
 define('PN_COOKIES_MANAGER_URL', plugin_dir_url(__FILE__));
 /**
@@ -92,8 +92,8 @@ $pn_cookies_manager_kses = [
 		'title' => [],
 	],
 	'i' => [
-		'id' => [], 
-		'class' => [], 
+		'id' => [],
+		'class' => [],
 		'title' => []
 	],
 
@@ -185,13 +185,14 @@ define('PN_COOKIES_MANAGER_KSES', $pn_cookies_manager_kses);
  * The code that runs during plugin activation.
  * This action is documented in includes/class-pn-cookies-manager-activator.php
  */
-function pn_cookies_manager_activation_hook() {
+function pn_cookies_manager_activation_hook()
+{
 	require_once plugin_dir_path(__FILE__) . 'includes/class-pn-cookies-manager-activator.php';
 	PN_COOKIES_MANAGER_Activator::pn_cookies_manager_activate();
-	
+
 	// Clear any previous state
 	delete_option('pn_cookies_manager_redirecting');
-	
+
 	// Set transient only if it doesn't exist
 	if (!get_transient('pn_cookies_manager_just_activated')) {
 		set_transient('pn_cookies_manager_just_activated', true, 30);
@@ -205,7 +206,8 @@ register_activation_hook(__FILE__, 'pn_cookies_manager_activation_hook');
  * The code that runs during plugin deactivation.
  * This action is documented in includes/class-pn-cookies-manager-deactivator.php
  */
-function pn_cookies_manager_deactivation_cleanup() {
+function pn_cookies_manager_deactivation_cleanup()
+{
 	delete_option('pn_cookies_manager_redirecting');
 }
 register_deactivation_hook(__FILE__, 'pn_cookies_manager_deactivation_cleanup');
@@ -222,7 +224,8 @@ require plugin_dir_path(__FILE__) . 'includes/class-pn-cookies-manager.php';
  *
  * @since    1.0.0
  */
-function pn_cookies_manager_run() {
+function pn_cookies_manager_run()
+{
 	$plugin = new PN_COOKIES_MANAGER();
 	$plugin->pn_cookies_manager_run();
 }

@@ -50,6 +50,7 @@ class PN_COOKIES_MANAGER_Admin {
 	public function pn_cookies_manager_enqueue_styles() {
 		wp_enqueue_style($this->plugin_name . '-admin', PN_COOKIES_MANAGER_URL . 'assets/css/admin/pn-cookies-manager-admin.css', [], $this->version, 'all');
 		wp_enqueue_style($this->plugin_name . '-banner', PN_COOKIES_MANAGER_URL . 'assets/css/public/pn-cookies-manager-banner.css', [], $this->version, 'all');
+		wp_enqueue_style($this->plugin_name . '-scanner', PN_COOKIES_MANAGER_URL . 'assets/css/admin/pn-cookies-manager-scanner.css', [], $this->version, 'all');
 	}
 
 	/**
@@ -84,6 +85,39 @@ class PN_COOKIES_MANAGER_Admin {
 			'th_description'  => __('Description', 'pn-cookies-manager'),
 			'no_cookies_msg'  => __('No cookies registered in this category.', 'pn-cookies-manager'),
 			'error_msg'       => __('Error saving options. Please try again.', 'pn-cookies-manager'),
+		]);
+
+		// Enqueue scanner script
+		wp_enqueue_script($this->plugin_name . '-scanner', PN_COOKIES_MANAGER_URL . 'assets/js/admin/pn-cookies-manager-scanner.js', ['jquery'], $this->version, ['in_footer' => true, 'strategy' => 'defer']);
+
+		// Localize scanner script
+		wp_localize_script($this->plugin_name . '-scanner', 'pncmScanner', [
+			'ajaxUrl' => admin_url('admin-ajax.php'),
+			'nonce'   => wp_create_nonce('pn-cookies-manager-nonce'),
+			'i18n'    => [
+				'noUrls'             => __('Please select at least one page to scan.', 'pn-cookies-manager'),
+				'scanning'           => __('Scanning... %current% of %total% pages', 'pn-cookies-manager'),
+				'scanError'          => __('An error occurred during the scan.', 'pn-cookies-manager'),
+				'noCookiesFound'     => __('No cookies found.', 'pn-cookies-manager'),
+				'noScanToExport'     => __('No scan results to export.', 'pn-cookies-manager'),
+				'noScanToImport'     => __('No scan results to import. Please run a scan first.', 'pn-cookies-manager'),
+				'exportError'        => __('Error exporting scan results.', 'pn-cookies-manager'),
+				'exportSuccess'      => __('Scan results exported successfully.', 'pn-cookies-manager'),
+				'importError'        => __('Error importing cookies to registry.', 'pn-cookies-manager'),
+				'importing'          => __('Importing...', 'pn-cookies-manager'),
+				'importButton'       => __('Import to Registry', 'pn-cookies-manager'),
+				'confirmImport'      => __('This will add the scanned cookies to the Cookie Registry. Existing cookies will not be duplicated. Continue?', 'pn-cookies-manager'),
+				'largeScamWarning'   => __('You are about to scan %d pages. This may take several minutes and could timeout on some servers. We recommend scanning 20 pages or less at a time. Continue?', 'pn-cookies-manager'),
+				'noScans'            => __('No scans found. Start your first scan!', 'pn-cookies-manager'),
+				'view'               => __('View', 'pn-cookies-manager'),
+				'delete'             => __('Delete', 'pn-cookies-manager'),
+				'confirmDelete'      => __('Are you sure you want to delete this scan?', 'pn-cookies-manager'),
+				'deleteError'        => __('Error deleting scan.', 'pn-cookies-manager'),
+				'viewError'          => __('Error loading scan results.', 'pn-cookies-manager'),
+				'pagesSelected'      => __('%d pages selected', 'pn-cookies-manager'),
+				'selectAll'          => __('Select All', 'pn-cookies-manager'),
+				'clearSelection'     => __('Clear Selection', 'pn-cookies-manager'),
+			],
 		]);
 	}
 }

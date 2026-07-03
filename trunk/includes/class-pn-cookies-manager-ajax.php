@@ -236,6 +236,252 @@ class PN_COOKIES_MANAGER_Ajax {
           exit;
           break;
 
+        case 'pn_cookies_manager_scan_cookies_batch':
+          if (!current_user_can('manage_options')) {
+            echo wp_json_encode(['error_key' => 'permission_denied', 'message' => __('You do not have permission to scan cookies.', 'pn-cookies-manager')]);
+            exit;
+          }
+
+          // Increase execution time for batch
+          @set_time_limit(60); // 60 seconds per batch
+          @ini_set('memory_limit', '256M');
+
+          $urls_raw = isset($_POST['urls']) ? sanitize_textarea_field(wp_unslash($_POST['urls'])) : '';
+          $urls = array_filter(array_map('trim', explode("\n", $urls_raw)));
+
+          if (empty($urls)) {
+            echo wp_json_encode(['error_key' => 'no_urls', 'message' => __('No URLs provided for scanning.', 'pn-cookies-manager')]);
+            exit;
+          }
+
+          $scanner = new PN_COOKIES_MANAGER_Scanner();
+          $results = $scanner->scan_urls($urls);
+
+          // Return results without saving (will be saved at the end)
+          echo wp_json_encode([
+            'error_key' => '',
+            'cookies' => $results['cookies'],
+            'urls_scanned' => $results['urls_scanned'],
+            'errors' => $results['errors'],
+          ]);
+          exit;
+          break;
+
+        case 'pn_cookies_manager_save_scan':
+          if (!current_user_can('manage_options')) {
+            echo wp_json_encode(['error_key' => 'permission_denied', 'message' => __('You do not have permission to save scans.', 'pn-cookies-manager')]);
+            exit;
+          }
+
+          $cookies_json = isset($_POST['cookies']) ? wp_unslash($_POST['cookies']) : '';
+          $cookies = json_decode($cookies_json, true);
+          $urls_scanned = isset($_POST['urls_scanned']) ? intval($_POST['urls_scanned']) : 0;
+
+          if (empty($cookies) || !is_array($cookies)) {
+            echo wp_json_encode(['error_key' => 'no_cookies', 'message' => __('No cookies to save.', 'pn-cookies-manager')]);
+            exit;
+          }
+
+          $scanner = new PN_COOKIES_MANAGER_Scanner();
+          $results = [
+            'cookies' => $cookies,
+            'urls_scanned' => $urls_scanned,
+            'errors' => [],
+          ];
+
+          $scan_id = $scanner->save_scan_results($results);
+
+          if ($scan_id === false) {
+            error_log('PN Cookies Manager - Failed to save scan results');
+            echo wp_json_encode([
+              'error_key' => 'save_failed',
+              'scan_id' => null,
+              'message' => sprintf(__('Scan completed. Found %d cookies on %d pages. Warning: Failed to save scan history.', 'pn-cookies-manager'), count($cookies), $urls_scanned),
+            ]);
+          } else {
+            echo wp_json_encode([
+              'error_key' => '',
+              'scan_id' => $scan_id,
+              'message' => sprintf(__('Scan completed. Found %d unique cookies on %d pages.', 'pn-cookies-manager'), count($cookies), $urls_scanned),
+            ]);
+          }
+          exit;
+          break;
+
+        case 'pn_cookies_manager_scan_cookies':
+          if (!current_user_can('manage_options')) {
+            echo wp_json_encode(['error_key' => 'permission_denied', 'message' => __('You do not have permission to scan cookies.', 'pn-cookies-manager')]);
+            exit;
+          }
+
+          // Increase execution time and memory for large scans
+          @set_time_limit(300); // 5 minutes
+          @ini_set('memory_limit', '512M');
+
+          $urls_raw = isset($_POST['urls']) ? sanitize_textarea_field(wp_unslash($_POST['urls'])) : '';
+          $urls = array_filter(array_map('trim', explode("\n", $urls_raw)));
+
+          if (empty($urls)) {
+            echo wp_json_encode(['error_key' => 'no_urls', 'message' => __('No URLs provided for scanning.', 'pn-cookies-manager')]);
+            exit;
+          }
+
+          // Limit to reasonable number of URLs to prevent timeouts
+          if (count($urls) > 50) {
+            $urls = array_slice($urls, 0, 50);
+          }
+
+          $scanner = new PN_COOKIES_MANAGER_Scanner();
+          $results = $scanner->scan_urls($urls);
+
+          // Save scan results to database
+          $scan_id = $scanner->save_scan_results($results);
+
+          if ($scan_id === false) {
+            error_log('PN Cookies Manager - Failed to save scan results');
+            echo wp_json_encode([
+              'error_key' => 'save_failed',
+              'scan_id' => null,
+              'cookies' => $results['cookies'],
+              'urls_scanned' => $results['urls_scanned'],
+              'errors' => $results['errors'],
+              'message' => sprintf(__('Scan completed. Found %d cookies on %d pages. Warning: Failed to save scan history.', 'pn-cookies-manager'), count($results['cookies']), $results['urls_scanned']),
+            ]);
+          } else {
+            echo wp_json_encode([
+              'error_key' => '',
+              'scan_id' => $scan_id,
+              'cookies' => $results['cookies'],
+              'urls_scanned' => $results['urls_scanned'],
+              'errors' => $results['errors'],
+              'message' => sprintf(__('Scan completed. Found %d cookies on %d pages.', 'pn-cookies-manager'), count($results['cookies']), $results['urls_scanned']),
+            ]);
+          }
+          exit;
+          break;
+
+        case 'pn_cookies_manager_export_scan_csv':
+          if (!current_user_can('manage_options')) {
+            echo wp_json_encode(['error_key' => 'permission_denied']);
+            exit;
+          }
+
+          $scan_id = isset($_POST['scan_id']) ? intval($_POST['scan_id']) : 0;
+
+          if (empty($scan_id)) {
+            echo wp_json_encode(['error_key' => 'invalid_scan_id']);
+            exit;
+          }
+
+          $scanner = new PN_COOKIES_MANAGER_Scanner();
+          $csv = $scanner->export_to_csv($scan_id);
+
+          if ($csv === false) {
+            echo wp_json_encode(['error_key' => 'export_failed', 'message' => __('Failed to export scan results.', 'pn-cookies-manager')]);
+            exit;
+          }
+
+          echo wp_json_encode([
+            'error_key' => '',
+            'csv' => $csv,
+            'filename' => 'cookie-scan-' . date('Y-m-d-H-i-s') . '.csv',
+          ]);
+          exit;
+          break;
+
+        case 'pn_cookies_manager_get_scan_history':
+          if (!current_user_can('manage_options')) {
+            echo wp_json_encode(['error_key' => 'permission_denied']);
+            exit;
+          }
+
+          // Ensure table exists
+          PN_COOKIES_MANAGER_Scanner::create_scanner_table();
+
+          global $wpdb;
+          $table_name = $wpdb->prefix . 'pn_cookies_manager_scans';
+
+          // Check if table exists before querying
+          $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_name'") === $table_name;
+
+          if (!$table_exists) {
+            echo wp_json_encode([
+              'error_key' => '',
+              'scans' => [],
+            ]);
+            exit;
+          }
+
+          $scans = $wpdb->get_results("SELECT * FROM $table_name ORDER BY scan_date DESC LIMIT 10");
+
+          echo wp_json_encode([
+            'error_key' => '',
+            'scans' => $scans ? $scans : [],
+          ]);
+          exit;
+          break;
+
+        case 'pn_cookies_manager_delete_scan':
+          if (!current_user_can('manage_options')) {
+            echo wp_json_encode(['error_key' => 'permission_denied']);
+            exit;
+          }
+
+          $scan_id = isset($_POST['scan_id']) ? intval($_POST['scan_id']) : 0;
+
+          if (empty($scan_id)) {
+            echo wp_json_encode(['error_key' => 'invalid_scan_id']);
+            exit;
+          }
+
+          $scanner = new PN_COOKIES_MANAGER_Scanner();
+          $deleted = $scanner->delete_scan($scan_id);
+
+          if ($deleted) {
+            echo wp_json_encode([
+              'error_key' => '',
+              'message' => __('Scan deleted successfully.', 'pn-cookies-manager'),
+            ]);
+          } else {
+            echo wp_json_encode([
+              'error_key' => 'delete_failed',
+              'message' => __('Failed to delete scan.', 'pn-cookies-manager'),
+            ]);
+          }
+          exit;
+          break;
+
+        case 'pn_cookies_manager_view_scan':
+          if (!current_user_can('manage_options')) {
+            echo wp_json_encode(['error_key' => 'permission_denied']);
+            exit;
+          }
+
+          $scan_id = isset($_POST['scan_id']) ? intval($_POST['scan_id']) : 0;
+
+          if (empty($scan_id)) {
+            echo wp_json_encode(['error_key' => 'invalid_scan_id']);
+            exit;
+          }
+
+          $scanner = new PN_COOKIES_MANAGER_Scanner();
+          $scan = $scanner->get_scan_by_id($scan_id);
+
+          if (!$scan) {
+            echo wp_json_encode(['error_key' => 'scan_not_found']);
+            exit;
+          }
+
+          $cookies = json_decode($scan->cookies_data, true);
+
+          echo wp_json_encode([
+            'error_key' => '',
+            'scan' => $scan,
+            'cookies' => $cookies,
+          ]);
+          exit;
+          break;
+
         case 'pn_ck_install_plugin':
           if (!current_user_can('install_plugins')) {
             echo wp_json_encode(['error_key' => 'permission_denied']);
@@ -309,6 +555,119 @@ class PN_COOKIES_MANAGER_Ajax {
           }
 
           echo wp_json_encode(['error_key' => '']);
+          exit;
+          break;
+
+        case 'pn_cookies_manager_import_scan_to_registry':
+          if (!current_user_can('manage_options')) {
+            echo wp_json_encode(['error_key' => 'permission_denied', 'message' => __('You do not have permission to import cookies.', 'pn-cookies-manager')]);
+            exit;
+          }
+
+          $scan_id = isset($_POST['scan_id']) ? intval($_POST['scan_id']) : 0;
+
+          if (empty($scan_id)) {
+            echo wp_json_encode(['error_key' => 'invalid_scan_id', 'message' => __('Invalid scan ID.', 'pn-cookies-manager')]);
+            exit;
+          }
+
+          $scanner = new PN_COOKIES_MANAGER_Scanner();
+          $scan = $scanner->get_scan_by_id($scan_id);
+
+          if (!$scan) {
+            echo wp_json_encode(['error_key' => 'scan_not_found', 'message' => __('Scan not found.', 'pn-cookies-manager')]);
+            exit;
+          }
+
+          $cookies = json_decode($scan->cookies_data, true);
+
+          if (empty($cookies)) {
+            echo wp_json_encode(['error_key' => 'no_cookies', 'message' => __('No cookies to import.', 'pn-cookies-manager')]);
+            exit;
+          }
+
+          // Category mapping based on scanner categorization
+          $category_map = [
+            'Necessary' => 'necessary',
+            'Functional' => 'functional',
+            'Analytics' => 'analytics',
+            'Performance' => 'performance',
+            'Advertising' => 'advertising',
+            'Uncategorized' => 'necessary', // Default fallback
+          ];
+
+          $imported_count = 0;
+          $skipped_count = 0;
+          $categories_affected = [];
+
+          foreach ($cookies as $cookie) {
+            // Determine category
+            $scanner_category = isset($cookie['category']) ? $cookie['category'] : 'Uncategorized';
+            $target_category = isset($category_map[$scanner_category]) ? $category_map[$scanner_category] : 'necessary';
+
+            // Get existing cookies in this category
+            $existing_ids = get_option('pn_cookies_manager_cookies_' . $target_category . '_id', []);
+            $existing_durations = get_option('pn_cookies_manager_cookies_' . $target_category . '_duration', []);
+            $existing_descriptions = get_option('pn_cookies_manager_cookies_' . $target_category . '_description', []);
+
+            if (!is_array($existing_ids)) {
+              $existing_ids = [];
+              $existing_durations = [];
+              $existing_descriptions = [];
+            }
+
+            // Check if cookie already exists (case-insensitive comparison)
+            $cookie_name = isset($cookie['name']) ? trim($cookie['name']) : '';
+            $cookie_exists = false;
+
+            foreach ($existing_ids as $existing_id) {
+              if (strcasecmp(trim($existing_id), $cookie_name) === 0) {
+                $cookie_exists = true;
+                break;
+              }
+            }
+
+            if ($cookie_exists) {
+              $skipped_count++;
+              continue;
+            }
+
+            // Add cookie to registry
+            $existing_ids[] = $cookie_name;
+            $existing_durations[] = isset($cookie['duration']) ? $cookie['duration'] : __('Unknown', 'pn-cookies-manager');
+            $existing_descriptions[] = isset($cookie['purpose']) ? $cookie['purpose'] : __('Purpose not identified', 'pn-cookies-manager');
+
+            // Update options
+            update_option('pn_cookies_manager_cookies_' . $target_category . '_id', $existing_ids);
+            update_option('pn_cookies_manager_cookies_' . $target_category . '_duration', $existing_durations);
+            update_option('pn_cookies_manager_cookies_' . $target_category . '_description', $existing_descriptions);
+
+            $imported_count++;
+            if (!in_array($target_category, $categories_affected)) {
+              $categories_affected[] = $target_category;
+            }
+          }
+
+          $message = sprintf(
+            __('%d cookies imported successfully, %d skipped (already exist).', 'pn-cookies-manager'),
+            $imported_count,
+            $skipped_count
+          );
+
+          if (!empty($categories_affected)) {
+            $message .= ' ' . sprintf(
+              __('Categories affected: %s', 'pn-cookies-manager'),
+              implode(', ', array_map('ucfirst', $categories_affected))
+            );
+          }
+
+          echo wp_json_encode([
+            'error_key' => '',
+            'imported' => $imported_count,
+            'skipped' => $skipped_count,
+            'categories' => $categories_affected,
+            'message' => $message,
+          ]);
           exit;
           break;
       }

@@ -70,8 +70,121 @@ class PN_COOKIES_MANAGER_Shortcodes {
         <?php endif ?>
       </div>
     <?php 
-    $pn_cookies_manager_return_string = ob_get_contents(); 
-    ob_end_clean(); 
+    $pn_cookies_manager_return_string = ob_get_contents();
+    ob_end_clean();
+    return $pn_cookies_manager_return_string;
+  }
+
+  /**
+   * Display registered cookies list
+   * Usage: [pn-cookies-manager-cookies-list]
+   * Usage with specific category: [pn-cookies-manager-cookies-list category="analytics"]
+   * Usage with custom title: [pn-cookies-manager-cookies-list show_title="yes" title="Our Cookies"]
+   *
+   * @since 1.0.35
+   */
+  public function pn_cookies_manager_cookies_list($atts) {
+    $a = extract(shortcode_atts([
+      'category' => '', // Empty = all categories, or: necessary, functional, analytics, performance, advertising
+      'show_title' => 'yes', // Show section titles
+      'title' => '', // Custom main title
+      'show_empty' => 'no', // Show categories with no cookies
+    ], $atts));
+
+    $cookie_categories = [
+      'necessary' => [
+        'label' => __('Necessary Cookies', 'pn-cookies-manager'),
+        'description' => __('Essential cookies required for the website to function. These cannot be disabled.', 'pn-cookies-manager'),
+      ],
+      'functional' => [
+        'label' => __('Functional Cookies', 'pn-cookies-manager'),
+        'description' => __('Cookies that enable enhanced functionality and personalization.', 'pn-cookies-manager'),
+      ],
+      'analytics' => [
+        'label' => __('Analytics Cookies', 'pn-cookies-manager'),
+        'description' => __('Cookies used to collect information about how visitors use the website.', 'pn-cookies-manager'),
+      ],
+      'performance' => [
+        'label' => __('Performance Cookies', 'pn-cookies-manager'),
+        'description' => __('Cookies used to monitor and improve website performance.', 'pn-cookies-manager'),
+      ],
+      'advertising' => [
+        'label' => __('Advertising Cookies', 'pn-cookies-manager'),
+        'description' => __('Cookies used to deliver relevant ads and track campaign performance.', 'pn-cookies-manager'),
+      ],
+    ];
+
+    // Filter categories if specific category requested
+    if (!empty($category) && isset($cookie_categories[$category])) {
+      $cookie_categories = [$category => $cookie_categories[$category]];
+    }
+
+    ob_start();
+    ?>
+    <div class="pn-cookies-manager-cookies-list-wrapper">
+      <?php if (!empty($title)): ?>
+        <h2 class="pn-cookies-manager-cookies-list-main-title"><?php echo esc_html($title); ?></h2>
+      <?php endif; ?>
+
+      <?php foreach ($cookie_categories as $cat_key => $cat_data): ?>
+        <?php
+        // Get cookies for this category
+        $cookie_ids = get_option('pn_cookies_manager_cookies_' . $cat_key . '_id', []);
+        $cookie_durations = get_option('pn_cookies_manager_cookies_' . $cat_key . '_duration', []);
+        $cookie_descriptions = get_option('pn_cookies_manager_cookies_' . $cat_key . '_description', []);
+
+        // Skip empty categories if show_empty is 'no'
+        if (empty($cookie_ids) && $show_empty === 'no') {
+          continue;
+        }
+        ?>
+
+        <div class="pn-cookies-manager-cookies-category pn-cookies-manager-cookies-category-<?php echo esc_attr($cat_key); ?>">
+          <?php if ($show_title === 'yes'): ?>
+            <h3 class="pn-cookies-manager-cookies-category-title">
+              <?php echo esc_html($cat_data['label']); ?>
+            </h3>
+            <p class="pn-cookies-manager-cookies-category-description">
+              <?php echo esc_html($cat_data['description']); ?>
+            </p>
+          <?php endif; ?>
+
+          <?php if (!empty($cookie_ids)): ?>
+            <table class="pn-cookies-manager-cookies-table">
+              <thead>
+                <tr>
+                  <th><?php esc_html_e('Cookie Name', 'pn-cookies-manager'); ?></th>
+                  <th><?php esc_html_e('Duration', 'pn-cookies-manager'); ?></th>
+                  <th><?php esc_html_e('Description', 'pn-cookies-manager'); ?></th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php foreach ($cookie_ids as $index => $cookie_id): ?>
+                  <tr>
+                    <td class="pn-cookies-manager-cookie-name" data-label="<?php esc_attr_e('Cookie Name', 'pn-cookies-manager'); ?>">
+                      <strong><?php echo esc_html($cookie_id); ?></strong>
+                    </td>
+                    <td class="pn-cookies-manager-cookie-duration" data-label="<?php esc_attr_e('Duration', 'pn-cookies-manager'); ?>">
+                      <?php echo esc_html(isset($cookie_durations[$index]) ? $cookie_durations[$index] : __('Unknown', 'pn-cookies-manager')); ?>
+                    </td>
+                    <td class="pn-cookies-manager-cookie-description" data-label="<?php esc_attr_e('Description', 'pn-cookies-manager'); ?>">
+                      <?php echo esc_html(isset($cookie_descriptions[$index]) ? $cookie_descriptions[$index] : __('No description available', 'pn-cookies-manager')); ?>
+                    </td>
+                  </tr>
+                <?php endforeach; ?>
+              </tbody>
+            </table>
+          <?php else: ?>
+            <p class="pn-cookies-manager-no-cookies">
+              <?php esc_html_e('No cookies registered in this category.', 'pn-cookies-manager'); ?>
+            </p>
+          <?php endif; ?>
+        </div>
+      <?php endforeach; ?>
+    </div>
+    <?php
+    $pn_cookies_manager_return_string = ob_get_contents();
+    ob_end_clean();
     return $pn_cookies_manager_return_string;
   }
 }

@@ -4,7 +4,7 @@ Donate link: https://padresenlanube.com/
 Tags: cookie consent, gdpr, ccpa, privacy, cookie banner
 Requires at least: 3.5
 Tested up to: 7.0
-Stable tag: 1.0.30
+Stable tag: 1.0.45
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Manage cookies on your website. Configure cookie consent banners, categorize cookies, and ensure compliance with privacy regulations.
@@ -122,6 +122,18 @@ For support, visit the plugin's support forum on WordPress.org or contact us at 
 
 
 == Changelog ==
+
+= 1.0.45 =
+
+* New: Added Cookie Scanner section to detect cookies used on your website
+* New: Scan multiple pages to identify cookies from videos, forms, and external tools
+* New: Detailed cookie information with name, provider/domain, duration, category, and purpose
+* New: Export scan results to CSV format
+* New: Scan history with date, time, and cookies found per scan
+* Improved: Reorganized settings structure - Design and User Roles are now subsections within System
+* Enhanced: Cookie detection for YouTube, Vimeo, Google Maps, HubSpot, Mailchimp, and more
+* Enhanced: Automatic categorization of detected cookies based on known patterns
+* Enhanced: Database table for storing scan history and results
 
 = 1.0.0 =
 

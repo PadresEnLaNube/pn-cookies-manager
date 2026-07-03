@@ -2451,3 +2451,190 @@ header .wp-block-navigation .wp-block-navigation-item__content.wp-block-navigati
     cursor:not-allowed;
   }
 /* END PRESET LIST */
+
+/* COOKIES LIST SHORTCODE */
+.pn-cookies-manager-cookies-list-wrapper {
+  margin: 20px 0;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.pn-cookies-manager-cookies-list-main-title {
+  margin: 0 0 25px 0;
+  color: var(--pn-cookies-manager-color-main);
+  font-size: 28px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.pn-cookies-manager-cookies-category {
+  margin-bottom: 35px;
+}
+
+.pn-cookies-manager-cookies-category:last-child {
+  margin-bottom: 0;
+}
+
+.pn-cookies-manager-cookies-category-title {
+  margin: 0 0 10px 0;
+  color: var(--pn-cookies-manager-color-main);
+  font-size: 22px;
+  font-weight: 600;
+  border-bottom: 2px solid var(--pn-cookies-manager-border-color-main);
+  padding-bottom: 8px;
+}
+
+.pn-cookies-manager-cookies-category-description {
+  margin: 0 0 15px 0;
+  color: #666;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.pn-cookies-manager-cookies-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 15px;
+}
+
+.pn-cookies-manager-cookies-table thead {
+  background: var(--pn-cookies-manager-bg-color-main);
+  color: #fff;
+}
+
+.pn-cookies-manager-cookies-table thead th {
+  padding: 12px 15px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.pn-cookies-manager-cookies-table tbody tr {
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s ease;
+}
+
+.pn-cookies-manager-cookies-table tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+.pn-cookies-manager-cookies-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.pn-cookies-manager-cookies-table tbody td {
+  padding: 12px 15px;
+  color: #555;
+  font-size: 14px;
+  vertical-align: top;
+  line-height: 1.6;
+}
+
+.pn-cookies-manager-cookie-name {
+  font-weight: 600;
+  color: #333;
+}
+
+.pn-cookies-manager-cookie-name strong {
+  color: var(--pn-cookies-manager-color-main);
+}
+
+.pn-cookies-manager-cookie-duration {
+  color: #666;
+  white-space: nowrap;
+}
+
+.pn-cookies-manager-cookie-description {
+  color: #555;
+}
+
+.pn-cookies-manager-no-cookies {
+  margin: 15px 0 0 0;
+  color: #999;
+  font-style: italic;
+  font-size: 14px;
+}
+
+/* Table Scroll Container for Mobile/Tablet */
+.pn-cookies-manager-cookies-category {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.pn-cookies-manager-cookies-table {
+  min-width: 600px;
+}
+
+/* Responsive Design for Cookies List */
+@media screen and (max-width: 1024px) {
+  .pn-cookies-manager-cookies-list-wrapper {
+    padding: 15px;
+  }
+
+  .pn-cookies-manager-cookies-list-main-title {
+    font-size: 24px;
+  }
+
+  .pn-cookies-manager-cookies-category-title {
+    font-size: 20px;
+  }
+
+  .pn-cookies-manager-cookies-table {
+    font-size: 13px;
+  }
+
+  .pn-cookies-manager-cookies-table thead th,
+  .pn-cookies-manager-cookies-table tbody td {
+    padding: 10px 12px;
+  }
+
+  /* Add scroll indicator shadow */
+  .pn-cookies-manager-cookies-category {
+    position: relative;
+  }
+
+  .pn-cookies-manager-cookies-category::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 30px;
+    background: linear-gradient(to left, rgba(255,255,255,0.9), transparent);
+    pointer-events: none;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .pn-cookies-manager-cookies-list-wrapper {
+    padding: 10px;
+  }
+
+  .pn-cookies-manager-cookies-list-main-title {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
+  .pn-cookies-manager-cookies-category-title {
+    font-size: 18px;
+  }
+
+  .pn-cookies-manager-cookies-table {
+    font-size: 12px;
+    min-width: 500px;
+  }
+
+  .pn-cookies-manager-cookies-table thead th,
+  .pn-cookies-manager-cookies-table tbody td {
+    padding: 8px 10px;
+  }
+}
+/* END COOKIES LIST SHORTCODE */

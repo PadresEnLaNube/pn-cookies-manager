@@ -68,6 +68,7 @@ class PN_COOKIES_MANAGER {
 		self::pn_cookies_manager_load_templates();
 		self::pn_cookies_manager_load_settings();
 		self::pn_cookies_manager_load_shortcodes();
+		self::pn_cookies_manager_load_blocks();
 		self::pn_cookies_manager_load_analytics();
 	}
 			
@@ -146,6 +147,11 @@ class PN_COOKIES_MANAGER {
 		 * The class defining form management.
 		 */
 		require_once PN_COOKIES_MANAGER_DIR . 'includes/class-pn-cookies-manager-forms.php';
+
+		/**
+		 * The class defining cookie scanner functionality.
+		 */
+		require_once PN_COOKIES_MANAGER_DIR . 'includes/class-pn-cookies-manager-scanner.php';
 
 		/**
 		 * The class defining ajax functions.
@@ -318,6 +324,98 @@ class PN_COOKIES_MANAGER {
 		$plugin_shortcodes = new PN_COOKIES_MANAGER_Shortcodes();
 		$this->pn_cookies_manager_loader->pn_cookies_manager_add_shortcode('pn-cookies-manager-test', $plugin_shortcodes, 'pn_cookies_manager_test');
 		$this->pn_cookies_manager_loader->pn_cookies_manager_add_shortcode('pn-cookies-manager-call-to-action', $plugin_shortcodes, 'pn_cookies_manager_call_to_action');
+		$this->pn_cookies_manager_loader->pn_cookies_manager_add_shortcode('pn-cookies-manager-cookies-list', $plugin_shortcodes, 'pn_cookies_manager_cookies_list');
+	}
+
+	/**
+	 * Register Gutenberg blocks.
+	 *
+	 * @since    1.0.35
+	 * @access   private
+	 */
+	private function pn_cookies_manager_load_blocks() {
+		$this->pn_cookies_manager_loader->pn_cookies_manager_add_action('init', $this, 'pn_cookies_manager_register_blocks');
+		$this->pn_cookies_manager_loader->pn_cookies_manager_add_action('enqueue_block_editor_assets', $this, 'pn_cookies_manager_enqueue_block_editor_assets');
+	}
+
+	/**
+	 * Register individual blocks.
+	 *
+	 * @since    1.0.35
+	 */
+	public function pn_cookies_manager_register_blocks() {
+		// Only register blocks if Gutenberg is available
+		if (!function_exists('register_block_type')) {
+			return;
+		}
+
+		// Register Cookies List Block - Simple shortcode wrapper
+		register_block_type('pn-cookies-manager/cookies-list', [
+			'attributes' => [
+				'category' => [
+					'type' => 'string',
+					'default' => '',
+				],
+				'showTitle' => [
+					'type' => 'boolean',
+					'default' => true,
+				],
+				'title' => [
+					'type' => 'string',
+					'default' => '',
+				],
+				'showEmpty' => [
+					'type' => 'boolean',
+					'default' => false,
+				],
+			],
+			'render_callback' => [$this, 'pn_cookies_manager_render_cookies_list_block'],
+		]);
+	}
+
+	/**
+	 * Render callback for Cookies List block.
+	 * Simply executes the shortcode with the block attributes.
+	 *
+	 * @since    1.0.35
+	 * @param    array    $attributes    Block attributes.
+	 * @return   string   Block HTML output.
+	 */
+	public function pn_cookies_manager_render_cookies_list_block($attributes) {
+		// Build shortcode string from attributes
+		$shortcode = '[pn-cookies-manager-cookies-list';
+
+		if (!empty($attributes['category'])) {
+			$shortcode .= ' category="' . esc_attr($attributes['category']) . '"';
+		}
+
+		$shortcode .= ' show_title="' . (isset($attributes['showTitle']) && $attributes['showTitle'] ? 'yes' : 'no') . '"';
+
+		if (!empty($attributes['title'])) {
+			$shortcode .= ' title="' . esc_attr($attributes['title']) . '"';
+		}
+
+		$shortcode .= ' show_empty="' . (isset($attributes['showEmpty']) && $attributes['showEmpty'] ? 'yes' : 'no') . '"';
+
+		$shortcode .= ']';
+
+		// Execute the shortcode
+		return do_shortcode($shortcode);
+	}
+
+	/**
+	 * Enqueue block editor assets.
+	 *
+	 * @since    1.0.35
+	 */
+	public function pn_cookies_manager_enqueue_block_editor_assets() {
+		wp_enqueue_script(
+			'pn-cookies-manager-blocks',
+			PN_COOKIES_MANAGER_URL . 'assets/js/blocks/pn-cookies-manager-blocks.js',
+			['wp-blocks', 'wp-element', 'wp-i18n'],
+			PN_COOKIES_MANAGER_VERSION,
+			true
+		);
 	}
 
 	/**

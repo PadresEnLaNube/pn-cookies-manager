@@ -768,6 +768,106 @@ class PN_COOKIES_MANAGER_Forms {
         </div>
         <?php
         break;
+      case 'cookie_scanner':
+        ?>
+        <div class="pn-cookies-manager-cookie-scanner-wrapper" <?php echo wp_kses_post($pn_cookies_manager_parent_block); ?>>
+          <div class="pn-cookies-manager-scanner-controls pn-cookies-manager-mb-20">
+            <button type="button" id="pn-cookies-manager-start-scan" class="pn-cookies-manager-btn pn-cookies-manager-btn-mini">
+              <span class="material-icons-outlined pn-cookies-manager-vertical-align-middle">search</span>
+              <?php esc_html_e('Start Scan', 'pn-cookies-manager'); ?>
+            </button>
+            <button type="button" id="pn-cookies-manager-import-cookies" class="pn-cookies-manager-btn pn-cookies-manager-btn-mini" disabled style="background-color: #28a745; color: white;">
+              <span class="material-icons-outlined pn-cookies-manager-vertical-align-middle">upload</span>
+              <?php esc_html_e('Import to Registry', 'pn-cookies-manager'); ?>
+            </button>
+            <button type="button" id="pn-cookies-manager-export-csv" class="pn-cookies-manager-btn pn-cookies-manager-btn-mini" disabled>
+              <span class="material-icons-outlined pn-cookies-manager-vertical-align-middle">file_download</span>
+              <?php esc_html_e('Export CSV', 'pn-cookies-manager'); ?>
+            </button>
+            <span id="pn-cookies-manager-scan-progress" class="pn-cookies-manager-ml-10 pn-cookies-manager-display-none-soft">
+              <?php esc_html_e('Scanning...', 'pn-cookies-manager'); ?>
+            </span>
+          </div>
+
+          <div id="pn-cookies-manager-scan-results" class="pn-cookies-manager-mb-20 pn-cookies-manager-display-none-soft">
+            <h4 class="pn-cookies-manager-mb-10"><?php esc_html_e('Scan Results', 'pn-cookies-manager'); ?></h4>
+            <div class="pn-cookies-manager-table-wrapper">
+              <table class="pn-cookies-manager-scanner-table pn-cookies-manager-width-100-percent">
+                <thead>
+                  <tr>
+                    <th><?php esc_html_e('Cookie Name', 'pn-cookies-manager'); ?></th>
+                    <th><?php esc_html_e('Provider/Domain', 'pn-cookies-manager'); ?></th>
+                    <th><?php esc_html_e('Duration', 'pn-cookies-manager'); ?></th>
+                    <th><?php esc_html_e('Category', 'pn-cookies-manager'); ?></th>
+                    <th><?php esc_html_e('Purpose', 'pn-cookies-manager'); ?></th>
+                  </tr>
+                </thead>
+                <tbody id="pn-cookies-manager-scan-results-body">
+                  <!-- Results will be populated here via JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="pn-cookies-manager-scan-history" class="pn-cookies-manager-mb-20">
+            <h4 class="pn-cookies-manager-mb-10"><?php esc_html_e('Scan History', 'pn-cookies-manager'); ?></h4>
+            <div class="pn-cookies-manager-table-wrapper">
+              <table class="pn-cookies-manager-scanner-table pn-cookies-manager-width-100-percent">
+                <thead>
+                  <tr>
+                    <th><?php esc_html_e('Date & Time', 'pn-cookies-manager'); ?></th>
+                    <th><?php esc_html_e('Cookies Found', 'pn-cookies-manager'); ?></th>
+                    <th><?php esc_html_e('Actions', 'pn-cookies-manager'); ?></th>
+                  </tr>
+                </thead>
+                <tbody id="pn-cookies-manager-scan-history-body">
+                  <?php
+                  global $wpdb;
+                  $table_name = $wpdb->prefix . 'pn_cookies_manager_scans';
+
+                  // Ensure table exists
+                  PN_COOKIES_MANAGER_Scanner::create_scanner_table();
+
+                  // Check if table exists
+                  $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_name'") === $table_name;
+                  $scans = [];
+
+                  if ($table_exists) {
+                    $scans = $wpdb->get_results("SELECT * FROM $table_name ORDER BY scan_date DESC LIMIT 10");
+                  }
+
+                  if (!empty($scans)) {
+                    foreach ($scans as $scan) {
+                      ?>
+                      <tr>
+                        <td><?php echo esc_html($scan->scan_date); ?></td>
+                        <td><?php echo esc_html($scan->cookies_count); ?></td>
+                        <td>
+                          <button type="button" class="pn-cookies-manager-btn pn-cookies-manager-btn-mini pn-cookies-manager-view-scan" data-scan-id="<?php echo esc_attr($scan->id); ?>">
+                            <?php esc_html_e('View', 'pn-cookies-manager'); ?>
+                          </button>
+                          <button type="button" class="pn-cookies-manager-btn pn-cookies-manager-btn-mini pn-cookies-manager-delete-scan" data-scan-id="<?php echo esc_attr($scan->id); ?>">
+                            <?php esc_html_e('Delete', 'pn-cookies-manager'); ?>
+                          </button>
+                        </td>
+                      </tr>
+                      <?php
+                    }
+                  } else {
+                    ?>
+                    <tr>
+                      <td colspan="3" class="pn-cookies-manager-text-center"><?php esc_html_e('No scans found. Start your first scan!', 'pn-cookies-manager'); ?></td>
+                    </tr>
+                    <?php
+                  }
+                  ?>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <?php
+        break;
     }
   }
 
