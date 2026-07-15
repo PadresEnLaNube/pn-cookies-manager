@@ -166,7 +166,11 @@ class PN_COOKIES_MANAGER_Ajax_Nopriv {
                       }
                     }
 
-                    // Process remaining individual fields
+                    // Detect and handle cookie registry fields with proper merge
+                    $cookie_categories = ['necessary', 'functional', 'analytics', 'performance', 'advertising'];
+                    $processed_categories = [];
+
+                    // First pass: collect all cookie field updates and merge them properly
                     foreach ($pn_cookies_manager_key_value as $pn_cookies_manager_key => $pn_cookies_manager_value) {
                       // Skip action and ajax type keys
                       if (in_array($pn_cookies_manager_key, ['action', 'pn_cookies_manager_ajax_nopriv_type'])) {
@@ -174,15 +178,109 @@ class PN_COOKIES_MANAGER_Ajax_Nopriv {
                       }
 
                       // Ensure option name is prefixed with pn_cookies_manager_
-                      // Special case: if key is just 'pn-cookies-manager', don't add prefix as it's already the main option
                       if ($pn_cookies_manager_key !== 'pn-cookies-manager' && strpos((string)$pn_cookies_manager_key, 'pn_cookies_manager_') !== 0) {
                         $pn_cookies_manager_key = 'pn_cookies_manager_' . $pn_cookies_manager_key;
-                      } else {
-                        // Key already has correct prefix
+                      }
+
+                      // Only process if option is in allowed options list
+                      if (!in_array($pn_cookies_manager_key, $pn_cookies_manager_allowed_options)) {
+                        continue;
+                      }
+
+                      // Check if this is a cookie registry _id field
+                      foreach ($cookie_categories as $category) {
+                        $id_field = 'pn_cookies_manager_cookies_' . $category . '_id';
+                        if ($pn_cookies_manager_key === $id_field && !isset($processed_categories[$category])) {
+                          $processed_categories[$category] = true;
+
+                          // Get the corresponding duration and description fields
+                          $duration_field = 'pn_cookies_manager_cookies_' . $category . '_duration';
+                          $description_field = 'pn_cookies_manager_cookies_' . $category . '_description';
+
+                          // Get new values from the form
+                          $new_ids = isset($pn_cookies_manager_key_value[str_replace('pn_cookies_manager_', '', $id_field)])
+                            ? $pn_cookies_manager_key_value[str_replace('pn_cookies_manager_', '', $id_field)]
+                            : (isset($pn_cookies_manager_key_value[$id_field]) ? $pn_cookies_manager_key_value[$id_field] : []);
+                          $new_durations = isset($pn_cookies_manager_key_value[str_replace('pn_cookies_manager_', '', $duration_field)])
+                            ? $pn_cookies_manager_key_value[str_replace('pn_cookies_manager_', '', $duration_field)]
+                            : (isset($pn_cookies_manager_key_value[$duration_field]) ? $pn_cookies_manager_key_value[$duration_field] : []);
+                          $new_descriptions = isset($pn_cookies_manager_key_value[str_replace('pn_cookies_manager_', '', $description_field)])
+                            ? $pn_cookies_manager_key_value[str_replace('pn_cookies_manager_', '', $description_field)]
+                            : (isset($pn_cookies_manager_key_value[$description_field]) ? $pn_cookies_manager_key_value[$description_field] : []);
+
+                          // Ensure arrays
+                          if (!is_array($new_ids)) $new_ids = [];
+                          if (!is_array($new_durations)) $new_durations = [];
+                          if (!is_array($new_descriptions)) $new_descriptions = [];
+
+                          // Get existing cookies
+                          $existing_ids = get_option($id_field, []);
+                          $existing_durations = get_option($duration_field, []);
+                          $existing_descriptions = get_option($description_field, []);
+
+                          if (!is_array($existing_ids)) $existing_ids = [];
+                          if (!is_array($existing_durations)) $existing_durations = [];
+                          if (!is_array($existing_descriptions)) $existing_descriptions = [];
+
+                          // Merge: add new cookies that don't already exist (case-insensitive comparison)
+                          for ($i = 0; $i < count($new_ids); $i++) {
+                            $cookie_name = isset($new_ids[$i]) ? trim($new_ids[$i]) : '';
+                            if (empty($cookie_name)) continue;
+
+                            // Check if cookie already exists (case-insensitive)
+                            $cookie_exists = false;
+                            foreach ($existing_ids as $existing_id) {
+                              if (strcasecmp(trim($existing_id), $cookie_name) === 0) {
+                                $cookie_exists = true;
+                                break;
+                              }
+                            }
+
+                            // Only add if it doesn't exist
+                            if (!$cookie_exists) {
+                              $existing_ids[] = $cookie_name;
+                              $existing_durations[] = isset($new_durations[$i]) ? $new_durations[$i] : '';
+                              $existing_descriptions[] = isset($new_descriptions[$i]) ? $new_descriptions[$i] : '';
+                            }
+                          }
+
+                          // Update all three fields with merged values
+                          update_option($id_field, $existing_ids);
+                          update_option($duration_field, $existing_durations);
+                          update_option($description_field, $existing_descriptions);
+
+                          break; // Found the category, no need to check others
+                        }
+                      }
+                    }
+
+                    // Second pass: process non-cookie fields normally
+                    foreach ($pn_cookies_manager_key_value as $pn_cookies_manager_key => $pn_cookies_manager_value) {
+                      // Skip action and ajax type keys
+                      if (in_array($pn_cookies_manager_key, ['action', 'pn_cookies_manager_ajax_nopriv_type'])) {
+                        continue;
+                      }
+
+                      // Ensure option name is prefixed with pn_cookies_manager_
+                      if ($pn_cookies_manager_key !== 'pn-cookies-manager' && strpos((string)$pn_cookies_manager_key, 'pn_cookies_manager_') !== 0) {
+                        $pn_cookies_manager_key = 'pn_cookies_manager_' . $pn_cookies_manager_key;
                       }
 
                       // Only update if option is in allowed options list
-                      if (in_array($pn_cookies_manager_key, $pn_cookies_manager_allowed_options)) {
+                      if (!in_array($pn_cookies_manager_key, $pn_cookies_manager_allowed_options)) {
+                        continue;
+                      }
+
+                      // Skip cookie registry fields (already processed)
+                      $is_cookie_field = false;
+                      foreach ($cookie_categories as $category) {
+                        if (preg_match('/^pn_cookies_manager_cookies_' . $category . '_(id|duration|description)$/', $pn_cookies_manager_key)) {
+                          $is_cookie_field = true;
+                          break;
+                        }
+                      }
+
+                      if (!$is_cookie_field) {
                         update_option($pn_cookies_manager_key, $pn_cookies_manager_value);
                       }
                     }

@@ -188,6 +188,11 @@ class PN_COOKIES_MANAGER {
 		 */
 		require_once PN_COOKIES_MANAGER_DIR . 'includes/class-pn-cookies-manager-analytics.php';
 
+		/**
+		 * The class responsible for tutorial onboarding functionality.
+		 */
+		require_once PN_COOKIES_MANAGER_DIR . 'includes/class-pn-cookies-manager-tutorial.php';
+
 		$this->pn_cookies_manager_loader = new PN_COOKIES_MANAGER_Loader();
 	}
 

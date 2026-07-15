@@ -51,6 +51,11 @@ class PN_COOKIES_MANAGER_Admin {
 		wp_enqueue_style($this->plugin_name . '-admin', PN_COOKIES_MANAGER_URL . 'assets/css/admin/pn-cookies-manager-admin.css', [], $this->version, 'all');
 		wp_enqueue_style($this->plugin_name . '-banner', PN_COOKIES_MANAGER_URL . 'assets/css/public/pn-cookies-manager-banner.css', [], $this->version, 'all');
 		wp_enqueue_style($this->plugin_name . '-scanner', PN_COOKIES_MANAGER_URL . 'assets/css/admin/pn-cookies-manager-scanner.css', [], $this->version, 'all');
+
+		// Load tutorial styles on settings page
+		if (isset($_GET['page']) && $_GET['page'] === 'pn_cookies_manager_options') {
+			PN_COOKIES_MANAGER_Tutorial::enqueue_assets();
+		}
 	}
 
 	/**

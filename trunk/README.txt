@@ -4,7 +4,7 @@ Donate link: https://padresenlanube.com/
 Tags: cookie consent, gdpr, ccpa, privacy, cookie banner
 Requires at least: 3.5
 Tested up to: 7.0
-Stable tag: 1.0.45
+Stable tag: 1.0.46
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Manage cookies on your website. Configure cookie consent banners, categorize cookies, and ensure compliance with privacy regulations.
@@ -40,6 +40,25 @@ Display a fully customizable cookie consent banner, register the cookies your si
 * Define cookie name, duration, and description for each entry.
 * Quick-add preset buttons for common cookies: WordPress defaults, Google Analytics (GA4), Google Ads, Google Merchant, Facebook Pixel, and more.
 * "Add all" button to insert all presets for a category at once.
+* Smart merge system: new cookies are added to existing registry without deleting previously registered cookies.
+* Case-insensitive duplicate detection prevents accidental cookie duplication.
+
+= Cookie Scanner =
+
+* Automated cookie discovery tool that scans your website pages.
+* Select multiple pages to scan simultaneously (pages, posts, custom post types).
+* Batch processing with progress indicator showing current page being scanned.
+* Automatic categorization of discovered cookies (Necessary, Functional, Analytics, Performance, Advertising).
+* One-click import of scanned cookies directly into the Cookie Registry.
+* Scan history with ability to view, export (CSV), and delete previous scans.
+* Smart import prevents duplicate entries when adding scanned cookies to registry.
+
+= Interactive Tutorial =
+
+* Step-by-step guided tutorial for first-time users.
+* Contextual help highlighting key features and settings.
+* Shows on first activation to help users get started quickly.
+* Can be dismissed and won't show again once completed.
 
 = Customizable Design =
 
@@ -90,7 +109,11 @@ After activating the plugin, go to Cookies Manager > Settings. You will find sec
 
 = How do I register the cookies my site uses? =
 
-In the Settings page, scroll down to the Cookie Registry section. Each category (Necessary, Functional, Analytics, Performance, Advertising) has its own expandable subsection where you can add cookie entries with name, duration, and description. Use the preset buttons to quickly add common cookies from services like Google Analytics or Facebook.
+In the Settings page, scroll down to the Cookie Registry section. Each category (Necessary, Functional, Analytics, Performance, Advertising) has its own expandable subsection where you can add cookie entries with name, duration, and description. Use the preset buttons to quickly add common cookies from services like Google Analytics or Facebook. Alternatively, use the Cookie Scanner to automatically detect cookies on your site and import them with one click.
+
+= How does the Cookie Scanner work? =
+
+The Cookie Scanner automatically detects cookies used on your website. Go to Cookies Manager > Settings > Cookie Scanner, select the pages you want to scan, and click "Start Scan". The scanner will analyze each page and categorize any cookies it finds. Once the scan is complete, you can review the results and click "Import to Registry" to add them to your cookie registry. The smart merge system ensures previously registered cookies won't be deleted or duplicated.
 
 = What is Google Consent Mode v2? =
 
@@ -123,7 +146,7 @@ For support, visit the plugin's support forum on WordPress.org or contact us at 
 
 == Changelog ==
 
-= 1.0.45 =
+= 1.0.46 =
 
 * New: Added Cookie Scanner section to detect cookies used on your website
 * New: Scan multiple pages to identify cookies from videos, forms, and external tools

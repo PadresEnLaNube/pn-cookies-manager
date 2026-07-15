@@ -302,7 +302,7 @@ class PN_COOKIES_MANAGER_Settings
   /**
    * Get list of scannable URLs (pages, posts, special WordPress pages).
    *
-   * @since    1.0.45
+   * @since    1.0.46
    * @return   array
    */
   public static function pn_cookies_manager_get_scannable_urls()
@@ -1283,6 +1283,11 @@ class PN_COOKIES_MANAGER_Settings
         'activate' => __('Activate', 'pn-cookies-manager'),
       ],
     ]);
+    ?>
+
+    <?php
+    // Render tutorial if not completed
+    PN_COOKIES_MANAGER_Tutorial::render();
   ?>
   <?php
   }

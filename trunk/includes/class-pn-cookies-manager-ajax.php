@@ -670,6 +670,13 @@ class PN_COOKIES_MANAGER_Ajax {
           ]);
           exit;
           break;
+
+        case 'pn_cookies_manager_complete_tutorial':
+          $completed = !empty($_POST['completed']) ? intval($_POST['completed']) : 0;
+          PN_COOKIES_MANAGER_Tutorial::mark_completed($completed ? true : false);
+          echo wp_json_encode(['success' => true]);
+          exit;
+          break;
       }
 
       echo wp_json_encode([
