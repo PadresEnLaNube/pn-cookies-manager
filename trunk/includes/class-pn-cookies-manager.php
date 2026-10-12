@@ -52,7 +52,7 @@ class PN_COOKIES_MANAGER {
 		if (defined('PN_COOKIES_MANAGER_VERSION')) {
 			$this->pn_cookies_manager_version = PN_COOKIES_MANAGER_VERSION;
 		} else {
-			$this->pn_cookies_manager_version = '1.0.30';
+			$this->pn_cookies_manager_version = '1.0.50';
 		}
 
 		$this->pn_cookies_manager_plugin_name = 'pn-cookies-manager';
@@ -70,6 +70,8 @@ class PN_COOKIES_MANAGER {
 		self::pn_cookies_manager_load_shortcodes();
 		self::pn_cookies_manager_load_blocks();
 		self::pn_cookies_manager_load_analytics();
+		self::pn_cookies_manager_load_script_blocker();
+		self::pn_cookies_manager_load_wp_consent_api();
 	}
 			
 	/**
@@ -192,6 +194,16 @@ class PN_COOKIES_MANAGER {
 		 * The class responsible for tutorial onboarding functionality.
 		 */
 		require_once PN_COOKIES_MANAGER_DIR . 'includes/class-pn-cookies-manager-tutorial.php';
+
+		/**
+		 * The class responsible for preventive script/iframe blocking.
+		 */
+		require_once PN_COOKIES_MANAGER_DIR . 'includes/class-pn-cookies-manager-script-blocker.php';
+
+		/**
+		 * The class responsible for WP Consent API integration.
+		 */
+		require_once PN_COOKIES_MANAGER_DIR . 'includes/class-pn-cookies-manager-wp-consent-api.php';
 
 		$this->pn_cookies_manager_loader = new PN_COOKIES_MANAGER_Loader();
 	}
@@ -440,6 +452,31 @@ class PN_COOKIES_MANAGER {
 		$this->pn_cookies_manager_loader->pn_cookies_manager_add_action('wp_ajax_pncm_log_consent', $plugin_analytics, 'pn_cookies_manager_log_consent');
 		$this->pn_cookies_manager_loader->pn_cookies_manager_add_action('wp_ajax_nopriv_pncm_log_consent', $plugin_analytics, 'pn_cookies_manager_log_consent');
 		$this->pn_cookies_manager_loader->pn_cookies_manager_add_action('wp_ajax_pncm_get_analytics', $plugin_analytics, 'pn_cookies_manager_ajax_get_analytics');
+	}
+
+	/**
+	 * Load script blocker for preventive blocking.
+	 *
+	 * @since    1.1.0
+	 * @access   private
+	 */
+	private function pn_cookies_manager_load_script_blocker() {
+		$blocker = new PN_COOKIES_MANAGER_Script_Blocker();
+		$this->pn_cookies_manager_loader->pn_cookies_manager_add_filter( 'script_loader_tag', $blocker, 'filter_script_tag', 999, 3 );
+		$this->pn_cookies_manager_loader->pn_cookies_manager_add_action( 'template_redirect', $blocker, 'start_buffer', 2 );
+	}
+
+	/**
+	 * Load WP Consent API integration.
+	 *
+	 * @since    1.1.0
+	 * @access   private
+	 */
+	private function pn_cookies_manager_load_wp_consent_api() {
+		$wp_consent = new PN_COOKIES_MANAGER_WP_Consent_API();
+		if ( $wp_consent->is_active() ) {
+			$wp_consent->register();
+		}
 	}
 
 	/**

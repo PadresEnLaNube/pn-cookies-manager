@@ -7,9 +7,14 @@
   // Exposed on window so the generic AJAX form handler can clear it on save
   window.pncmFormDirty = false;
 
-  // Mark form as dirty when any setting field changes
-  $(document).on('change input', '#pn-cookies-manager-form-setting input, #pn-cookies-manager-form-setting select, #pn-cookies-manager-form-setting textarea', function() {
-    window.pncmFormDirty = true;
+  // Delay listening for changes until after the browser has finished
+  // normalising input values (e.g. <input type="color"> with alpha hex).
+  $(function() {
+    setTimeout(function() {
+      $(document).on('change.pncmDirty input.pncmDirty', '#pn-cookies-manager-form-setting input, #pn-cookies-manager-form-setting select, #pn-cookies-manager-form-setting textarea', function() {
+        window.pncmFormDirty = true;
+      });
+    }, 500);
   });
 
   // Warn before leaving with unsaved changes

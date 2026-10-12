@@ -12,8 +12,8 @@
  * @wordpress-plugin
  * Plugin Name:       PN Cookies Manager
  * Plugin URI:        https://padresenlanube.com/plugins/pn-cookies-manager/
- * Description:       Comprehensive cookie consent management with automated scanner, smart registry, and GDPR compliance. Scan, categorize, and manage cookies with an intuitive interface.
- * Version:           1.0.46
+ * Description:       Comprehensive cookie consent management with automated scanner, smart registry, preventive script blocking, Google Consent Mode v2, GPC support, WP Consent API integration, individual consent proof logging, and GDPR/CCPA compliance.
+ * Version:           1.0.50
  * Requires at least: 3.5
  * Tested up to:      7.0
  * Requires PHP:      7.2
@@ -35,7 +35,7 @@ if (!defined('WPINC')) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define('PN_COOKIES_MANAGER_VERSION', '1.0.46');
+define('PN_COOKIES_MANAGER_VERSION', '1.0.50');
 define('PN_COOKIES_MANAGER_DIR', plugin_dir_path(__FILE__));
 define('PN_COOKIES_MANAGER_URL', plugin_dir_url(__FILE__));
 /**
@@ -189,6 +189,10 @@ function pn_cookies_manager_activation_hook()
 {
 	require_once plugin_dir_path(__FILE__) . 'includes/class-pn-cookies-manager-activator.php';
 	PN_COOKIES_MANAGER_Activator::pn_cookies_manager_activate();
+
+	// Create consent log table
+	require_once plugin_dir_path(__FILE__) . 'includes/class-pn-cookies-manager-analytics.php';
+	PN_COOKIES_MANAGER_Analytics::pn_cookies_manager_create_consent_log_table();
 
 	// Clear any previous state
 	delete_option('pn_cookies_manager_redirecting');

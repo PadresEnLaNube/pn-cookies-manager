@@ -1,0 +1,2 @@
+# Deny all web access to the tests directory
+Deny from all

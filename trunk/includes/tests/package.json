@@ -1,0 +1,20 @@
+{
+  "name": "pn-cookies-manager",
+  "version": "1.0.46",
+  "description": "PN Cookies Manager - Cookie consent management for WordPress",
+  "private": true,
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0",
+    "jest-environment-jsdom": "^29.0.0"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "testMatch": [
+      "**/js/**/*.test.js"
+    ]
+  }
+}

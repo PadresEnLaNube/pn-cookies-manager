@@ -295,7 +295,7 @@ class PN_COOKIES_MANAGER_Tutorial
    */
   public static function mark_completed($completed = true)
   {
-    update_option('pn_cookies_manager_tutorial_completed', $completed);
+    update_option('pn_cookies_manager_tutorial_completed', $completed ? 'completed' : 'skipped');
   }
 
   /**

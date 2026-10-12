@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<phpunit
+  bootstrap="bootstrap.php"
+  backupGlobals="false"
+  colors="true"
+  convertErrorsToExceptions="true"
+  convertNoticesToExceptions="true"
+  convertWarningsToExceptions="true"
+>
+  <testsuites>
+    <testsuite name="PN Cookies Manager Test Suite">
+      <directory suffix=".php">./</directory>
+    </testsuite>
+  </testsuites>
+  <coverage>
+    <include>
+      <directory suffix=".php">../</directory>
+      <exclude>
+        <directory suffix=".php">./</directory>
+      </exclude>
+    </include>
+  </coverage>
+</phpunit>

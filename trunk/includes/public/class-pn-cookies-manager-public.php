@@ -111,6 +111,24 @@ class PN_COOKIES_MANAGER_Public {
 			$banner_config['analytics_nonce'] = wp_create_nonce('pncm_log_consent');
 		}
 
+		$banner_config['gpc_enabled'] = get_option( 'pn_cookies_manager_gpc_enabled', 'on' ) ? '1' : '';
+		$banner_config['user_region'] = $this->detect_user_region();
+
+		// Block patterns for MutationObserver
+		$block_patterns = array();
+		$pattern_cats = array( 'analytics', 'advertising', 'performance', 'functional' );
+		foreach ( $pattern_cats as $pcat ) {
+			$raw = get_option( 'pn_cookies_manager_block_scripts_' . $pcat, '' );
+			if ( ! empty( $raw ) ) {
+				$patterns = array_map( 'trim', explode( ',', $raw ) );
+				$patterns = array_filter( $patterns );
+				if ( ! empty( $patterns ) ) {
+					$block_patterns[ $pcat ] = array_values( $patterns );
+				}
+			}
+		}
+		$banner_config['block_patterns'] = $block_patterns;
+
 		wp_localize_script($this->plugin_name . '-banner', 'pncm_banner_config', $banner_config);
 
 		// Google Consent Mode v2 default — non-OB fallback path.
@@ -121,6 +139,65 @@ class PN_COOKIES_MANAGER_Public {
 			wp_enqueue_script($this->plugin_name . '-consent-default');
 			wp_add_inline_script($this->plugin_name . '-consent-default', $this->pn_cookies_manager_build_consent_js());
 		}
+	}
+
+	/**
+	 * Detect user region from server headers.
+	 *
+	 * @since 1.1.0
+	 * @return string|null ISO 2-letter country code or null.
+	 */
+	private function detect_user_region() {
+		$headers = array(
+			'HTTP_CF_IPCOUNTRY',
+			'HTTP_X_COUNTRY',
+			'HTTP_X_VERCEL_IP_COUNTRY',
+			'GEOIP_COUNTRY_CODE',
+		);
+		foreach ( $headers as $header ) {
+			if ( ! empty( $_SERVER[ $header ] ) ) {
+				$code = strtoupper( sanitize_text_field( wp_unslash( $_SERVER[ $header ] ) ) );
+				if ( preg_match( '/^[A-Z]{2}$/', $code ) ) {
+					return $code;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Get regional default consent state.
+	 *
+	 * @since 1.1.0
+	 * @param string|null $region ISO 2-letter country code.
+	 * @return string 'granted' or 'denied'.
+	 */
+	private function get_regional_default( $region ) {
+		$mode = get_option( 'pn_cookies_manager_gcm_regional_defaults', 'strict' );
+
+		if ( $mode === 'lenient' ) {
+			return 'granted';
+		}
+
+		if ( $mode === 'strict' ) {
+			return 'denied';
+		}
+
+		// Mixed mode: EU/EEA + UK denied, rest granted
+		$eu_countries = array(
+			'AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR',
+			'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL',
+			'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE',
+			'IS', 'LI', 'NO', // EEA
+			'GB', // UK
+		);
+
+		if ( $region === null ) {
+			$fallback = get_option( 'pn_cookies_manager_geo_fallback', 'strict' );
+			return $fallback === 'lenient' ? 'granted' : 'denied';
+		}
+
+		return in_array( $region, $eu_countries, true ) ? 'denied' : 'granted';
 	}
 
 	/**
@@ -143,17 +220,20 @@ class PN_COOKIES_MANAGER_Public {
 			}
 		}
 
+		$region = $this->detect_user_region();
+		$default_state = $this->get_regional_default( $region );
+
 		$g = function($val) {
 			return $val ? 'granted' : 'denied';
 		};
 
 		$values = [
-			'ad_storage'              => $consent ? $g(!empty($consent['advertising'])) : 'denied',
-			'ad_user_data'            => $consent ? $g(!empty($consent['advertising'])) : 'denied',
-			'ad_personalization'      => $consent ? $g(!empty($consent['advertising'])) : 'denied',
-			'analytics_storage'       => $consent ? $g(!empty($consent['analytics']))   : 'denied',
-			'functionality_storage'   => $consent ? $g(!empty($consent['functional']))  : 'denied',
-			'personalization_storage' => $consent ? $g(!empty($consent['functional']))  : 'denied',
+			'ad_storage'              => $consent ? $g(!empty($consent['advertising'])) : $default_state,
+			'ad_user_data'            => $consent ? $g(!empty($consent['advertising'])) : $default_state,
+			'ad_personalization'      => $consent ? $g(!empty($consent['advertising'])) : $default_state,
+			'analytics_storage'       => $consent ? $g(!empty($consent['analytics']))   : $default_state,
+			'functionality_storage'   => $consent ? $g(!empty($consent['functional']))  : $default_state,
+			'personalization_storage' => $consent ? $g(!empty($consent['functional']))  : $default_state,
 			'security_storage'        => 'granted',
 			'wait_for_update'         => 500,
 		];

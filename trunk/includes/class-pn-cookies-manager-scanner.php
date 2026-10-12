@@ -229,15 +229,20 @@ class PN_COOKIES_MANAGER_Scanner {
    * @return array|WP_Error Array of cookies found or WP_Error on failure
    */
   private function scan_single_url($url) {
+    // Validate URL before making the request
+    $validation = $this->validate_scan_url($url);
+    if (is_wp_error($validation)) {
+      return $validation;
+    }
+
     $response = wp_remote_get($url, [
       'timeout' => 15, // Reduced from 30 to 15 seconds
-      'sslverify' => false,
-      'redirection' => 3, // Limit redirects
+      'sslverify' => true,
+      'redirection' => 0, // Do not follow redirects
     ]);
 
     if (is_wp_error($response)) {
-      // Return empty array instead of error to continue scanning
-      return [];
+      return $response;
     }
 
     $body = wp_remote_retrieve_body($response);
@@ -619,5 +624,55 @@ class PN_COOKIES_MANAGER_Scanner {
 
     require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
     dbDelta($sql);
+  }
+
+  /**
+   * Validate a URL before scanning to prevent SSRF attacks
+   *
+   * @param string $url URL to validate
+   * @return true|WP_Error True if valid, WP_Error if not
+   */
+  private function validate_scan_url($url) {
+    $parsed = wp_parse_url($url);
+
+    if (empty($parsed['host'])) {
+      return new WP_Error('invalid_url', __('The URL is not valid or does not contain a host.', 'pn-cookies-manager'));
+    }
+
+    $site_parsed = wp_parse_url(site_url());
+
+    if (strtolower($parsed['host']) !== strtolower($site_parsed['host'])) {
+      return new WP_Error('external_host', __('Scanning is restricted to the current site host only.', 'pn-cookies-manager'));
+    }
+
+    $resolved_ip = gethostbyname($parsed['host']);
+
+    // gethostbyname returns the hostname unchanged if resolution fails
+    if ($resolved_ip === $parsed['host']) {
+      return new WP_Error('dns_resolution_failed', __('Could not resolve the hostname to an IP address.', 'pn-cookies-manager'));
+    }
+
+    if ($this->is_private_ip($resolved_ip)) {
+      return new WP_Error('private_ip', __('The URL resolves to a private or reserved IP address and cannot be scanned.', 'pn-cookies-manager'));
+    }
+
+    return true;
+  }
+
+  /**
+   * Check if an IP address is private or reserved
+   *
+   * @param string $ip IP address to check
+   * @return bool True if the IP is private or reserved, false otherwise
+   */
+  private function is_private_ip($ip) {
+    // Use filter_var to check for private and reserved ranges
+    // This covers RFC 1918 (10.x, 172.16-31.x, 192.168.x), loopback (127.x),
+    // link-local (169.254.x), and IPv6 loopback (::1)
+    if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false) {
+      return true;
+    }
+
+    return false;
   }
 }

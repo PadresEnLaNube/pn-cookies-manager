@@ -884,11 +884,150 @@ class PN_COOKIES_MANAGER_Settings
       'section' => 'end',
     ];
 
+    // Script Blocking section
+    $pn_cookies_manager_options['pn_cookies_manager_script_blocking_section_start'] = [
+      'id' => 'pn_cookies_manager_script_blocking_section_start',
+      'section' => 'start',
+      'label' => __('Script Blocking', 'pn-cookies-manager'),
+      'description' => __('Configure preventive blocking of scripts and iframes before user consent. Scripts matching these patterns will be blocked until the user grants consent for the corresponding category.', 'pn-cookies-manager'),
+    ];
+
+    $pn_cookies_manager_options['pn_cookies_manager_script_blocking_enabled'] = [
+      'id' => 'pn_cookies_manager_script_blocking_enabled',
+      'class' => 'pn-cookies-manager-input pn-cookies-manager-width-100-percent',
+      'input' => 'input',
+      'type' => 'checkbox',
+      'label' => __('Enable script blocking', 'pn-cookies-manager'),
+      'description' => __('Block scripts and iframes from loading before user consent is given.', 'pn-cookies-manager'),
+      'value' => 'on',
+    ];
+
+    $pn_cookies_manager_options['pn_cookies_manager_block_scripts_analytics'] = [
+      'id' => 'pn_cookies_manager_block_scripts_analytics',
+      'class' => 'pn-cookies-manager-input pn-cookies-manager-width-100-percent',
+      'input' => 'textarea',
+      'label' => __('Analytics blocking patterns', 'pn-cookies-manager'),
+      'placeholder' => 'google-analytics.com, googletagmanager.com, gtag/js, analytics.js',
+      'value' => 'google-analytics.com, googletagmanager.com, gtag/js, analytics.js',
+      'description' => __('Comma-separated list of URL patterns to block for the Analytics category.', 'pn-cookies-manager'),
+    ];
+
+    $pn_cookies_manager_options['pn_cookies_manager_block_scripts_advertising'] = [
+      'id' => 'pn_cookies_manager_block_scripts_advertising',
+      'class' => 'pn-cookies-manager-input pn-cookies-manager-width-100-percent',
+      'input' => 'textarea',
+      'label' => __('Advertising blocking patterns', 'pn-cookies-manager'),
+      'placeholder' => 'facebook.net, fbevents.js, doubleclick.net, googlesyndication.com, adservice.google, connect.facebook.net',
+      'value' => 'facebook.net, fbevents.js, doubleclick.net, googlesyndication.com, adservice.google, connect.facebook.net',
+      'description' => __('Comma-separated list of URL patterns to block for the Advertising category.', 'pn-cookies-manager'),
+    ];
+
+    $pn_cookies_manager_options['pn_cookies_manager_block_scripts_performance'] = [
+      'id' => 'pn_cookies_manager_block_scripts_performance',
+      'class' => 'pn-cookies-manager-input pn-cookies-manager-width-100-percent',
+      'input' => 'textarea',
+      'label' => __('Performance blocking patterns', 'pn-cookies-manager'),
+      'placeholder' => 'hotjar.com, clarity.ms, static.hotjar.com',
+      'value' => 'hotjar.com, clarity.ms, static.hotjar.com',
+      'description' => __('Comma-separated list of URL patterns to block for the Performance category.', 'pn-cookies-manager'),
+    ];
+
+    $pn_cookies_manager_options['pn_cookies_manager_block_scripts_functional'] = [
+      'id' => 'pn_cookies_manager_block_scripts_functional',
+      'class' => 'pn-cookies-manager-input pn-cookies-manager-width-100-percent',
+      'input' => 'textarea',
+      'label' => __('Functional blocking patterns', 'pn-cookies-manager'),
+      'placeholder' => '',
+      'value' => '',
+      'description' => __('Comma-separated list of URL patterns to block for the Functional category (empty by default).', 'pn-cookies-manager'),
+    ];
+
+    $pn_cookies_manager_options['pn_cookies_manager_script_blocking_section_end'] = [
+      'id' => 'pn_cookies_manager_script_blocking_section_end',
+      'section' => 'end',
+    ];
+
+    // Privacy & Compliance section
+    $pn_cookies_manager_options['pn_cookies_manager_privacy_section_start'] = [
+      'id' => 'pn_cookies_manager_privacy_section_start',
+      'section' => 'start',
+      'label' => __('Privacy & Compliance', 'pn-cookies-manager'),
+      'description' => __('Configure privacy compliance features including GPC support, regional defaults, and consent mode.', 'pn-cookies-manager'),
+    ];
+
+    $pn_cookies_manager_options['pn_cookies_manager_gcm_mode'] = [
+      'id' => 'pn_cookies_manager_gcm_mode',
+      'class' => 'pn-cookies-manager-select pn-cookies-manager-width-100-percent',
+      'input' => 'select',
+      'label' => __('Google Consent Mode type', 'pn-cookies-manager'),
+      'description' => __('Advanced: Tags load with denied state and update on consent (recommended). Basic: Tags are completely blocked until consent is given.', 'pn-cookies-manager'),
+      'placeholder' => __('Select option', 'pn-cookies-manager'),
+      'options' => [
+        'advanced' => __('Advanced (default)', 'pn-cookies-manager'),
+        'basic' => __('Basic', 'pn-cookies-manager'),
+      ],
+      'value' => 'advanced',
+    ];
+
+    $pn_cookies_manager_options['pn_cookies_manager_gcm_regional_defaults'] = [
+      'id' => 'pn_cookies_manager_gcm_regional_defaults',
+      'class' => 'pn-cookies-manager-select pn-cookies-manager-width-100-percent',
+      'input' => 'select',
+      'label' => __('Regional consent defaults', 'pn-cookies-manager'),
+      'description' => __('How to handle consent defaults based on user region. Strict: all denied everywhere. Mixed: denied in EU/EEA, granted elsewhere. Lenient: all granted everywhere.', 'pn-cookies-manager'),
+      'placeholder' => __('Select option', 'pn-cookies-manager'),
+      'options' => [
+        'strict' => __('Strict - all denied (default)', 'pn-cookies-manager'),
+        'mixed' => __('Mixed - EU denied, rest granted', 'pn-cookies-manager'),
+        'lenient' => __('Lenient - all granted', 'pn-cookies-manager'),
+      ],
+      'value' => 'strict',
+    ];
+
+    $pn_cookies_manager_options['pn_cookies_manager_gpc_enabled'] = [
+      'id' => 'pn_cookies_manager_gpc_enabled',
+      'class' => 'pn-cookies-manager-input pn-cookies-manager-width-100-percent',
+      'input' => 'input',
+      'type' => 'checkbox',
+      'label' => __('Global Privacy Control (GPC)', 'pn-cookies-manager'),
+      'description' => __('Recognize the GPC browser signal and automatically opt-out of analytics and advertising cookies for users who have it enabled.', 'pn-cookies-manager'),
+      'value' => 'on',
+    ];
+
+    $pn_cookies_manager_options['pn_cookies_manager_geo_fallback'] = [
+      'id' => 'pn_cookies_manager_geo_fallback',
+      'class' => 'pn-cookies-manager-select pn-cookies-manager-width-100-percent',
+      'input' => 'select',
+      'label' => __('Geolocation fallback', 'pn-cookies-manager'),
+      'description' => __('How to handle consent when user region cannot be detected.', 'pn-cookies-manager'),
+      'placeholder' => __('Select option', 'pn-cookies-manager'),
+      'options' => [
+        'strict' => __('Strict - treat as denied (default)', 'pn-cookies-manager'),
+        'lenient' => __('Lenient - treat as granted', 'pn-cookies-manager'),
+      ],
+      'value' => 'strict',
+    ];
+
+    $pn_cookies_manager_options['pn_cookies_manager_privacy_section_end'] = [
+      'id' => 'pn_cookies_manager_privacy_section_end',
+      'section' => 'end',
+    ];
+
     $pn_cookies_manager_options['pn_cookies_manager_system_section_start'] = [
       'id' => 'pn_cookies_manager_system_section_start',
       'section' => 'start',
       'label' => __('System', 'pn-cookies-manager'),
       'description' => __('Configure the system settings.', 'pn-cookies-manager'),
+    ];
+
+    $pn_cookies_manager_options['pn_cookies_manager_show_banner'] = [
+      'id' => 'pn_cookies_manager_show_banner',
+      'class' => 'pn-cookies-manager-input pn-cookies-manager-width-100-percent',
+      'input' => 'input',
+      'type' => 'checkbox',
+      'label' => __('Show settings banner image', 'pn-cookies-manager'),
+      'description' => __('Show the banner image at the top of the settings page.', 'pn-cookies-manager'),
+      'default' => 'on',
     ];
 
     $pn_cookies_manager_options['pn_cookies_manager_google_consent_mode'] = [
@@ -1072,6 +1211,49 @@ class PN_COOKIES_MANAGER_Settings
       'pn_cookies_manager_options',
       [$this, 'pn_cookies_manager_options'],
     );
+
+    add_submenu_page(
+      'pn_cookies_manager_options',
+      esc_html__('Tests', 'pn-cookies-manager'),
+      esc_html__('Tests', 'pn-cookies-manager'),
+      'administrator',
+      'pn-cookies-manager-tests',
+      [$this, 'pn_cookies_manager_tests_page'],
+    );
+  }
+
+  /**
+   * Tests page renderer.
+   *
+   * @since 1.1.0
+   */
+  public function pn_cookies_manager_tests_page()
+  {
+    if ( ! current_user_can( 'administrator' ) ) {
+      wp_die( esc_html__( 'You do not have permission to access this page.', 'pn-cookies-manager' ) );
+    }
+
+    $test_runner_file = PN_COOKIES_MANAGER_DIR . 'includes/tests/run-tests.php';
+
+    echo '<div class="wrap">';
+    echo '<h1>' . esc_html__( 'PN Cookies Manager — Tests', 'pn-cookies-manager' ) . '</h1>';
+
+    if ( ! file_exists( $test_runner_file ) ) {
+      echo '<div class="notice notice-error"><p>' . esc_html__( 'Test runner file not found.', 'pn-cookies-manager' ) . '</p></div>';
+      echo '</div>';
+      return;
+    }
+
+    if ( ! defined( 'PNCM_RUNNING_TESTS' ) ) {
+      define( 'PNCM_RUNNING_TESTS', true );
+    }
+
+    require_once $test_runner_file;
+
+    $runner = pncm_run_all_tests( true );
+    echo $runner->render_html();
+
+    echo '</div>';
   }
 
   public function pn_cookies_manager_options()
@@ -1079,10 +1261,17 @@ class PN_COOKIES_MANAGER_Settings
     ?>
     <div
       class="pn-cookies-manager-options pn-cookies-manager-max-width-1000 pn-cookies-manager-margin-auto pn-cookies-manager-mt-50 pn-cookies-manager-mb-50">
-      <img src="<?php echo esc_url(PN_COOKIES_MANAGER_URL . 'assets/media/banner-1544x500.png'); ?>"
-        alt="<?php esc_html_e('Plugin main Banner', 'pn-cookies-manager'); ?>"
-        title="<?php esc_html_e('Plugin main Banner', 'pn-cookies-manager'); ?>"
-        class="pn-cookies-manager-width-100-percent pn-cookies-manager-border-radius-20 pn-cookies-manager-mb-30">
+      <?php if (get_option('pn_cookies_manager_show_banner', 'on') === 'on'): ?>
+      <div class="pn-cookies-manager-banner-wrapper">
+        <img src="<?php echo esc_url(PN_COOKIES_MANAGER_URL . 'assets/media/banner-1544x500.png'); ?>"
+          alt="<?php esc_html_e('Plugin main Banner', 'pn-cookies-manager'); ?>"
+          title="<?php esc_html_e('Plugin main Banner', 'pn-cookies-manager'); ?>"
+          class="pn-cookies-manager-width-100-percent pn-cookies-manager-border-radius-20 pn-cookies-manager-mb-30">
+        <button type="button" id="pn-cookies-manager-banner-hide-btn" class="pn-cookies-manager-banner-hide-btn pn-cookies-manager-tooltip" title="<?php esc_attr_e('Hide image', 'pn-cookies-manager'); ?>">
+          <i class="material-icons-outlined">close</i>
+        </button>
+      </div>
+      <?php endif; ?>
       <h1 class="pn-cookies-manager-mb-30"><?php esc_html_e('PN Cookies Manager Settings', 'pn-cookies-manager'); ?></h1>
       <div class="pn-cookies-manager-options-fields pn-cookies-manager-mb-30 pn-cookies-manager-settings-pb-80">
         <form action="" method="post" id="pn-cookies-manager-form-setting"
@@ -1111,6 +1300,15 @@ class PN_COOKIES_MANAGER_Settings
         </form>
       </div>
     </div>
+
+    <?php if ( current_user_can( 'administrator' ) ) : ?>
+    <div class="pn-cookies-manager-max-width-1000 pn-cookies-manager-margin-auto" style="margin-top:20px;">
+      <a href="<?php echo esc_url( admin_url( 'admin.php?page=pn-cookies-manager-tests' ) ); ?>"
+         class="button button-secondary">
+        <?php esc_html_e( 'Run Tests', 'pn-cookies-manager' ); ?>
+      </a>
+    </div>
+    <?php endif; ?>
 
     <?php
     /* ── Recommended companion plugins ─────────────────────────── */
@@ -1270,6 +1468,7 @@ class PN_COOKIES_MANAGER_Settings
       'nonce' => wp_create_nonce('pn-cookies-manager-nonce'),
       'settingsPages' => $settings_pages,
       'i18n' => [
+        'confirmHideBanner' => __('Are you sure you want to hide the banner image? You can re-enable it in System settings.', 'pn-cookies-manager'),
         'confirmImport' => __('This will overwrite your current settings. Continue?', 'pn-cookies-manager'),
         'importSuccess' => __('Settings imported successfully. Reloading...', 'pn-cookies-manager'),
         'importError' => __('Error importing settings.', 'pn-cookies-manager'),

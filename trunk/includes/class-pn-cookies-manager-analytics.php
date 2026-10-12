@@ -22,6 +22,7 @@ class PN_COOKIES_MANAGER_Analytics {
 	 * DB table name (without prefix).
 	 */
 	const TABLE = 'pncm_consent_analytics';
+	const LOG_TABLE = 'pncm_consent_log';
 
 	/**
 	 * Create / update the analytics table via dbDelta.
@@ -54,6 +55,158 @@ class PN_COOKIES_MANAGER_Analytics {
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
+	}
+
+	/**
+	 * Create consent log table for individual proof records.
+	 *
+	 * @since 1.1.0
+	 */
+	public static function pn_cookies_manager_create_consent_log_table() {
+		global $wpdb;
+
+		$table_name      = $wpdb->prefix . self::LOG_TABLE;
+		$charset_collate = $wpdb->get_charset_collate();
+
+		$sql = "CREATE TABLE {$table_name} (
+			id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+			consent_timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			consent_hash VARCHAR(64) NOT NULL,
+			consent_version VARCHAR(32) NOT NULL,
+			categories TEXT NOT NULL,
+			ip_hash VARCHAR(64) DEFAULT NULL,
+			user_agent_hash VARCHAR(64) DEFAULT NULL,
+			consent_type VARCHAR(20) NOT NULL DEFAULT 'custom',
+			region VARCHAR(5) DEFAULT NULL,
+			gpc_signal TINYINT(1) DEFAULT 0,
+			PRIMARY KEY  (id),
+			KEY idx_timestamp (consent_timestamp),
+			KEY idx_consent_hash (consent_hash)
+		) {$charset_collate};";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
+	/**
+	 * Get policy version hash based on banner message and cookie count.
+	 *
+	 * @since 1.1.0
+	 * @return string 32-char hash representing current policy version.
+	 */
+	public static function get_policy_version() {
+		$banner_message = get_option( 'pn_cookies_manager_banner_message', '' );
+		$cookie_count = 0;
+		$categories = array( 'necessary', 'functional', 'analytics', 'performance', 'advertising' );
+		foreach ( $categories as $cat ) {
+			$ids = get_option( 'pn_cookies_manager_cookies_' . $cat . '_id', array() );
+			if ( is_array( $ids ) ) {
+				$cookie_count += count( $ids );
+			}
+		}
+		return substr( hash( 'sha256', $banner_message . $cookie_count ), 0, 32 );
+	}
+
+	/**
+	 * Log individual consent for proof records.
+	 *
+	 * @since 1.1.0
+	 * @param array  $consent      Consent categories array.
+	 * @param string $consent_type Type of consent action.
+	 * @param string $region       User region code.
+	 * @param bool   $gpc          Whether GPC signal was active.
+	 */
+	public function log_individual_consent( $consent, $consent_type, $region = '', $gpc = false ) {
+		global $wpdb;
+		$table_name = $wpdb->prefix . self::LOG_TABLE;
+
+		$ip = '';
+		if ( isset( $_SERVER['REMOTE_ADDR'] ) ) {
+			$ip = sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) );
+		}
+		$ua = '';
+		if ( isset( $_SERVER['HTTP_USER_AGENT'] ) ) {
+			$ua = sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) );
+		}
+
+		$wpdb->insert(
+			$table_name,
+			array(
+				'consent_timestamp' => current_time( 'mysql' ),
+				'consent_hash'      => hash( 'sha256', time() . wp_rand() ),
+				'consent_version'   => self::get_policy_version(),
+				'categories'        => wp_json_encode( $consent ),
+				'ip_hash'           => hash( 'sha256', $ip . wp_salt() ),
+				'user_agent_hash'   => hash( 'sha256', $ua . wp_salt() ),
+				'consent_type'      => $consent_type,
+				'region'            => $region ? substr( $region, 0, 5 ) : null,
+				'gpc_signal'        => $gpc ? 1 : 0,
+			),
+			array( '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d' )
+		);
+	}
+
+	/**
+	 * Export consent log to CSV.
+	 *
+	 * @since 1.1.0
+	 * @param array $args Query arguments (date_from, date_to).
+	 * @return string CSV content.
+	 */
+	public function export_consent_log( $args = array() ) {
+		global $wpdb;
+		$table_name = $wpdb->prefix . self::LOG_TABLE;
+
+		$where = '1=1';
+		$params = array();
+		if ( ! empty( $args['date_from'] ) ) {
+			$where .= ' AND consent_timestamp >= %s';
+			$params[] = $args['date_from'];
+		}
+		if ( ! empty( $args['date_to'] ) ) {
+			$where .= ' AND consent_timestamp <= %s';
+			$params[] = $args['date_to'];
+		}
+
+		$query = "SELECT consent_timestamp, consent_hash, consent_version, categories, consent_type, region, gpc_signal FROM {$table_name} WHERE {$where} ORDER BY consent_timestamp DESC LIMIT 10000";
+
+		if ( ! empty( $params ) ) {
+			$query = $wpdb->prepare( $query, $params ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		}
+
+		$rows = $wpdb->get_results( $query, ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+
+		$csv = '"Timestamp","Consent Hash","Policy Version","Categories","Consent Type","Region","GPC Signal"' . "\n";
+		if ( $rows ) {
+			foreach ( $rows as $row ) {
+				$csv .= '"' . esc_html( $row['consent_timestamp'] ) . '",';
+				$csv .= '"' . esc_html( $row['consent_hash'] ) . '",';
+				$csv .= '"' . esc_html( $row['consent_version'] ) . '",';
+				$csv .= '"' . esc_html( $row['categories'] ) . '",';
+				$csv .= '"' . esc_html( $row['consent_type'] ) . '",';
+				$csv .= '"' . esc_html( $row['region'] ) . '",';
+				$csv .= '"' . esc_html( $row['gpc_signal'] ) . '"' . "\n";
+			}
+		}
+		return $csv;
+	}
+
+	/**
+	 * Purge old consent log entries.
+	 *
+	 * @since 1.1.0
+	 * @param int $retention_days Number of days to retain.
+	 * @return int Number of rows deleted.
+	 */
+	public function purge_consent_log( $retention_days = 730 ) {
+		global $wpdb;
+		$table_name = $wpdb->prefix . self::LOG_TABLE;
+		$cutoff = gmdate( 'Y-m-d H:i:s', strtotime( "-{$retention_days} days" ) );
+
+		return $wpdb->query( $wpdb->prepare(
+			"DELETE FROM {$table_name} WHERE consent_timestamp < %s", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$cutoff
+		) );
 	}
 
 	/**
@@ -124,7 +277,7 @@ class PN_COOKIES_MANAGER_Analytics {
 		$consent_type = isset( $_POST['consent_type'] ) ? sanitize_text_field( wp_unslash( $_POST['consent_type'] ) ) : '';
 		$categories   = isset( $_POST['categories'] ) ? json_decode( sanitize_text_field( wp_unslash( $_POST['categories'] ) ), true ) : [];
 
-		if ( ! in_array( $consent_type, [ 'accept_all', 'reject_all', 'custom' ], true ) ) {
+		if ( ! in_array( $consent_type, [ 'accept_all', 'reject_all', 'custom', 'gpc' ], true ) ) {
 			wp_send_json_error( 'Invalid consent type', 400 );
 		}
 
@@ -185,6 +338,19 @@ class PN_COOKIES_MANAGER_Analytics {
 			$reject_val,
 			$custom_val
 		) );
+
+		// Log individual consent for proof records
+		$region = isset( $_POST['region'] ) ? sanitize_text_field( wp_unslash( $_POST['region'] ) ) : '';
+		$gpc = $consent_type === 'gpc';
+		$this->log_individual_consent( $categories, $consent_type, $region, $gpc );
+
+		// Sync with WP Consent API if available
+		if ( class_exists( 'PN_COOKIES_MANAGER_WP_Consent_API' ) ) {
+			$wp_consent = new PN_COOKIES_MANAGER_WP_Consent_API();
+			if ( $wp_consent->is_active() ) {
+				$wp_consent->sync_consent( $categories );
+			}
+		}
 
 		wp_send_json_success();
 	}
@@ -430,6 +596,32 @@ class PN_COOKIES_MANAGER_Analytics {
 	 * @since 1.1.0
 	 */
 	public function pn_cookies_manager_analytics_page() {
+		// Handle consent log export
+		if (
+			isset( $_POST['pncm_export_log'] ) &&
+			isset( $_POST['_wpnonce'] ) &&
+			wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ), 'pncm_export_log' ) &&
+			current_user_can( 'manage_pn_cookies_manager_options' )
+		) {
+			$csv = $this->export_consent_log();
+			header( 'Content-Type: text/csv; charset=utf-8' );
+			header( 'Content-Disposition: attachment; filename=pncm-consent-log-' . gmdate( 'Y-m-d' ) . '.csv' );
+			echo $csv; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			exit;
+		}
+
+		// Handle consent log purge
+		if (
+			isset( $_POST['pncm_purge_log'] ) &&
+			isset( $_POST['_wpnonce'] ) &&
+			wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ), 'pncm_purge_log' ) &&
+			current_user_can( 'manage_pn_cookies_manager_options' )
+		) {
+			$retention = isset( $_POST['pncm_retention_days'] ) ? absint( $_POST['pncm_retention_days'] ) : 730;
+			$deleted = $this->purge_consent_log( $retention );
+			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html( sprintf( __( '%d consent log entries purged.', 'pn-cookies-manager' ), $deleted ) ) . '</p></div>';
+		}
+
 		// Handle clear analytics data request
 		if (
 			isset( $_POST['pncm_clear_analytics'] ) &&
@@ -483,6 +675,29 @@ class PN_COOKIES_MANAGER_Analytics {
 						<?php esc_html_e( 'Clear analytics data', 'pn-cookies-manager' ); ?>
 					</button>
 				</form>
+			</div>
+
+			<!-- Consent Proof Log -->
+			<div class="pncm-analytics-log pn-cookies-manager-mb-30">
+				<h2 class="pn-cookies-manager-mb-20"><?php esc_html_e( 'Consent Proof Log', 'pn-cookies-manager' ); ?></h2>
+				<p class="pn-cookies-manager-mb-20"><?php esc_html_e( 'Individual consent records for compliance proof. Data is hashed for privacy.', 'pn-cookies-manager' ); ?></p>
+				<div style="display:flex;gap:20px;flex-wrap:wrap;">
+					<form method="post" style="display:inline;">
+						<?php wp_nonce_field( 'pncm_export_log' ); ?>
+						<button type="submit" name="pncm_export_log" value="1" class="pn-cookies-manager-btn pn-cookies-manager-btn-mini">
+							<?php esc_html_e( 'Export CSV', 'pn-cookies-manager' ); ?>
+						</button>
+					</form>
+					<form method="post" style="display:inline-flex;align-items:center;gap:8px;">
+						<?php wp_nonce_field( 'pncm_purge_log' ); ?>
+						<label for="pncm_retention_days"><?php esc_html_e( 'Purge entries older than', 'pn-cookies-manager' ); ?></label>
+						<input type="number" name="pncm_retention_days" id="pncm_retention_days" value="730" min="30" max="3650" style="width:80px;">
+						<span><?php esc_html_e( 'days', 'pn-cookies-manager' ); ?></span>
+						<button type="submit" name="pncm_purge_log" value="1" class="pncm-analytics-clear__btn" onclick="return confirm('<?php echo esc_js( __( 'Are you sure you want to purge old consent log entries?', 'pn-cookies-manager' ) ); ?>');">
+							<?php esc_html_e( 'Purge', 'pn-cookies-manager' ); ?>
+						</button>
+					</form>
+				</div>
 			</div>
 
 		</div>

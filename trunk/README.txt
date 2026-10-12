@@ -4,7 +4,7 @@ Donate link: https://padresenlanube.com/
 Tags: cookie consent, gdpr, ccpa, privacy, cookie banner
 Requires at least: 3.5
 Tested up to: 7.0
-Stable tag: 1.0.46
+Stable tag: 1.0.50
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Manage cookies on your website. Configure cookie consent banners, categorize cookies, and ensure compliance with privacy regulations.
@@ -66,19 +66,62 @@ Display a fully customizable cookie consent banner, register the cookies your si
 * All colors applied via CSS custom properties for consistent theming.
 * Admin preview button to see how the banner will look before publishing.
 
+= Preventive Script & Iframe Blocking =
+
+* Block third-party scripts and iframes from loading before the user gives consent.
+* Configurable URL patterns per category (analytics, advertising, performance, functional) with sensible defaults.
+* Re-enable scripts and restore iframes automatically after consent is granted.
+* MutationObserver intercepts dynamically injected scripts that match blocking patterns.
+* Automatic deletion of known tracking cookies (GA, Facebook, HotJar, Clarity, etc.) when a user revokes consent.
+
 = Google Consent Mode v2 =
 
-* Built-in Google Consent Mode v2 integration.
+* Built-in Google Consent Mode v2 integration with Basic and Advanced mode selector.
+* Advanced mode: tags load with denied state and update on consent (default). Basic mode: tags are completely blocked until consent.
+* Regional consent defaults based on user geolocation (Cloudflare, Vercel, GeoIP headers) with EU/EEA country list.
+* Three regional modes: Strict (all denied), Mixed (EU denied, rest granted), Lenient (all granted).
 * Outputs default consent state in the page head before any Google tag scripts load.
 * Automatically updates consent signals (ad_storage, ad_user_data, ad_personalization, analytics_storage, functionality_storage, personalization_storage) when visitors change their preferences.
 * Works with Google Analytics 4, Google Ads, and Google Tag Manager.
 
+= Global Privacy Control (GPC) =
+
+* Detect the browser GPC signal (navigator.globalPrivacyControl) and automatically apply opt-out consent.
+* When GPC is active on a new visitor, analytics and advertising are denied without showing the banner.
+* Respects explicit user choices: if a consent cookie already exists, GPC does not override it.
+* Configurable toggle in Privacy & Compliance settings.
+
+= WP Consent API Integration =
+
+* Automatically syncs consent state with the WP Consent API plugin when active.
+* Maps plugin categories to WP Consent API types (functional→preferences, analytics→statistics, performance→statistics-anonymous, advertising→marketing).
+
+= Individual Consent Proof Logging =
+
+* Privacy-safe individual consent records for compliance proof with hashed IP and user agent.
+* Each record includes consent hash, policy version, categories, consent type, region, and GPC signal.
+* Policy version hash based on banner message and total registered cookie count.
+* Export consent log to CSV from the Analytics admin page.
+* Configurable retention period with purge function (default 730 days).
+
 = Privacy & Compliance =
 
 * Configurable consent cookie duration (1-395 days) following GDPR/CNIL/EDPB guidelines (max 13 months recommended).
+* Secure flag on consent cookie when site is served over HTTPS.
 * Privacy Policy link option in the banner.
 * Consent stored in a browser cookie (no server-side tracking).
+* SSRF protection in the cookie scanner: URL validation, private IP rejection, SSL verification, and redirect blocking.
 * All banner texts are translatable by default; custom text overrides are also supported.
+
+= Accessibility =
+
+* Full ARIA support: aria-labelledby, aria-describedby, aria-expanded, aria-controls, and role attributes on all interactive elements.
+* Focus management: saves and restores focus when opening/closing banner and settings panel.
+* Focus trap in the settings panel to prevent tabbing outside the dialog.
+* Keyboard navigation: Enter/Space to toggle category sections.
+* :focus-visible outline styles on all interactive elements.
+* Respects prefers-reduced-motion to disable animations.
+* Respects prefers-contrast for enhanced high contrast mode.
 
 = Translations =
 
@@ -145,6 +188,41 @@ For support, visit the plugin's support forum on WordPress.org or contact us at 
 
 
 == Changelog ==
+
+= 1.0.50 =
+
+* Add Secure flag to the consent cookie when site is served over HTTPS
+* Add SSRF protection to the cookie scanner: validate URLs against site host, reject private/reserved IP ranges, disable redirect following, and enable SSL verification
+* Propagate scanner errors to the admin UI with differentiated error messages per URL
+* Add preventive script and iframe blocking before user consent via new Script Blocker class
+* Add admin settings section to configure blocking patterns per category with sensible defaults
+* Add toggle to enable/disable script blocking globally
+* Re-enable blocked scripts and restore iframe sources client-side when the user grants consent
+* Add MutationObserver to intercept and block dynamically injected scripts that match blocking patterns
+* Delete known tracking cookies client-side when a user revokes consent for a category
+* Add Google Consent Mode v2 Basic/Advanced mode selector
+* Add regional consent defaults based on user geolocation with EU/EEA country list
+* Add regional defaults mode selector: Strict, Mixed, and Lenient
+* Add geolocation fallback setting for when user region cannot be detected
+* Add Global Privacy Control (GPC) support with automatic opt-out consent
+* Add GPC toggle in Privacy & Compliance settings section
+* Add WP Consent API integration with category mapping and consent sync
+* Add individual consent proof logging table with hashed IP, user agent, consent hash, policy version, categories, consent type, region, and GPC signal
+* Add policy version hash based on banner message content and registered cookie count
+* Add consent log CSV export from the Analytics admin page
+* Add consent log purge with configurable retention period from the Analytics admin page
+* Add ARIA attributes to the cookie banner for screen reader support
+* Add focus management and focus trap in the settings panel
+* Add keyboard accessibility for category headers
+* Add :focus-visible, prefers-reduced-motion, and prefers-contrast CSS support
+* Add hideable settings banner image with close button and AJAX persistence
+* Add Script Blocking and Privacy & Compliance settings sections
+* Add Tests submenu page under Cookies Manager for administrators
+* Add standalone test runner with tests for scanner security, consent cookies, GCM signals, and consent logging
+* Add file upload input type, section labels, and colored section headers in the forms builder
+* Fix default value logic for options to only apply defaults when get_option returns false
+* Fix unsaved changes warning appearing on page load due to browser normalizing color input values
+* Fix tutorial completion handler to pass boolean directly
 
 = 1.0.46 =
 

@@ -1,0 +1,15 @@
+{
+  "name": "padresenlanube/pn-cookies-manager",
+  "description": "PN Cookies Manager - Cookie consent management for WordPress",
+  "type": "wordpress-plugin",
+  "license": "GPL-2.0-or-later",
+  "require-dev": {
+    "phpunit/phpunit": "^9.5",
+    "yoast/phpunit-polyfills": "^1.0"
+  },
+  "autoload-dev": {
+    "classmap": [
+      "tests/"
+    ]
+  }
+}

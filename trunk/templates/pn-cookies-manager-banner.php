@@ -148,16 +148,16 @@ $pn_cookies_manager_save_text = __('Save preferences', 'pn-cookies-manager');
 <div class="pn-cookies-manager-banner-overlay" aria-hidden="true"></div>
 
 <!-- Cookie Banner -->
-<div class="<?php echo esc_attr($pn_cookies_manager_banner_classes); ?>" role="dialog" aria-label="<?php esc_attr_e('Cookie consent', 'pn-cookies-manager'); ?>" aria-modal="false">
+<div class="<?php echo esc_attr($pn_cookies_manager_banner_classes); ?>" role="dialog" aria-labelledby="pn-cookies-manager-banner-title" aria-describedby="pn-cookies-manager-banner-message" aria-modal="false">
   <?php if (!empty($pn_cookies_manager_title)) : ?>
-    <h3 class="pn-cookies-manager-banner-title"><?php echo esc_html($pn_cookies_manager_title); ?></h3>
+    <h3 class="pn-cookies-manager-banner-title" id="pn-cookies-manager-banner-title"><?php echo esc_html($pn_cookies_manager_title); ?></h3>
   <?php endif; ?>
 
-  <p class="pn-cookies-manager-banner-message"><?php echo esc_html($pn_cookies_manager_message); ?></p>
+  <p class="pn-cookies-manager-banner-message" id="pn-cookies-manager-banner-message"><?php echo esc_html($pn_cookies_manager_message); ?></p>
 
   <?php if (!empty($pn_cookies_manager_privacy_url)) : ?>
     <p class="pn-cookies-manager-banner-privacy">
-      <a href="<?php echo esc_url($pn_cookies_manager_privacy_url); ?>" target="_blank" rel="noopener noreferrer">
+      <a href="<?php echo esc_url($pn_cookies_manager_privacy_url); ?>" target="_blank" rel="noopener noreferrer" aria-label="<?php esc_attr_e('Privacy Policy (opens in new tab)', 'pn-cookies-manager'); ?>">
         <?php esc_html_e('Privacy Policy', 'pn-cookies-manager'); ?>
       </a>
     </p>
@@ -177,16 +177,16 @@ $pn_cookies_manager_save_text = __('Save preferences', 'pn-cookies-manager');
 </div>
 
 <!-- Cookie Settings Panel -->
-<div class="pn-cookies-manager-settings-panel" role="dialog" aria-label="<?php esc_attr_e('Cookie preferences', 'pn-cookies-manager'); ?>" aria-modal="true">
+<div class="pn-cookies-manager-settings-panel" role="dialog" aria-labelledby="pn-cookies-manager-settings-title" aria-modal="true">
   <div class="pn-cookies-manager-settings-panel-header">
-    <h3 class="pn-cookies-manager-settings-panel-title"><?php echo esc_html($pn_cookies_manager_settings_text); ?></h3>
+    <h3 class="pn-cookies-manager-settings-panel-title" id="pn-cookies-manager-settings-title"><?php echo esc_html($pn_cookies_manager_settings_text); ?></h3>
     <button type="button" class="pn-cookies-manager-settings-panel-close" aria-label="<?php esc_attr_e('Close', 'pn-cookies-manager'); ?>">&times;</button>
   </div>
 
   <div class="pn-cookies-manager-settings-panel-body">
     <?php foreach ($pn_cookies_manager_categories_data as $pn_cookies_manager_cat_key => $pn_cookies_manager_cat) : ?>
       <div class="pn-cookies-manager-category" data-category="<?php echo esc_attr($pn_cookies_manager_cat_key); ?>">
-        <div class="pn-cookies-manager-category-header">
+        <div class="pn-cookies-manager-category-header" role="button" tabindex="0" aria-expanded="false" aria-controls="pn-cookies-manager-cat-<?php echo esc_attr($pn_cookies_manager_cat_key); ?>-content">
           <div class="pn-cookies-manager-category-info">
             <p class="pn-cookies-manager-category-name"><?php echo esc_html($pn_cookies_manager_cat['label']); ?></p>
             <p class="pn-cookies-manager-category-desc"><?php echo esc_html($pn_cookies_manager_cat['description']); ?></p>
@@ -203,7 +203,7 @@ $pn_cookies_manager_save_text = __('Save preferences', 'pn-cookies-manager');
         </div>
 
         <?php if (!empty($pn_cookies_manager_cat['cookies'])) : ?>
-          <div class="pn-cookies-manager-category-cookies">
+          <div class="pn-cookies-manager-category-cookies" id="pn-cookies-manager-cat-<?php echo esc_attr($pn_cookies_manager_cat_key); ?>-content" role="region">
             <table class="pn-cookies-manager-cookie-table">
               <thead>
                 <tr>
@@ -224,7 +224,7 @@ $pn_cookies_manager_save_text = __('Save preferences', 'pn-cookies-manager');
             </table>
           </div>
         <?php else : ?>
-          <div class="pn-cookies-manager-category-cookies">
+          <div class="pn-cookies-manager-category-cookies" id="pn-cookies-manager-cat-<?php echo esc_attr($pn_cookies_manager_cat_key); ?>-content" role="region">
             <p class="pn-cookies-manager-category-empty pn-cookies-manager-pt-20"><?php esc_html_e('No cookies registered in this category.', 'pn-cookies-manager'); ?></p>
           </div>
         <?php endif; ?>

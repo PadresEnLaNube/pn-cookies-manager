@@ -68,7 +68,7 @@ class PN_COOKIES_MANAGER_Forms {
 
     // If no value is found and there's a default value in the input config, use it
     // BUT NOT for checkboxes in multiple fields, as empty string and 'off' are valid states (unchecked)
-    if (empty($current_value) && !empty($pn_cookies_manager_input['value'])) {
+    if ($current_value === false && !empty($pn_cookies_manager_input['value'])) {
       // For checkboxes in multiple fields, don't override empty values or 'off' with default
       if (!($pn_cookies_manager_meta_array && isset($pn_cookies_manager_input['type']) && $pn_cookies_manager_input['type'] === 'checkbox')) {
         $current_value = $pn_cookies_manager_input['value'];
@@ -93,15 +93,29 @@ class PN_COOKIES_MANAGER_Forms {
       case 'input':        
         switch ($pn_cookies_manager_input['type']) {
           case 'file':
-            ?>
-              <?php if (empty($pn_cookies_manager_value)): ?>
-                <p class="pn-cookies-manager-m-10"><?php esc_html_e('No file found', 'pn-cookies-manager'); ?></p>
-              <?php else: ?>
-                <p class="pn-cookies-manager-m-10">
-                  <a href="<?php echo esc_url(get_post_meta($pn_cookies_manager_id, $pn_cookies_manager_input['id'], true)['url']); ?>" target="_blank"><?php echo esc_html(basename(get_post_meta($pn_cookies_manager_id, $pn_cookies_manager_input['id'], true)['url'])); ?></a>
-                </p>
-              <?php endif ?>
-            <?php
+            if (!empty($pn_cookies_manager_input['upload'])) {
+              ?>
+                <input
+                  id="<?php echo esc_attr($pn_cookies_manager_input['id']); ?>"
+                  name="<?php echo esc_attr($pn_cookies_manager_input['id']); ?>"
+                  class="pn-cookies-manager-field <?php echo array_key_exists('class', $pn_cookies_manager_input) ? esc_attr($pn_cookies_manager_input['class']) : ''; ?>"
+                  type="file"
+                  <?php echo (!empty($pn_cookies_manager_input['accept']) ? 'accept="' . esc_attr($pn_cookies_manager_input['accept']) . '"' : ''); ?>
+                  <?php echo ((array_key_exists('required', $pn_cookies_manager_input) && $pn_cookies_manager_input['required'] == true) ? 'required' : ''); ?>
+                  <?php echo (((array_key_exists('disabled', $pn_cookies_manager_input) && $pn_cookies_manager_input['disabled'] == 'true') || $disabled) ? 'disabled' : ''); ?>
+                />
+              <?php
+            } else {
+              ?>
+                <?php if (empty($pn_cookies_manager_value)): ?>
+                  <p class="pn-cookies-manager-m-10"><?php esc_html_e('No file found', 'pn-cookies-manager'); ?></p>
+                <?php else: ?>
+                  <p class="pn-cookies-manager-m-10">
+                    <a href="<?php echo esc_url(get_post_meta($pn_cookies_manager_id, $pn_cookies_manager_input['id'], true)['url']); ?>" target="_blank"><?php echo esc_html(basename(get_post_meta($pn_cookies_manager_id, $pn_cookies_manager_input['id'], true)['url'])); ?></a>
+                  </p>
+                <?php endif ?>
+              <?php
+            }
             break;
           case 'checkbox':
             ?>
@@ -327,9 +341,12 @@ class PN_COOKIES_MANAGER_Forms {
                 <?php echo (isset($pn_cookies_manager_input['min']) ? 'min="' . esc_attr($pn_cookies_manager_input['min']) . '"' : ''); ?>
                 <?php echo (isset($pn_cookies_manager_input['maxlength']) ? 'maxlength="' . esc_attr($pn_cookies_manager_input['maxlength']) . '"' : ''); ?>
                 <?php echo (isset($pn_cookies_manager_input['pattern']) ? 'pattern="' . esc_attr($pn_cookies_manager_input['pattern']) . '"' : ''); ?>
-                
+                <?php echo (isset($pn_cookies_manager_input['accept']) ? 'accept="' . esc_attr($pn_cookies_manager_input['accept']) . '"' : ''); ?>
+
                 <?php /* Content attributes */ ?>
+                <?php if ($pn_cookies_manager_input['type'] !== 'file'): ?>
                 value="<?php echo (!empty($pn_cookies_manager_input['button_text']) ? esc_html($pn_cookies_manager_input['button_text']) : esc_html($pn_cookies_manager_value)); ?>"
+                <?php endif; ?>
                 placeholder="<?php echo (array_key_exists('placeholder', $pn_cookies_manager_input) ? esc_html($pn_cookies_manager_input['placeholder']) : ''); ?>"
                 
                 <?php /* Custom data attributes */ ?>
@@ -873,18 +890,34 @@ class PN_COOKIES_MANAGER_Forms {
 
   public static function pn_cookies_manager_input_wrapper_builder($input_array, $type, $pn_cookies_manager_id = 0, $disabled = 0, $pn_cookies_manager_format = 'half'){
     ?>
-      <?php if (array_key_exists('section', $input_array) && !empty($input_array['section'])): ?>      
-        <?php if ($input_array['section'] == 'start'): ?>
-          <div class="pn-cookies-manager-toggle-wrapper pn-cookies-manager-section-wrapper pn-cookies-manager-position-relative <?php echo array_key_exists('class', $input_array) ? esc_attr($input_array['class']) : ''; ?>" id="<?php echo array_key_exists('id', $input_array) ? esc_attr($input_array['id']) : ''; ?>">
-            <a href="#" class="pn-cookies-manager-toggle pn-cookies-manager-width-100-percent pn-cookies-manager-text-decoration-none">
-              <div class="pn-cookies-manager-display-table pn-cookies-manager-width-100-percent pn-cookies-manager-mb-20">
-                <div class="pn-cookies-manager-display-inline-table pn-cookies-manager-width-90-percent">
-                  <label class="pn-cookies-manager-cursor-pointer pn-cookies-manager-mb-20 pn-cookies-manager-color-main-0"><?php echo wp_kses_post($input_array['label']); ?></label>
-                </div>
-                <div class="pn-cookies-manager-display-inline-table pn-cookies-manager-width-10-percent pn-cookies-manager-text-align-right">
-                  <i class="material-icons-outlined pn-cookies-manager-cursor-pointer pn-cookies-manager-color-main-0">add</i>
-                </div>
+      <?php if (array_key_exists('section', $input_array) && !empty($input_array['section'])): ?>
+        <?php if ($input_array['section'] == 'label'): ?>
+              <?php $label_color = !empty($input_array['section_color']) ? $input_array['section_color'] : '#7c3aed'; ?>
+              <div class="pn-cookies-manager-sections-label" style="background: <?php echo esc_attr($label_color); ?>;">
+                <span><?php echo wp_kses_post($input_array['label']); ?></span>
               </div>
+        <?php elseif ($input_array['section'] == 'start'): ?>
+          <?php $section_color = !empty($input_array['section_color']) ? $input_array['section_color'] : ''; ?>
+          <div
+            class="pn-cookies-manager-toggle-wrapper pn-cookies-manager-section-wrapper pn-cookies-manager-position-relative pn-cookies-manager-mb-10 <?php echo $section_color ? 'pn-cookies-manager-section-colored' : ''; ?> <?php echo array_key_exists('class', $input_array) ? esc_attr($input_array['class']) : ''; ?>"
+            id="<?php echo array_key_exists('id', $input_array) ? esc_attr($input_array['id']) : ''; ?>"
+            <?php echo $section_color ? 'style="--pn-cookies-manager-section-color: ' . esc_attr($section_color) . '"' : ''; ?>>
+            <a href="#" class="pn-cookies-manager-toggle pn-cookies-manager-width-100-percent pn-cookies-manager-text-decoration-none">
+              <?php if ($section_color): ?>
+                <div class="pn-cookies-manager-section-header">
+                  <label class="pn-cookies-manager-cursor-pointer"><?php echo wp_kses_post($input_array['label']); ?></label>
+                  <i class="material-icons-outlined pn-cookies-manager-cursor-pointer">add</i>
+                </div>
+              <?php else: ?>
+                <div class="pn-cookies-manager-display-table pn-cookies-manager-width-100-percent pn-cookies-manager-mb-20">
+                  <div class="pn-cookies-manager-display-inline-table pn-cookies-manager-width-90-percent">
+                    <label class="pn-cookies-manager-cursor-pointer pn-cookies-manager-mb-20 pn-cookies-manager-color-main-0"><?php echo wp_kses_post($input_array['label']); ?></label>
+                  </div>
+                  <div class="pn-cookies-manager-display-inline-table pn-cookies-manager-width-10-percent pn-cookies-manager-text-align-right">
+                    <i class="material-icons-outlined pn-cookies-manager-cursor-pointer pn-cookies-manager-color-main-0">add</i>
+                  </div>
+                </div>
+              <?php endif; ?>
             </a>
 
             <div class="pn-cookies-manager-content pn-cookies-manager-pl-10 pn-cookies-manager-toggle-content pn-cookies-manager-mb-20 pn-cookies-manager-display-none-soft">
@@ -899,9 +932,9 @@ class PN_COOKIES_MANAGER_Forms {
           </div>
         <?php endif ?>
       <?php else: ?>
-        <div class="pn-cookies-manager-input-wrapper <?php echo esc_attr($input_array['id']); ?> <?php echo !empty($input_array['tabs']) ? 'pn-cookies-manager-input-tabbed' : ''; ?> pn-cookies-manager-input-field-<?php echo esc_attr($input_array['input']); ?> <?php echo (!empty($input_array['required']) && $input_array['required'] == true) ? 'pn-cookies-manager-input-field-required' : ''; ?> <?php echo ($disabled) ? 'pn-cookies-manager-input-field-disabled' : ''; ?>">
+        <div class="pn-cookies-manager-input-wrapper pn-cookies-manager-mb-10 <?php echo esc_attr($input_array['id']); ?> <?php echo !empty($input_array['tabs']) ? 'pn-cookies-manager-input-tabbed' : ''; ?> pn-cookies-manager-input-field-<?php echo esc_attr($input_array['input']); ?> <?php echo (!empty($input_array['required']) && $input_array['required'] == true) ? 'pn-cookies-manager-input-field-required' : ''; ?> <?php echo ($disabled) ? 'pn-cookies-manager-input-field-disabled' : ''; ?>">
           <?php if (array_key_exists('label', $input_array) && !empty($input_array['label'])): ?>
-            <div class="pn-cookies-manager-display-inline-table <?php echo (($pn_cookies_manager_format == 'half' && !(array_key_exists('type', $input_array) && $input_array['type'] == 'submit')) ? 'pn-cookies-manager-width-40-percent' : 'pn-cookies-manager-width-100-percent'); ?> pn-cookies-manager-tablet-display-block pn-cookies-manager-tablet-width-100-percent pn-cookies-manager-vertical-align-top">
+            <div class="pn-cookies-manager-display-inline-table <?php echo (($pn_cookies_manager_format == 'half' && !(array_key_exists('type', $input_array) && $input_array['type'] == 'submit') && !(array_key_exists('input', $input_array) && $input_array['input'] == 'button')) ? 'pn-cookies-manager-width-40-percent' : 'pn-cookies-manager-width-100-percent'); ?> pn-cookies-manager-tablet-display-block pn-cookies-manager-tablet-width-100-percent pn-cookies-manager-vertical-align-top">
               <div class="pn-cookies-manager-p-10 <?php echo (array_key_exists('parent', $input_array) && !empty($input_array['parent']) && $input_array['parent'] != 'this') ? 'pn-cookies-manager-pl-30' : ''; ?>">
                 <label class="pn-cookies-manager-vertical-align-middle pn-cookies-manager-display-block <?php echo (array_key_exists('description', $input_array) && !empty($input_array['description'])) ? 'pn-cookies-manager-toggle' : ''; ?>" for="<?php echo esc_attr($input_array['id']); ?>"><?php echo wp_kses($input_array['label'], PN_COOKIES_MANAGER_KSES); ?> <?php echo (array_key_exists('required', $input_array) && !empty($input_array['required']) && $input_array['required'] == true) ? '<span class="pn-cookies-manager-tooltip" title="' . esc_html(__('Required field', 'pn-cookies-manager')) . '">*</span>' : ''; ?><?php echo (array_key_exists('description', $input_array) && !empty($input_array['description'])) ? '<i class="material-icons-outlined pn-cookies-manager-cursor-pointer pn-cookies-manager-float-right">add</i>' : ''; ?></label>
 
@@ -914,7 +947,7 @@ class PN_COOKIES_MANAGER_Forms {
             </div>
           <?php endif ?>
 
-          <div class="pn-cookies-manager-display-inline-table <?php echo ((array_key_exists('label', $input_array) && empty($input_array['label'])) ? 'pn-cookies-manager-width-100-percent' : (($pn_cookies_manager_format == 'half' && !(array_key_exists('type', $input_array) && $input_array['type'] == 'submit')) ? 'pn-cookies-manager-width-60-percent' : 'pn-cookies-manager-width-100-percent')); ?> pn-cookies-manager-tablet-display-block pn-cookies-manager-tablet-width-100-percent pn-cookies-manager-vertical-align-top">
+          <div class="pn-cookies-manager-display-inline-table <?php echo ((array_key_exists('label', $input_array) && empty($input_array['label'])) ? 'pn-cookies-manager-width-100-percent' : (($pn_cookies_manager_format == 'half' && !(array_key_exists('type', $input_array) && $input_array['type'] == 'submit') && !(array_key_exists('input', $input_array) && $input_array['input'] == 'button')) ? 'pn-cookies-manager-width-60-percent' : 'pn-cookies-manager-width-100-percent')); ?> pn-cookies-manager-tablet-display-block pn-cookies-manager-tablet-width-100-percent pn-cookies-manager-vertical-align-top">
             <div class="pn-cookies-manager-p-10 <?php echo (array_key_exists('parent', $input_array) && !empty($input_array['parent']) && $input_array['parent'] != 'this') ? 'pn-cookies-manager-pl-30' : ''; ?>">
               <div class="pn-cookies-manager-input-field"><?php self::pn_cookies_manager_input_builder($input_array, $type, $pn_cookies_manager_id, $disabled); ?></div>
             </div>
@@ -938,18 +971,34 @@ class PN_COOKIES_MANAGER_Forms {
   public static function pn_cookies_manager_input_display_wrapper($input_array, $type, $pn_cookies_manager_id = 0, $pn_cookies_manager_meta_array = 0, $pn_cookies_manager_array_index = 0, $pn_cookies_manager_format = 'half') {
     ob_start();
     ?>
-    <?php if (array_key_exists('section', $input_array) && !empty($input_array['section'])): ?>      
-      <?php if ($input_array['section'] == 'start'): ?>
-        <div class="pn-cookies-manager-toggle-wrapper pn-cookies-manager-section-wrapper pn-cookies-manager-position-relative <?php echo array_key_exists('class', $input_array) ? esc_attr($input_array['class']) : ''; ?>" id="<?php echo array_key_exists('id', $input_array) ? esc_attr($input_array['id']) : ''; ?>">
-          <a href="#" class="pn-cookies-manager-toggle pn-cookies-manager-width-100-percent pn-cookies-manager-text-decoration-none">
-            <div class="pn-cookies-manager-display-table pn-cookies-manager-width-100-percent pn-cookies-manager-mb-20">
-              <div class="pn-cookies-manager-display-inline-table pn-cookies-manager-width-90-percent">
-                <label class="pn-cookies-manager-cursor-pointer pn-cookies-manager-mb-20 pn-cookies-manager-color-main-0"><?php echo wp_kses($input_array['label'], PN_COOKIES_MANAGER_KSES); ?></label>
-              </div>
-              <div class="pn-cookies-manager-display-inline-table pn-cookies-manager-width-10-percent pn-cookies-manager-text-align-right">
-                <i class="material-icons-outlined pn-cookies-manager-cursor-pointer pn-cookies-manager-color-main-0">add</i>
-              </div>
+    <?php if (array_key_exists('section', $input_array) && !empty($input_array['section'])): ?>
+      <?php if ($input_array['section'] == 'label'): ?>
+            <?php $label_color = !empty($input_array['section_color']) ? $input_array['section_color'] : '#7c3aed'; ?>
+            <div class="pn-cookies-manager-sections-label" style="background: <?php echo esc_attr($label_color); ?>;">
+              <span><?php echo wp_kses_post($input_array['label']); ?></span>
             </div>
+      <?php elseif ($input_array['section'] == 'start'): ?>
+        <?php $section_color = !empty($input_array['section_color']) ? $input_array['section_color'] : ''; ?>
+        <div
+          class="pn-cookies-manager-toggle-wrapper pn-cookies-manager-section-wrapper pn-cookies-manager-position-relative pn-cookies-manager-mb-10 <?php echo $section_color ? 'pn-cookies-manager-section-colored' : ''; ?> <?php echo array_key_exists('class', $input_array) ? esc_attr($input_array['class']) : ''; ?>"
+          id="<?php echo array_key_exists('id', $input_array) ? esc_attr($input_array['id']) : ''; ?>"
+          <?php echo $section_color ? 'style="--pn-cookies-manager-section-color: ' . esc_attr($section_color) . '"' : ''; ?>>
+          <a href="#" class="pn-cookies-manager-toggle pn-cookies-manager-width-100-percent pn-cookies-manager-text-decoration-none">
+            <?php if ($section_color): ?>
+              <div class="pn-cookies-manager-section-header">
+                <label class="pn-cookies-manager-cursor-pointer"><?php echo wp_kses_post($input_array['label']); ?></label>
+                <i class="material-icons-outlined pn-cookies-manager-cursor-pointer">add</i>
+              </div>
+            <?php else: ?>
+              <div class="pn-cookies-manager-display-table pn-cookies-manager-width-100-percent pn-cookies-manager-mb-20">
+                <div class="pn-cookies-manager-display-inline-table pn-cookies-manager-width-90-percent">
+                  <label class="pn-cookies-manager-cursor-pointer pn-cookies-manager-mb-20 pn-cookies-manager-color-main-0"><?php echo wp_kses($input_array['label'], PN_COOKIES_MANAGER_KSES); ?></label>
+                </div>
+                <div class="pn-cookies-manager-display-inline-table pn-cookies-manager-width-10-percent pn-cookies-manager-text-align-right">
+                  <i class="material-icons-outlined pn-cookies-manager-cursor-pointer pn-cookies-manager-color-main-0">add</i>
+                </div>
+              </div>
+            <?php endif; ?>
           </a>
 
           <div class="pn-cookies-manager-content pn-cookies-manager-pl-10 pn-cookies-manager-toggle-content pn-cookies-manager-mb-20 pn-cookies-manager-display-none-soft">
@@ -964,7 +1013,7 @@ class PN_COOKIES_MANAGER_Forms {
         </div>
       <?php endif ?>
     <?php else: ?>
-      <div class="pn-cookies-manager-input-wrapper <?php echo esc_attr($input_array['id']); ?> pn-cookies-manager-input-display-<?php echo esc_attr($input_array['input']); ?> <?php echo (!empty($input_array['required']) && $input_array['required'] == true) ? 'pn-cookies-manager-input-field-required' : ''; ?>">
+      <div class="pn-cookies-manager-input-wrapper pn-cookies-manager-mb-10 <?php echo esc_attr($input_array['id']); ?> pn-cookies-manager-input-display-<?php echo esc_attr($input_array['input']); ?> <?php echo (!empty($input_array['required']) && $input_array['required'] == true) ? 'pn-cookies-manager-input-field-required' : ''; ?>">
         <?php if (array_key_exists('label', $input_array) && !empty($input_array['label'])): ?>
           <div class="pn-cookies-manager-display-inline-table <?php echo ($pn_cookies_manager_format == 'half' ? 'pn-cookies-manager-width-40-percent' : 'pn-cookies-manager-width-100-percent'); ?> pn-cookies-manager-tablet-display-block pn-cookies-manager-tablet-width-100-percent pn-cookies-manager-vertical-align-top">
             <div class="pn-cookies-manager-p-10 <?php echo (array_key_exists('parent', $input_array) && !empty($input_array['parent']) && $input_array['parent'] != 'this') ? 'pn-cookies-manager-pl-30' : ''; ?>">

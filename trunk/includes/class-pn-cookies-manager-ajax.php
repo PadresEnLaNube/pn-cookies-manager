@@ -181,6 +181,16 @@ class PN_COOKIES_MANAGER_Ajax {
 
           exit;
           break;
+        case 'pn_cookies_manager_hide_banner':
+          if (!current_user_can('manage_options')) {
+            echo wp_json_encode(['error_key' => 'permission_denied']);
+            exit;
+          }
+          update_option('pn_cookies_manager_show_banner', '');
+          echo wp_json_encode(['error_key' => '']);
+          exit;
+          break;
+
         case 'pn_cookies_manager_settings_export':
           if (!current_user_can('manage_options')) {
             echo wp_json_encode(['error_key' => 'permission_denied']);
@@ -672,8 +682,8 @@ class PN_COOKIES_MANAGER_Ajax {
           break;
 
         case 'pn_cookies_manager_complete_tutorial':
-          $completed = !empty($_POST['completed']) ? intval($_POST['completed']) : 0;
-          PN_COOKIES_MANAGER_Tutorial::mark_completed($completed ? true : false);
+          $completed = !empty($_POST['completed']) ? true : false;
+          PN_COOKIES_MANAGER_Tutorial::mark_completed($completed);
           echo wp_json_encode(['success' => true]);
           exit;
           break;
