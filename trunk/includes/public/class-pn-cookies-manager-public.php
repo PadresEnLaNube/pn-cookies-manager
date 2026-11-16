@@ -48,6 +48,55 @@ class PN_COOKIES_MANAGER_Public {
 	}
 
 	/**
+	 * Get all banner-related options in a single cached call.
+	 *
+	 * Reduces ~20 individual get_option() calls per frontend page load
+	 * to a single call on first access, then serves from static cache.
+	 *
+	 * @since 1.1.0
+	 * @return array Associative array of all banner option values.
+	 */
+	private static function get_banner_options() {
+		static $cache = null;
+		if ( null !== $cache ) {
+			return $cache;
+		}
+
+		$defaults = [
+			'pn_cookies_manager_banner_bg_color'          => '#ffffff',
+			'pn_cookies_manager_banner_text_color'        => '#333333',
+			'pn_cookies_manager_banner_btn_accept_bg'     => '#803300ff',
+			'pn_cookies_manager_banner_btn_accept_color'  => '#ffffff',
+			'pn_cookies_manager_banner_btn_reject_bg'     => '#e0e0e0',
+			'pn_cookies_manager_banner_btn_reject_color'  => '#333333',
+			'pn_cookies_manager_banner_btn_settings_color' => '#803300ff',
+			'pn_cookies_manager_banner_border_radius'     => '8',
+			'pn_cookies_manager_banner_reopen_color'      => '#803300ff',
+			'pn_cookies_manager_banner_overlay'           => '',
+			'pn_cookies_manager_banner_settings_text'     => '',
+			'pn_cookies_manager_banner_accept_text'       => '',
+			'pn_cookies_manager_banner_reject_text'       => '',
+			'pn_cookies_manager_cookie_expiry'            => '182',
+			'pn_cookies_manager_google_consent_mode'      => 'on',
+			'pn_cookies_manager_analytics_enabled'        => 'on',
+			'pn_cookies_manager_gpc_enabled'              => 'on',
+			'pn_cookies_manager_gcm_regional_defaults'    => 'strict',
+			'pn_cookies_manager_geo_fallback'             => 'strict',
+			'pn_cookies_manager_block_scripts_analytics'  => '',
+			'pn_cookies_manager_block_scripts_advertising' => '',
+			'pn_cookies_manager_block_scripts_performance' => '',
+			'pn_cookies_manager_block_scripts_functional' => '',
+		];
+
+		$cache = [];
+		foreach ( $defaults as $key => $default ) {
+			$cache[ $key ] = get_option( $key, $default );
+		}
+
+		return $cache;
+	}
+
+	/**
 	 * Register the stylesheets for the public-facing side of the site.
 	 *
 	 * @since    1.0.0
@@ -56,17 +105,19 @@ class PN_COOKIES_MANAGER_Public {
 		wp_enqueue_style($this->plugin_name . '-public', PN_COOKIES_MANAGER_URL . 'assets/css/public/pn-cookies-manager-public.css', [], $this->version, 'all');
 		wp_enqueue_style($this->plugin_name . '-banner', PN_COOKIES_MANAGER_URL . 'assets/css/public/pn-cookies-manager-banner.css', [], $this->version, 'all');
 
+		$opts = self::get_banner_options();
+
 		// Inject banner CSS custom properties for dynamic theming
 		$colors_map = [
-			'--pn-cookies-manager-banner-bg'                 => get_option('pn_cookies_manager_banner_bg_color', '#ffffff'),
-			'--pn-cookies-manager-banner-text-color'         => get_option('pn_cookies_manager_banner_text_color', '#333333'),
-			'--pn-cookies-manager-banner-btn-accept-bg'      => get_option('pn_cookies_manager_banner_btn_accept_bg', '#803300ff'),
-			'--pn-cookies-manager-banner-btn-accept-color'   => get_option('pn_cookies_manager_banner_btn_accept_color', '#ffffff'),
-			'--pn-cookies-manager-banner-btn-reject-bg'      => get_option('pn_cookies_manager_banner_btn_reject_bg', '#e0e0e0'),
-			'--pn-cookies-manager-banner-btn-reject-color'   => get_option('pn_cookies_manager_banner_btn_reject_color', '#333333'),
-			'--pn-cookies-manager-banner-btn-settings-color' => get_option('pn_cookies_manager_banner_btn_settings_color', '#803300ff'),
-			'--pn-cookies-manager-banner-radius'             => intval(get_option('pn_cookies_manager_banner_border_radius', '8')) . 'px',
-			'--pn-cookies-manager-banner-reopen-color'       => get_option('pn_cookies_manager_banner_reopen_color', '#803300ff'),
+			'--pn-cookies-manager-banner-bg'                 => $opts['pn_cookies_manager_banner_bg_color'],
+			'--pn-cookies-manager-banner-text-color'         => $opts['pn_cookies_manager_banner_text_color'],
+			'--pn-cookies-manager-banner-btn-accept-bg'      => $opts['pn_cookies_manager_banner_btn_accept_bg'],
+			'--pn-cookies-manager-banner-btn-accept-color'   => $opts['pn_cookies_manager_banner_btn_accept_color'],
+			'--pn-cookies-manager-banner-btn-reject-bg'      => $opts['pn_cookies_manager_banner_btn_reject_bg'],
+			'--pn-cookies-manager-banner-btn-reject-color'   => $opts['pn_cookies_manager_banner_btn_reject_color'],
+			'--pn-cookies-manager-banner-btn-settings-color' => $opts['pn_cookies_manager_banner_btn_settings_color'],
+			'--pn-cookies-manager-banner-radius'             => intval($opts['pn_cookies_manager_banner_border_radius']) . 'px',
+			'--pn-cookies-manager-banner-reopen-color'       => $opts['pn_cookies_manager_banner_reopen_color'],
 		];
 
 		$vars = [];
@@ -92,17 +143,18 @@ class PN_COOKIES_MANAGER_Public {
 
 		wp_enqueue_script($this->plugin_name . '-banner', PN_COOKIES_MANAGER_URL . 'assets/js/public/pn-cookies-manager-banner.js', ['jquery'], $this->version, ['in_footer' => true, 'strategy' => 'defer']);
 
-		$gcm_enabled = get_option('pn_cookies_manager_google_consent_mode', 'on');
-		$analytics_enabled = get_option('pn_cookies_manager_analytics_enabled', 'on') === 'on';
+		$opts = self::get_banner_options();
+		$gcm_enabled = $opts['pn_cookies_manager_google_consent_mode'];
+		$analytics_enabled = $opts['pn_cookies_manager_analytics_enabled'] === 'on';
 
 		$banner_config = [
 			'cookie_name'      => 'pncm_consent',
-			'cookie_expiry'    => intval(get_option('pn_cookies_manager_cookie_expiry', '182')),
+			'cookie_expiry'    => intval($opts['pn_cookies_manager_cookie_expiry']),
 			'gcm_enabled'      => $gcm_enabled ? '1' : '',
-			'overlay'          => get_option('pn_cookies_manager_banner_overlay', '') ? '1' : '',
-			'settings_text'    => get_option('pn_cookies_manager_banner_settings_text', __('Cookie settings', 'pn-cookies-manager')),
-			'accept_text'      => get_option('pn_cookies_manager_banner_accept_text', __('Accept all', 'pn-cookies-manager')),
-			'reject_text'      => get_option('pn_cookies_manager_banner_reject_text', __('Reject all', 'pn-cookies-manager')),
+			'overlay'          => $opts['pn_cookies_manager_banner_overlay'] ? '1' : '',
+			'settings_text'    => $opts['pn_cookies_manager_banner_settings_text'] ?: __('Cookie settings', 'pn-cookies-manager'),
+			'accept_text'      => $opts['pn_cookies_manager_banner_accept_text'] ?: __('Accept all', 'pn-cookies-manager'),
+			'reject_text'      => $opts['pn_cookies_manager_banner_reject_text'] ?: __('Reject all', 'pn-cookies-manager'),
 			'save_text'        => __('Save preferences', 'pn-cookies-manager'),
 		];
 
@@ -111,14 +163,14 @@ class PN_COOKIES_MANAGER_Public {
 			$banner_config['analytics_nonce'] = wp_create_nonce('pncm_log_consent');
 		}
 
-		$banner_config['gpc_enabled'] = get_option( 'pn_cookies_manager_gpc_enabled', 'on' ) ? '1' : '';
+		$banner_config['gpc_enabled'] = $opts['pn_cookies_manager_gpc_enabled'] ? '1' : '';
 		$banner_config['user_region'] = $this->detect_user_region();
 
 		// Block patterns for MutationObserver
 		$block_patterns = array();
 		$pattern_cats = array( 'analytics', 'advertising', 'performance', 'functional' );
 		foreach ( $pattern_cats as $pcat ) {
-			$raw = get_option( 'pn_cookies_manager_block_scripts_' . $pcat, '' );
+			$raw = $opts[ 'pn_cookies_manager_block_scripts_' . $pcat ];
 			if ( ! empty( $raw ) ) {
 				$patterns = array_map( 'trim', explode( ',', $raw ) );
 				$patterns = array_filter( $patterns );
@@ -173,7 +225,8 @@ class PN_COOKIES_MANAGER_Public {
 	 * @return string 'granted' or 'denied'.
 	 */
 	private function get_regional_default( $region ) {
-		$mode = get_option( 'pn_cookies_manager_gcm_regional_defaults', 'strict' );
+		$opts = self::get_banner_options();
+		$mode = $opts['pn_cookies_manager_gcm_regional_defaults'];
 
 		if ( $mode === 'lenient' ) {
 			return 'granted';
@@ -193,7 +246,7 @@ class PN_COOKIES_MANAGER_Public {
 		);
 
 		if ( $region === null ) {
-			$fallback = get_option( 'pn_cookies_manager_geo_fallback', 'strict' );
+			$fallback = $opts['pn_cookies_manager_geo_fallback'];
 			return $fallback === 'lenient' ? 'granted' : 'denied';
 		}
 
@@ -281,7 +334,8 @@ class PN_COOKIES_MANAGER_Public {
 	 * @since    1.0.0
 	 */
 	public function pn_cookies_manager_start_consent_buffer() {
-		$gcm_enabled = get_option('pn_cookies_manager_google_consent_mode', 'on');
+		$opts = self::get_banner_options();
+		$gcm_enabled = $opts['pn_cookies_manager_google_consent_mode'];
 		if (empty($gcm_enabled)) {
 			return;
 		}

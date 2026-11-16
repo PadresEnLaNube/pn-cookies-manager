@@ -60,8 +60,14 @@
   }
 
   function getCookieValue(name) {
-    var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-    return match ? match[2] : null;
+    var cookies = document.cookie.split('; ');
+    for (var i = 0; i < cookies.length; i++) {
+      var parts = cookies[i].split('=');
+      if (parts[0] === name) {
+        return parts.slice(1).join('=');
+      }
+    }
+    return null;
   }
 
   function buildConsent(allAccepted) {
@@ -510,6 +516,7 @@
         }
       });
       observer.observe(document.documentElement, { childList: true, subtree: true });
+      $(window).on('beforeunload', function() { observer.disconnect(); });
     }
   });
 

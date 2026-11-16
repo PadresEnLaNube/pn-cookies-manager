@@ -222,32 +222,33 @@ class PN_COOKIES_MANAGER_Ajax_Nopriv {
                           if (!is_array($existing_durations)) $existing_durations = [];
                           if (!is_array($existing_descriptions)) $existing_descriptions = [];
 
+                          // Build lowercase lookup map for O(1) deduplication
+                          $existing_lower_map = array_map( 'strtolower', array_map( 'trim', $existing_ids ) );
+
                           // Merge: add new cookies that don't already exist (case-insensitive comparison)
-                          for ($i = 0; $i < count($new_ids); $i++) {
+                          $new_count = count($new_ids);
+                          for ($i = 0; $i < $new_count; $i++) {
                             $cookie_name = isset($new_ids[$i]) ? trim($new_ids[$i]) : '';
                             if (empty($cookie_name)) continue;
 
-                            // Check if cookie already exists (case-insensitive)
-                            $cookie_exists = false;
-                            foreach ($existing_ids as $existing_id) {
-                              if (strcasecmp(trim($existing_id), $cookie_name) === 0) {
-                                $cookie_exists = true;
-                                break;
-                              }
+                            $cookie_name_lower = strtolower( $cookie_name );
+
+                            // O(1) deduplication check
+                            if ( in_array( $cookie_name_lower, $existing_lower_map, true ) ) {
+                              continue;
                             }
 
                             // Only add if it doesn't exist
-                            if (!$cookie_exists) {
-                              $existing_ids[] = $cookie_name;
-                              $existing_durations[] = isset($new_durations[$i]) ? $new_durations[$i] : '';
-                              $existing_descriptions[] = isset($new_descriptions[$i]) ? $new_descriptions[$i] : '';
-                            }
+                            $existing_ids[] = $cookie_name;
+                            $existing_durations[] = isset($new_durations[$i]) ? $new_durations[$i] : '';
+                            $existing_descriptions[] = isset($new_descriptions[$i]) ? $new_descriptions[$i] : '';
+                            $existing_lower_map[] = $cookie_name_lower;
                           }
 
-                          // Update all three fields with merged values
-                          update_option($id_field, $existing_ids);
-                          update_option($duration_field, $existing_durations);
-                          update_option($description_field, $existing_descriptions);
+                          // Update all three fields with merged values (autoload off for cookie registry)
+                          update_option($id_field, $existing_ids, false);
+                          update_option($duration_field, $existing_durations, false);
+                          update_option($description_field, $existing_descriptions, false);
 
                           break; // Found the category, no need to check others
                         }

@@ -278,6 +278,7 @@
         };
 
         var interval = setInterval(updateTime, 1000);
+        $(window).on('beforeunload', function() { clearInterval(interval); });
 
         $(window).on('load', function() {
           pn_cookies_manager_countdown.find('.pn-cookies-manager-loader').fadeOut('fast');

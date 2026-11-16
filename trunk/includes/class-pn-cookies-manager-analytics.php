@@ -179,16 +179,38 @@ class PN_COOKIES_MANAGER_Analytics {
 		$csv = '"Timestamp","Consent Hash","Policy Version","Categories","Consent Type","Region","GPC Signal"' . "\n";
 		if ( $rows ) {
 			foreach ( $rows as $row ) {
-				$csv .= '"' . esc_html( $row['consent_timestamp'] ) . '",';
-				$csv .= '"' . esc_html( $row['consent_hash'] ) . '",';
-				$csv .= '"' . esc_html( $row['consent_version'] ) . '",';
-				$csv .= '"' . esc_html( $row['categories'] ) . '",';
-				$csv .= '"' . esc_html( $row['consent_type'] ) . '",';
-				$csv .= '"' . esc_html( $row['region'] ) . '",';
-				$csv .= '"' . esc_html( $row['gpc_signal'] ) . '"' . "\n";
+				$csv .= '"' . self::pncm_csv_escape( $row['consent_timestamp'] ) . '",';
+				$csv .= '"' . self::pncm_csv_escape( $row['consent_hash'] ) . '",';
+				$csv .= '"' . self::pncm_csv_escape( $row['consent_version'] ) . '",';
+				$csv .= '"' . self::pncm_csv_escape( $row['categories'] ) . '",';
+				$csv .= '"' . self::pncm_csv_escape( $row['consent_type'] ) . '",';
+				$csv .= '"' . self::pncm_csv_escape( $row['region'] ) . '",';
+				$csv .= '"' . self::pncm_csv_escape( $row['gpc_signal'] ) . '"' . "\n";
 			}
 		}
 		return $csv;
+	}
+
+	/**
+	 * Escape a value for safe CSV output (prevents CSV injection).
+	 *
+	 * Prefixes values starting with =, +, -, @, \t, or \r with a single
+	 * quote so spreadsheet applications don't interpret them as formulas.
+	 * Also escapes internal double quotes.
+	 *
+	 * @since 1.1.0
+	 * @param string $value Raw value.
+	 * @return string Escaped value safe for CSV context.
+	 */
+	private static function pncm_csv_escape( $value ) {
+		$value = (string) $value;
+		// Escape double quotes for CSV
+		$value = str_replace( '"', '""', $value );
+		// Prefix formula-triggering characters to prevent CSV injection
+		if ( isset( $value[0] ) && in_array( $value[0], array( '=', '+', '-', '@', "\t", "\r" ), true ) ) {
+			$value = "'" . $value;
+		}
+		return $value;
 	}
 
 	/**
@@ -295,12 +317,16 @@ class PN_COOKIES_MANAGER_Analytics {
 			$type_col = 'total_reject';
 		}
 
-		// Build category increments
+		// Build category increments — whitelist enforced for dynamic column names
 		$cat_cols     = [ 'functional', 'analytics', 'performance', 'advertising' ];
 		$insert_extra = '';
 		$update_extra = '';
 
 		foreach ( $cat_cols as $cat ) {
+			// $cat is always from the hardcoded whitelist above — safe for interpolation
+			if ( ! in_array( $cat, [ 'functional', 'analytics', 'performance', 'advertising' ], true ) ) {
+				continue;
+			}
 			$accepted = ! empty( $categories[ $cat ] ) ? 1 : 0;
 			$rejected = $accepted ? 0 : 1;
 
@@ -339,6 +365,11 @@ class PN_COOKIES_MANAGER_Analytics {
 			$custom_val
 		) );
 
+		// Invalidate stats transient caches
+		foreach ( array( 7, 30, 90, 0 ) as $period ) {
+			delete_transient( 'pncm_stats_' . $period );
+		}
+
 		// Log individual consent for proof records
 		$region = isset( $_POST['region'] ) ? sanitize_text_field( wp_unslash( $_POST['region'] ) ) : '';
 		$gpc = $consent_type === 'gpc';
@@ -363,6 +394,12 @@ class PN_COOKIES_MANAGER_Analytics {
 	 * @return array
 	 */
 	private function pn_cookies_manager_get_stats( $days = 30 ) {
+		$cache_key = 'pncm_stats_' . intval( $days );
+		$cached    = get_transient( $cache_key );
+		if ( false !== $cached ) {
+			return $cached;
+		}
+
 		global $wpdb;
 		$table_name = $wpdb->prefix . self::TABLE;
 
@@ -390,13 +427,17 @@ class PN_COOKIES_MANAGER_Analytics {
 			ARRAY_A
 		);
 
-		return $row ? $row : [
+		$result = $row ? $row : [
 			'total_accept' => 0, 'total_reject' => 0, 'total_custom' => 0,
 			'cat_functional_accepted' => 0, 'cat_functional_rejected' => 0,
 			'cat_analytics_accepted' => 0, 'cat_analytics_rejected' => 0,
 			'cat_performance_accepted' => 0, 'cat_performance_rejected' => 0,
 			'cat_advertising_accepted' => 0, 'cat_advertising_rejected' => 0,
 		];
+
+		set_transient( $cache_key, $result, 5 * MINUTE_IN_SECONDS );
+
+		return $result;
 	}
 
 	/**

@@ -15,7 +15,6 @@
  * Description:       Comprehensive cookie consent management with automated scanner, smart registry, preventive script blocking, Google Consent Mode v2, GPC support, WP Consent API integration, individual consent proof logging, and GDPR/CCPA compliance.
  * Version:           1.0.50
  * Requires at least: 3.5
- * Tested up to:      7.0
  * Requires PHP:      7.2
  * Author:            Padres en la Nube
  * Author URI:        https://padresenlanube.com/
@@ -201,6 +200,11 @@ function pn_cookies_manager_activation_hook()
 	if (!get_transient('pn_cookies_manager_just_activated')) {
 		set_transient('pn_cookies_manager_just_activated', true, 30);
 	}
+
+	// Schedule daily consent log purge
+	if ( ! wp_next_scheduled( 'pncm_daily_purge' ) ) {
+		wp_schedule_event( time(), 'daily', 'pncm_daily_purge' );
+	}
 }
 
 // Register activation hook
@@ -213,8 +217,27 @@ register_activation_hook(__FILE__, 'pn_cookies_manager_activation_hook');
 function pn_cookies_manager_deactivation_cleanup()
 {
 	delete_option('pn_cookies_manager_redirecting');
+
+	// Unschedule daily consent log purge
+	$timestamp = wp_next_scheduled( 'pncm_daily_purge' );
+	if ( $timestamp ) {
+		wp_unschedule_event( $timestamp, 'pncm_daily_purge' );
+	}
 }
 register_deactivation_hook(__FILE__, 'pn_cookies_manager_deactivation_cleanup');
+
+/**
+ * Execute scheduled consent log purge.
+ *
+ * @since 1.1.0
+ */
+function pncm_execute_daily_purge() {
+	if ( class_exists( 'PN_COOKIES_MANAGER_Analytics' ) ) {
+		$analytics = new PN_COOKIES_MANAGER_Analytics();
+		$analytics->purge_consent_log();
+	}
+}
+add_action( 'pncm_daily_purge', 'pncm_execute_daily_purge' );
 
 /**
  * The core plugin class that is used to define internationalization, admin-specific hooks, and public-facing site hooks.

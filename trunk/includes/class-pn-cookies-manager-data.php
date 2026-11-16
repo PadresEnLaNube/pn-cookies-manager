@@ -29,7 +29,7 @@ class PN_COOKIES_MANAGER_Data {
 		$this->data['user_id'] = get_current_user_id();
 
 		if (is_admin()) {
-			$this->data['post_id'] = !empty($GLOBALS['_REQUEST']['post']) ? $GLOBALS['_REQUEST']['post'] : 0;
+			$this->data['post_id'] = !empty($GLOBALS['_REQUEST']['post']) ? absint($GLOBALS['_REQUEST']['post']) : 0;
 		} else {
 			$this->data['post_id'] = get_the_ID();
 		}

@@ -846,11 +846,12 @@ class PN_COOKIES_MANAGER_Forms {
                   PN_COOKIES_MANAGER_Scanner::create_scanner_table();
 
                   // Check if table exists
-                  $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_name'") === $table_name;
+                  $table_exists = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table_name ) ) === $table_name;
                   $scans = [];
 
                   if ($table_exists) {
-                    $scans = $wpdb->get_results("SELECT * FROM $table_name ORDER BY scan_date DESC LIMIT 10");
+                    // Table name is safe: built from $wpdb->prefix + hardcoded string
+                    $scans = $wpdb->get_results( "SELECT * FROM `{$table_name}` ORDER BY scan_date DESC LIMIT 10" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
                   }
 
                   if (!empty($scans)) {

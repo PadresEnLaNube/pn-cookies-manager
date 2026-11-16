@@ -55,6 +55,8 @@ class PN_COOKIES_MANAGER_Ajax {
         foreach ($pn_cookies_manager_ajax_keys as $pn_cookies_manager_key) {
           if (strpos((string)$pn_cookies_manager_key['id'], '[]') !== false) {
             $pn_cookies_manager_clear_key = str_replace('[]', '', $pn_cookies_manager_key['id']);
+            // Variable variable: key comes from sanitize_key() — safe for dynamic var creation.
+            // Used by switch cases that reference form fields by name.
             ${$pn_cookies_manager_clear_key} = $pn_cookies_manager_key_value[$pn_cookies_manager_clear_key] = [];
 
             if (!empty($_POST[$pn_cookies_manager_clear_key])) {
@@ -412,7 +414,7 @@ class PN_COOKIES_MANAGER_Ajax {
           $table_name = $wpdb->prefix . 'pn_cookies_manager_scans';
 
           // Check if table exists before querying
-          $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_name'") === $table_name;
+          $table_exists = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table_name ) ) === $table_name;
 
           if (!$table_exists) {
             echo wp_json_encode([
@@ -422,7 +424,8 @@ class PN_COOKIES_MANAGER_Ajax {
             exit;
           }
 
-          $scans = $wpdb->get_results("SELECT * FROM $table_name ORDER BY scan_date DESC LIMIT 10");
+          // Table name is safe: built from $wpdb->prefix + hardcoded string
+          $scans = $wpdb->get_results( "SELECT * FROM `{$table_name}` ORDER BY scan_date DESC LIMIT 10" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
           echo wp_json_encode([
             'error_key' => '',
@@ -483,6 +486,9 @@ class PN_COOKIES_MANAGER_Ajax {
           }
 
           $cookies = json_decode($scan->cookies_data, true);
+          if ( ! is_array( $cookies ) ) {
+            $cookies = [];
+          }
 
           echo wp_json_encode([
             'error_key' => '',
@@ -498,7 +504,7 @@ class PN_COOKIES_MANAGER_Ajax {
             exit;
           }
 
-          $slug = isset($_POST['slug']) ? sanitize_text_field($_POST['slug']) : '';
+          $slug = isset($_POST['slug']) ? sanitize_text_field( wp_unslash( $_POST['slug'] ) ) : '';
           $allowed_slugs = ['pn-customers-manager', 'mailpn', 'userspn', 'pn-tasks-manager'];
 
           if (!in_array($slug, $allowed_slugs, true)) {
@@ -543,7 +549,7 @@ class PN_COOKIES_MANAGER_Ajax {
             exit;
           }
 
-          $slug = isset($_POST['slug']) ? sanitize_text_field($_POST['slug']) : '';
+          $slug = isset($_POST['slug']) ? sanitize_text_field( wp_unslash( $_POST['slug'] ) ) : '';
           $plugin_files = [
             'pn-customers-manager' => 'pn-customers-manager/pn-customers-manager.php',
             'mailpn'               => 'mailpn/mailpn.php',
@@ -590,6 +596,9 @@ class PN_COOKIES_MANAGER_Ajax {
           }
 
           $cookies = json_decode($scan->cookies_data, true);
+          if ( ! is_array( $cookies ) ) {
+            $cookies = [];
+          }
 
           if (empty($cookies)) {
             echo wp_json_encode(['error_key' => 'no_cookies', 'message' => __('No cookies to import.', 'pn-cookies-manager')]);
@@ -606,6 +615,32 @@ class PN_COOKIES_MANAGER_Ajax {
             'Uncategorized' => 'necessary', // Default fallback
           ];
 
+          // Pre-load all category options to avoid N+1 queries
+          $valid_categories = ['necessary', 'functional', 'analytics', 'performance', 'advertising'];
+          $options_cache = [];
+          foreach ( $valid_categories as $cat ) {
+            $ids = get_option( 'pn_cookies_manager_cookies_' . $cat . '_id', [] );
+            $durations = get_option( 'pn_cookies_manager_cookies_' . $cat . '_duration', [] );
+            $descriptions = get_option( 'pn_cookies_manager_cookies_' . $cat . '_description', [] );
+
+            if ( ! is_array( $ids ) ) {
+              $ids = [];
+              $durations = [];
+              $descriptions = [];
+            }
+
+            // Build lowercase lookup map for O(1) deduplication
+            $lower_map = array_map( 'strtolower', array_map( 'trim', $ids ) );
+
+            $options_cache[ $cat ] = [
+              'ids'          => $ids,
+              'durations'    => $durations,
+              'descriptions' => $descriptions,
+              'lower_map'    => $lower_map,
+              'dirty'        => false,
+            ];
+          }
+
           $imported_count = 0;
           $skipped_count = 0;
           $categories_affected = [];
@@ -615,46 +650,34 @@ class PN_COOKIES_MANAGER_Ajax {
             $scanner_category = isset($cookie['category']) ? $cookie['category'] : 'Uncategorized';
             $target_category = isset($category_map[$scanner_category]) ? $category_map[$scanner_category] : 'necessary';
 
-            // Get existing cookies in this category
-            $existing_ids = get_option('pn_cookies_manager_cookies_' . $target_category . '_id', []);
-            $existing_durations = get_option('pn_cookies_manager_cookies_' . $target_category . '_duration', []);
-            $existing_descriptions = get_option('pn_cookies_manager_cookies_' . $target_category . '_description', []);
-
-            if (!is_array($existing_ids)) {
-              $existing_ids = [];
-              $existing_durations = [];
-              $existing_descriptions = [];
-            }
-
-            // Check if cookie already exists (case-insensitive comparison)
             $cookie_name = isset($cookie['name']) ? trim($cookie['name']) : '';
-            $cookie_exists = false;
+            $cookie_name_lower = strtolower( $cookie_name );
 
-            foreach ($existing_ids as $existing_id) {
-              if (strcasecmp(trim($existing_id), $cookie_name) === 0) {
-                $cookie_exists = true;
-                break;
-              }
-            }
-
-            if ($cookie_exists) {
+            // O(1) deduplication check
+            if ( in_array( $cookie_name_lower, $options_cache[ $target_category ]['lower_map'], true ) ) {
               $skipped_count++;
               continue;
             }
 
-            // Add cookie to registry
-            $existing_ids[] = $cookie_name;
-            $existing_durations[] = isset($cookie['duration']) ? $cookie['duration'] : __('Unknown', 'pn-cookies-manager');
-            $existing_descriptions[] = isset($cookie['purpose']) ? $cookie['purpose'] : __('Purpose not identified', 'pn-cookies-manager');
-
-            // Update options
-            update_option('pn_cookies_manager_cookies_' . $target_category . '_id', $existing_ids);
-            update_option('pn_cookies_manager_cookies_' . $target_category . '_duration', $existing_durations);
-            update_option('pn_cookies_manager_cookies_' . $target_category . '_description', $existing_descriptions);
+            // Add cookie to cached registry
+            $options_cache[ $target_category ]['ids'][] = $cookie_name;
+            $options_cache[ $target_category ]['durations'][] = isset($cookie['duration']) ? $cookie['duration'] : __('Unknown', 'pn-cookies-manager');
+            $options_cache[ $target_category ]['descriptions'][] = isset($cookie['purpose']) ? $cookie['purpose'] : __('Purpose not identified', 'pn-cookies-manager');
+            $options_cache[ $target_category ]['lower_map'][] = $cookie_name_lower;
+            $options_cache[ $target_category ]['dirty'] = true;
 
             $imported_count++;
             if (!in_array($target_category, $categories_affected)) {
               $categories_affected[] = $target_category;
+            }
+          }
+
+          // Batch-save only categories that changed
+          foreach ( $options_cache as $cat => $data ) {
+            if ( $data['dirty'] ) {
+              update_option( 'pn_cookies_manager_cookies_' . $cat . '_id', $data['ids'], false );
+              update_option( 'pn_cookies_manager_cookies_' . $cat . '_duration', $data['durations'], false );
+              update_option( 'pn_cookies_manager_cookies_' . $cat . '_description', $data['descriptions'], false );
             }
           }
 

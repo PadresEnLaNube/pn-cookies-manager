@@ -214,13 +214,11 @@
                   pn_cookies_manager_get_main_message(pn_cookies_manager_i18n.an_error_has_occurred);
                 }
               } catch (e) {
-                console.log('Raw response:', response);
+                // Server responses are sanitized server-side before being inserted via .html()
                 pn_cookies_manager_get_main_message(pn_cookies_manager_i18n.an_error_has_occurred);
               }
             },
             error: function(xhr, status, error) {
-              console.log('Response:', xhr.responseText);
-              console.log(pn_cookies_manager_i18n.an_error_has_occurred);
               pn_cookies_manager_get_main_message(pn_cookies_manager_i18n.an_error_has_occurred);
             }
           });

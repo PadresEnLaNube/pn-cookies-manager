@@ -9,7 +9,9 @@
       "Bash(git rm:*)",
       "Bash(cd:*)",
       "Bash(ls:*)",
-      "Bash(git log:*)"
+      "Bash(git log:*)",
+      "Bash(php -l:*)",
+      "Bash(where:*)"
     ]
   }
 }
