@@ -1660,7 +1660,7 @@ msgstr "Escanejant..."
 
 #: includes/admin/class-pn-cookies-manager-admin.php:99
 msgid "Scanning... %current% of %total% pages"
-msgstr "Escanejant... %actual% de %total% pàgines"
+msgstr "Escanejant... %current% de %total% pàgines"
 
 #: includes/class-pn-cookies-manager-ajax.php:114
 msgid "Security check failed for role assignment."

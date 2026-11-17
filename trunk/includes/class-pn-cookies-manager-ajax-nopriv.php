@@ -213,44 +213,50 @@ class PN_COOKIES_MANAGER_Ajax_Nopriv {
                           if (!is_array($new_durations)) $new_durations = [];
                           if (!is_array($new_descriptions)) $new_descriptions = [];
 
-                          // Get existing cookies
-                          $existing_ids = get_option($id_field, []);
-                          $existing_durations = get_option($duration_field, []);
-                          $existing_descriptions = get_option($description_field, []);
+                          // Filter out empty entries and deduplicate (case-insensitive)
+                          $clean_ids = [];
+                          $clean_durations = [];
+                          $clean_descriptions = [];
+                          $seen_lower = [];
 
-                          if (!is_array($existing_ids)) $existing_ids = [];
-                          if (!is_array($existing_durations)) $existing_durations = [];
-                          if (!is_array($existing_descriptions)) $existing_descriptions = [];
-
-                          // Build lowercase lookup map for O(1) deduplication
-                          $existing_lower_map = array_map( 'strtolower', array_map( 'trim', $existing_ids ) );
-
-                          // Merge: add new cookies that don't already exist (case-insensitive comparison)
                           $new_count = count($new_ids);
                           for ($i = 0; $i < $new_count; $i++) {
-                            $cookie_name = isset($new_ids[$i]) ? trim($new_ids[$i]) : '';
+                            $cookie_name = isset($new_ids[$i]) && is_string($new_ids[$i]) ? trim($new_ids[$i]) : '';
                             if (empty($cookie_name)) continue;
 
-                            $cookie_name_lower = strtolower( $cookie_name );
-
-                            // O(1) deduplication check
-                            if ( in_array( $cookie_name_lower, $existing_lower_map, true ) ) {
+                            $cookie_name_lower = strtolower($cookie_name);
+                            if (in_array($cookie_name_lower, $seen_lower, true)) {
                               continue;
                             }
 
-                            // Only add if it doesn't exist
-                            $existing_ids[] = $cookie_name;
-                            $existing_durations[] = isset($new_durations[$i]) ? $new_durations[$i] : '';
-                            $existing_descriptions[] = isset($new_descriptions[$i]) ? $new_descriptions[$i] : '';
-                            $existing_lower_map[] = $cookie_name_lower;
+                            $clean_ids[] = $cookie_name;
+                            $clean_durations[] = isset($new_durations[$i]) && is_string($new_durations[$i]) ? $new_durations[$i] : '';
+                            $clean_descriptions[] = isset($new_descriptions[$i]) && is_string($new_descriptions[$i]) ? $new_descriptions[$i] : '';
+                            $seen_lower[] = $cookie_name_lower;
                           }
 
-                          // Update all three fields with merged values (autoload off for cookie registry)
-                          update_option($id_field, $existing_ids, false);
-                          update_option($duration_field, $existing_durations, false);
-                          update_option($description_field, $existing_descriptions, false);
+                          // Replace with submitted values (autoload off for cookie registry)
+                          update_option($id_field, $clean_ids, false);
+                          update_option($duration_field, $clean_durations, false);
+                          update_option($description_field, $clean_descriptions, false);
 
                           break; // Found the category, no need to check others
+                        }
+                      }
+                    }
+
+                    // Clear categories that had all cookies removed (no POST data sent)
+                    foreach ($cookie_categories as $category) {
+                      if (!isset($processed_categories[$category])) {
+                        $id_field = 'pn_cookies_manager_cookies_' . $category . '_id';
+                        $duration_field = 'pn_cookies_manager_cookies_' . $category . '_duration';
+                        $description_field = 'pn_cookies_manager_cookies_' . $category . '_description';
+                        // Only clear if the category previously had cookies
+                        $existing = get_option($id_field, []);
+                        if (!empty($existing)) {
+                          update_option($id_field, [], false);
+                          update_option($duration_field, [], false);
+                          update_option($description_field, [], false);
                         }
                       }
                     }

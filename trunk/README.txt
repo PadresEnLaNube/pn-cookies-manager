@@ -4,7 +4,7 @@ Donate link: https://padresenlanube.com/
 Tags: cookie consent, gdpr, ccpa, privacy, cookie banner
 Requires at least: 3.5
 Tested up to: 7.0
-Stable tag: 1.0.50
+Stable tag: 1.0.55
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Manage cookies on your website. Configure cookie consent banners, categorize cookies, and ensure compliance with privacy regulations.
@@ -40,7 +40,6 @@ Display a fully customizable cookie consent banner, register the cookies your si
 * Define cookie name, duration, and description for each entry.
 * Quick-add preset buttons for common cookies: WordPress defaults, Google Analytics (GA4), Google Ads, Google Merchant, Facebook Pixel, and more.
 * "Add all" button to insert all presets for a category at once.
-* Smart merge system: new cookies are added to existing registry without deleting previously registered cookies.
 * Case-insensitive duplicate detection prevents accidental cookie duplication.
 
 = Cookie Scanner =
@@ -130,6 +129,17 @@ Display a fully customizable cookie consent banner, register the cookies your si
 * Spanish (es_ES) translation included.
 * Compatible with translation plugins like Loco Translate and Polylang.
 
+= Quick Setup & Configuration Overview =
+
+* One-click auto-configure button applies recommended defaults: cookie presets, script blocking patterns, GCM advanced mode, GPC, strict regional defaults, and consent analytics.
+* Configuration summary blocks at the top of the settings page show live status of Cookie Registry, Script Blocking, and Privacy & Compliance with expandable details and green/red status indicators.
+
+= Cookie Policy Generator =
+
+* Generate a cookie policy page automatically from the cookies registered in the plugin.
+* Outputs both Gutenberg block markup and raw HTML ready to paste into any WordPress page.
+* Available as a submenu page under Cookies Manager.
+
 = Lightweight & Developer Friendly =
 
 * No external dependencies for the front-end banner (jQuery only).
@@ -188,6 +198,20 @@ For support, visit the plugin's support forum on WordPress.org or contact us at 
 
 
 == Changelog ==
+
+= 1.0.55 =
+
+* Add configuration summary blocks (Cookie Registry, Script Blocking, Privacy & Compliance) at the top of the settings page with expandable details, status dots, and live option values
+* Add one-click auto-configure button that applies recommended defaults: populates all cookie presets, enables script blocking with default patterns, sets GCM to advanced mode, enables GPC, strict regional defaults, and consent analytics
+* Add auto-configure AJAX handler with capability check, preset population, privacy policy auto-detection, and auto-configured flag
+* Add Cookie Policy Generator submenu page that builds cookie policy content from registered cookies with Gutenberg block markup and raw HTML output
+* Add Run Tests card with icon, description, and transparent button matching the auto-configure card style
+* Replace cookie registry merge-on-save with direct replacement so that deleted cookies are actually removed instead of being re-added from the database
+* Add cleanup for categories where all cookies were removed to explicitly clear the stored arrays
+* Add is_string() guards in the cookie registry save handler to prevent non-string values from being stored in cookie arrays
+* Add is_string() guards in the frontend banner template to skip non-string cookie values instead of rendering "Array" text
+* Fix cookie scanner progress message showing literal "%actual%" instead of the current page number in Spanish, Catalan, and Galician translations
+* Reduce spacing between the form sections and the Run Tests card
 
 = 1.0.50 =
 

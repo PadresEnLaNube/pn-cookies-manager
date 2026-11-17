@@ -704,6 +704,91 @@ class PN_COOKIES_MANAGER_Ajax {
           exit;
           break;
 
+        case 'pn_cookies_manager_auto_configure':
+          if (!current_user_can('manage_options')) {
+            echo wp_json_encode(['error_key' => 'permission_denied']);
+            exit;
+          }
+
+          // Populate all preset cookies into each category
+          $presets = PN_COOKIES_MANAGER_Settings::pn_cookies_manager_get_presets();
+          $valid_categories = ['necessary', 'functional', 'analytics', 'performance', 'advertising'];
+
+          foreach ($valid_categories as $cat) {
+            if (empty($presets[$cat])) {
+              continue;
+            }
+
+            $existing_ids = get_option('pn_cookies_manager_cookies_' . $cat . '_id', []);
+            if (!is_array($existing_ids)) {
+              $existing_ids = [];
+            }
+            $existing_durations = get_option('pn_cookies_manager_cookies_' . $cat . '_duration', []);
+            if (!is_array($existing_durations)) {
+              $existing_durations = [];
+            }
+            $existing_descriptions = get_option('pn_cookies_manager_cookies_' . $cat . '_description', []);
+            if (!is_array($existing_descriptions)) {
+              $existing_descriptions = [];
+            }
+
+            $lower_map = array_map('strtolower', array_map('trim', $existing_ids));
+
+            foreach ($presets[$cat] as $preset) {
+              if (in_array(strtolower(trim($preset['id'])), $lower_map, true)) {
+                continue;
+              }
+              $existing_ids[] = $preset['id'];
+              $existing_durations[] = $preset['duration'];
+              $existing_descriptions[] = $preset['description'];
+              $lower_map[] = strtolower(trim($preset['id']));
+            }
+
+            update_option('pn_cookies_manager_cookies_' . $cat . '_id', $existing_ids, false);
+            update_option('pn_cookies_manager_cookies_' . $cat . '_duration', $existing_durations, false);
+            update_option('pn_cookies_manager_cookies_' . $cat . '_description', $existing_descriptions, false);
+          }
+
+          // Banner position & design defaults
+          update_option('pn_cookies_manager_banner_position', 'bottom');
+          update_option('pn_cookies_manager_banner_layout', 'box');
+          update_option('pn_cookies_manager_banner_alignment', 'right');
+          update_option('pn_cookies_manager_banner_border_radius', '8');
+          update_option('pn_cookies_manager_cookie_expiry', '182');
+
+          // Auto-detect privacy policy page URL
+          $privacy_page_id = (int) get_option('wp_page_for_privacy_policy', 0);
+          if ($privacy_page_id > 0 && 'publish' === get_post_status($privacy_page_id)) {
+            update_option('pn_cookies_manager_banner_privacy_url', get_permalink($privacy_page_id));
+          }
+
+          // Script blocking: enabled with default patterns
+          update_option('pn_cookies_manager_script_blocking_enabled', 'on');
+          update_option('pn_cookies_manager_block_scripts_analytics', 'google-analytics.com, googletagmanager.com, gtag/js, analytics.js');
+          update_option('pn_cookies_manager_block_scripts_advertising', 'facebook.net, fbevents.js, doubleclick.net, googlesyndication.com, adservice.google, connect.facebook.net');
+          update_option('pn_cookies_manager_block_scripts_performance', 'hotjar.com, clarity.ms, static.hotjar.com');
+          update_option('pn_cookies_manager_block_scripts_functional', '');
+
+          // Privacy & Compliance: GCM advanced, strict regional, GPC on, strict fallback
+          update_option('pn_cookies_manager_gcm_mode', 'advanced');
+          update_option('pn_cookies_manager_gcm_regional_defaults', 'strict');
+          update_option('pn_cookies_manager_gpc_enabled', 'on');
+          update_option('pn_cookies_manager_geo_fallback', 'strict');
+
+          // System: banner on, GCM on, analytics on
+          update_option('pn_cookies_manager_google_consent_mode', 'on');
+          update_option('pn_cookies_manager_analytics_enabled', 'on');
+
+          // Mark as auto-configured
+          update_option('pn_cookies_manager_auto_configured', true);
+
+          echo wp_json_encode([
+            'error_key' => '',
+            'message' => __('Plugin auto-configured successfully with recommended defaults.', 'pn-cookies-manager'),
+          ]);
+          exit;
+          break;
+
         case 'pn_cookies_manager_complete_tutorial':
           $completed = !empty($_POST['completed']) ? true : false;
           PN_COOKIES_MANAGER_Tutorial::mark_completed($completed);

@@ -51,3 +51,33 @@ body.folded .pn-cookies-manager-settings-footer{left:36px}
 .pn-cookies-manager-banner-hide-btn:hover{opacity:1}
 .pn-cookies-manager-banner-hide-btn i{font-size:22px}
 .pn-cookies-manager-banner-loader-overlay{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,.7);border-radius:20px;display:flex;align-items:center;justify-content:center}
+
+/* Config summary blocks */
+.pncm-config-blocks{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;margin-bottom:24px}
+.pncm-config-block{background:#fff;padding:10px;border-radius:8px;border:1px solid #ddd;box-shadow:0 2px 8px rgba(0,0,0,.1);transition:all .3s ease;position:relative;overflow:visible}
+.pncm-config-block:hover{box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.pncm-config-block-active::before,.pncm-config-block-inactive::before{content:'';position:absolute;top:-5px;right:5px;width:15px;height:15px;border-radius:50%;z-index:1}
+.pncm-config-block-active::before{background-color:#00a32a;box-shadow:0 0 0 2px rgba(0,163,42,.2)}
+.pncm-config-block-inactive::before{background-color:#d63638;box-shadow:0 0 0 2px rgba(214,54,56,.2)}
+.pncm-config-block-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;padding:6px 4px}
+.pncm-config-block-header:hover .pncm-config-block-title{color:#2271b1}
+.pncm-config-block-title{font-size:14px;font-weight:600;color:#1d2327;margin:0;display:flex;align-items:center;gap:6px}
+.pncm-config-block-title i{font-size:20px;color:#787c82}
+.pncm-config-block-arrow{font-size:20px;color:#a7aaad;transition:transform .2s}
+.pncm-config-block-body{padding:10px 4px 4px}
+.pncm-config-block-item{display:flex;justify-content:space-between;align-items:flex-start;padding:6px 0;border-bottom:1px solid #f0f0f1}
+.pncm-config-block-item:last-child{border-bottom:none}
+.pncm-config-block-label{font-size:13px;color:#50575e;font-weight:500}
+.pncm-config-block-value{font-size:13px;color:#1d2327;text-align:right;font-weight:400}
+.pncm-config-block-value-muted{color:#a7aaad;font-style:italic}
+@media(max-width:600px){.pncm-config-blocks{grid-template-columns:1fr}}
+
+/* Auto-configure card */
+.pncm-auto-configure{display:flex;align-items:center;gap:20px;padding:24px;border:1px solid #dcdcde;border-radius:12px;background:#f9f9f9;margin-bottom:30px}
+.pncm-auto-configure-icon{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#60a5fa);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff}
+.pncm-auto-configure-icon .material-icons-outlined{font-size:26px}
+.pncm-auto-configure-info{flex:1;min-width:0}
+.pncm-auto-configure-title{font-weight:600;font-size:15px;color:#1d2327;margin-bottom:4px}
+.pncm-auto-configure-desc{font-size:13px;color:#787c82}
+.pncm-auto-configure-action{flex-shrink:0}
+@media screen and (max-width:600px){.pncm-auto-configure{flex-wrap:wrap;gap:12px}.pncm-auto-configure-action{width:100%;text-align:right}}

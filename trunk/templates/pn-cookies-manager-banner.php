@@ -112,13 +112,16 @@ foreach ($pn_cookies_manager_categories as $pn_cookies_manager_cat_key => $pn_co
 
   $pn_cookies_manager_cookies = [];
   for ($pn_cookies_manager_i = 0; $pn_cookies_manager_i < count($pn_cookies_manager_ids); $pn_cookies_manager_i++) {
-    if (empty(trim($pn_cookies_manager_ids[$pn_cookies_manager_i]))) {
+    $pn_cookies_manager_cid = $pn_cookies_manager_ids[$pn_cookies_manager_i];
+    if (!is_string($pn_cookies_manager_cid) || empty(trim($pn_cookies_manager_cid))) {
       continue;
     }
+    $pn_cookies_manager_cdur = isset($pn_cookies_manager_durations[$pn_cookies_manager_i]) ? $pn_cookies_manager_durations[$pn_cookies_manager_i] : '';
+    $pn_cookies_manager_cdesc = isset($pn_cookies_manager_descriptions[$pn_cookies_manager_i]) ? $pn_cookies_manager_descriptions[$pn_cookies_manager_i] : '';
     $pn_cookies_manager_cookies[] = [
-      'id'          => $pn_cookies_manager_ids[$pn_cookies_manager_i],
-      'duration'    => isset($pn_cookies_manager_durations[$pn_cookies_manager_i]) ? $pn_cookies_manager_durations[$pn_cookies_manager_i] : '',
-      'description' => isset($pn_cookies_manager_descriptions[$pn_cookies_manager_i]) ? $pn_cookies_manager_descriptions[$pn_cookies_manager_i] : '',
+      'id'          => $pn_cookies_manager_cid,
+      'duration'    => is_string($pn_cookies_manager_cdur) ? $pn_cookies_manager_cdur : '',
+      'description' => is_string($pn_cookies_manager_cdesc) ? $pn_cookies_manager_cdesc : '',
     ];
   }
 

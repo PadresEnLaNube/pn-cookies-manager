@@ -12,8 +12,8 @@
  * @wordpress-plugin
  * Plugin Name:       PN Cookies Manager
  * Plugin URI:        https://padresenlanube.com/plugins/pn-cookies-manager/
- * Description:       Comprehensive cookie consent management with automated scanner, smart registry, preventive script blocking, Google Consent Mode v2, GPC support, WP Consent API integration, individual consent proof logging, and GDPR/CCPA compliance.
- * Version:           1.0.50
+ * Description:       Comprehensive cookie consent management with automated scanner, smart registry, preventive script blocking, Google Consent Mode v2, GPC support, WP Consent API integration, individual consent proof logging, cookie policy generator, one-click auto-configuration, and GDPR/CCPA compliance.
+ * Version:           1.0.55
  * Requires at least: 3.5
  * Requires PHP:      7.2
  * Author:            Padres en la Nube
@@ -34,7 +34,7 @@ if (!defined('WPINC')) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define('PN_COOKIES_MANAGER_VERSION', '1.0.50');
+define('PN_COOKIES_MANAGER_VERSION', '1.0.55');
 define('PN_COOKIES_MANAGER_DIR', plugin_dir_path(__FILE__));
 define('PN_COOKIES_MANAGER_URL', plugin_dir_url(__FILE__));
 /**

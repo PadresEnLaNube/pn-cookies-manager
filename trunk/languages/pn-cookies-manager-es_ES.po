@@ -2006,7 +2006,7 @@ msgstr "Exploración..."
 
 #: includes/admin/class-pn-cookies-manager-admin.php:104
 msgid "Scanning... %current% of %total% pages"
-msgstr "Escaneando... %actual% de %total% páginas"
+msgstr "Escaneando... %current% de %total% páginas"
 
 #: includes/class-pn-cookies-manager-settings.php:891
 msgid "Script Blocking"

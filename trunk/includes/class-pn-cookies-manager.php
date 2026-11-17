@@ -52,7 +52,7 @@ class PN_COOKIES_MANAGER {
 		if (defined('PN_COOKIES_MANAGER_VERSION')) {
 			$this->pn_cookies_manager_version = PN_COOKIES_MANAGER_VERSION;
 		} else {
-			$this->pn_cookies_manager_version = '1.0.50';
+			$this->pn_cookies_manager_version = '1.0.55';
 		}
 
 		$this->pn_cookies_manager_plugin_name = 'pn-cookies-manager';
@@ -144,6 +144,11 @@ class PN_COOKIES_MANAGER {
 		 * The class defining settings.
 		 */
 		require_once PN_COOKIES_MANAGER_DIR . 'includes/class-pn-cookies-manager-settings.php';
+
+		/**
+		 * The class for cookie policy page generation.
+		 */
+		require_once PN_COOKIES_MANAGER_DIR . 'includes/class-pn-cookies-manager-cookie-policy-generator.php';
 
 		/**
 		 * The class defining form management.

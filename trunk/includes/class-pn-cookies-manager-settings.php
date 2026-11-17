@@ -1214,6 +1214,15 @@ class PN_COOKIES_MANAGER_Settings
 
     add_submenu_page(
       'pn_cookies_manager_options',
+      esc_html__('Cookie Policy Generator', 'pn-cookies-manager'),
+      esc_html__('Policy Generator', 'pn-cookies-manager'),
+      'manage_options',
+      'pn-cookies-manager-policy-generator',
+      ['PN_COOKIES_MANAGER_Cookie_Policy_Generator', 'render_generator_page'],
+    );
+
+    add_submenu_page(
+      'pn_cookies_manager_options',
       esc_html__('Tests', 'pn-cookies-manager'),
       esc_html__('Tests', 'pn-cookies-manager'),
       'administrator',
@@ -1256,6 +1265,155 @@ class PN_COOKIES_MANAGER_Settings
     echo '</div>';
   }
 
+  /**
+   * Render configuration summary blocks at the top of the settings page.
+   *
+   * @since 1.1.0
+   */
+  private static function pn_cookies_manager_render_config_blocks()
+  {
+    // Block 1: Cookie Registry
+    $categories = ['necessary', 'functional', 'analytics', 'performance', 'advertising'];
+    $total_cookies = 0;
+    $active_categories = 0;
+    $cat_counts = [];
+    foreach ($categories as $cat) {
+      $ids = get_option('pn_cookies_manager_cookies_' . $cat . '_id', []);
+      if (!is_array($ids)) { $ids = []; }
+      $count = count($ids);
+      $cat_counts[$cat] = $count;
+      $total_cookies += $count;
+      if ($count > 0) { $active_categories++; }
+    }
+    $registry_status = $total_cookies > 0 ? 'active' : 'inactive';
+
+    // Block 2: Script Blocking
+    $sb_enabled = get_option('pn_cookies_manager_script_blocking_enabled', '') === 'on';
+    $sb_analytics = get_option('pn_cookies_manager_block_scripts_analytics', '');
+    $sb_advertising = get_option('pn_cookies_manager_block_scripts_advertising', '');
+    $sb_performance = get_option('pn_cookies_manager_block_scripts_performance', '');
+    $sb_status = $sb_enabled ? 'active' : 'inactive';
+
+    // Block 3: Privacy & Compliance
+    $gcm_mode = get_option('pn_cookies_manager_gcm_mode', '');
+    $gcm_on = get_option('pn_cookies_manager_google_consent_mode', '') === 'on';
+    $gpc_on = get_option('pn_cookies_manager_gpc_enabled', '') === 'on';
+    $regional = get_option('pn_cookies_manager_gcm_regional_defaults', '');
+    $geo_fallback = get_option('pn_cookies_manager_geo_fallback', '');
+    $analytics_on = get_option('pn_cookies_manager_analytics_enabled', '') === 'on';
+    $privacy_status = ($gcm_mode !== '' && $gpc_on) ? 'active' : 'inactive';
+
+    $not_set = '<span class="pncm-config-block-value-muted">' . esc_html__('Not set', 'pn-cookies-manager') . '</span>';
+    ?>
+    <div class="pncm-config-blocks pn-cookies-manager-mb-30">
+
+      <div class="pncm-config-block pncm-config-block-<?php echo esc_attr($registry_status); ?>">
+        <div class="pncm-config-block-header pn-cookies-manager-toggle">
+          <h3 class="pncm-config-block-title"><i class="material-icons-outlined">cookie</i> <?php esc_html_e('Cookie Registry', 'pn-cookies-manager'); ?></h3>
+          <i class="material-icons-outlined pncm-config-block-arrow">add</i>
+        </div>
+        <div class="pncm-config-block-body pn-cookies-manager-toggle-content pn-cookies-manager-display-none-soft">
+          <div class="pncm-config-block-item">
+            <span class="pncm-config-block-label"><?php esc_html_e('Total cookies:', 'pn-cookies-manager'); ?></span>
+            <span class="pncm-config-block-value"><?php echo esc_html($total_cookies); ?></span>
+          </div>
+          <div class="pncm-config-block-item">
+            <span class="pncm-config-block-label"><?php esc_html_e('Active categories:', 'pn-cookies-manager'); ?></span>
+            <span class="pncm-config-block-value"><?php echo esc_html($active_categories . '/5'); ?></span>
+          </div>
+          <div class="pncm-config-block-item">
+            <span class="pncm-config-block-label"><?php esc_html_e('Necessary:', 'pn-cookies-manager'); ?></span>
+            <span class="pncm-config-block-value"><?php echo esc_html($cat_counts['necessary']); ?></span>
+          </div>
+          <div class="pncm-config-block-item">
+            <span class="pncm-config-block-label"><?php esc_html_e('Analytics:', 'pn-cookies-manager'); ?></span>
+            <span class="pncm-config-block-value"><?php echo esc_html($cat_counts['analytics']); ?></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pncm-config-block pncm-config-block-<?php echo esc_attr($sb_status); ?>">
+        <div class="pncm-config-block-header pn-cookies-manager-toggle">
+          <h3 class="pncm-config-block-title"><i class="material-icons-outlined">block</i> <?php esc_html_e('Script Blocking', 'pn-cookies-manager'); ?></h3>
+          <i class="material-icons-outlined pncm-config-block-arrow">add</i>
+        </div>
+        <div class="pncm-config-block-body pn-cookies-manager-toggle-content pn-cookies-manager-display-none-soft">
+          <div class="pncm-config-block-item">
+            <span class="pncm-config-block-label"><?php esc_html_e('Status:', 'pn-cookies-manager'); ?></span>
+            <span class="pncm-config-block-value"><?php echo $sb_enabled ? esc_html__('Enabled', 'pn-cookies-manager') : esc_html__('Disabled', 'pn-cookies-manager'); ?></span>
+          </div>
+          <div class="pncm-config-block-item">
+            <span class="pncm-config-block-label"><?php esc_html_e('Analytics:', 'pn-cookies-manager'); ?></span>
+            <span class="pncm-config-block-value"><?php echo !empty($sb_analytics) ? esc_html__('Configured', 'pn-cookies-manager') : $not_set; ?></span>
+          </div>
+          <div class="pncm-config-block-item">
+            <span class="pncm-config-block-label"><?php esc_html_e('Advertising:', 'pn-cookies-manager'); ?></span>
+            <span class="pncm-config-block-value"><?php echo !empty($sb_advertising) ? esc_html__('Configured', 'pn-cookies-manager') : $not_set; ?></span>
+          </div>
+          <div class="pncm-config-block-item">
+            <span class="pncm-config-block-label"><?php esc_html_e('Performance:', 'pn-cookies-manager'); ?></span>
+            <span class="pncm-config-block-value"><?php echo !empty($sb_performance) ? esc_html__('Configured', 'pn-cookies-manager') : $not_set; ?></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pncm-config-block pncm-config-block-<?php echo esc_attr($privacy_status); ?>">
+        <div class="pncm-config-block-header pn-cookies-manager-toggle">
+          <h3 class="pncm-config-block-title"><i class="material-icons-outlined">shield</i> <?php esc_html_e('Privacy & Compliance', 'pn-cookies-manager'); ?></h3>
+          <i class="material-icons-outlined pncm-config-block-arrow">add</i>
+        </div>
+        <div class="pncm-config-block-body pn-cookies-manager-toggle-content pn-cookies-manager-display-none-soft">
+          <div class="pncm-config-block-item">
+            <span class="pncm-config-block-label"><?php esc_html_e('GCM v2:', 'pn-cookies-manager'); ?></span>
+            <span class="pncm-config-block-value"><?php echo $gcm_on ? esc_html(ucfirst($gcm_mode ?: 'advanced')) : esc_html__('Disabled', 'pn-cookies-manager'); ?></span>
+          </div>
+          <div class="pncm-config-block-item">
+            <span class="pncm-config-block-label"><?php esc_html_e('GPC:', 'pn-cookies-manager'); ?></span>
+            <span class="pncm-config-block-value"><?php echo $gpc_on ? esc_html__('Enabled', 'pn-cookies-manager') : esc_html__('Disabled', 'pn-cookies-manager'); ?></span>
+          </div>
+          <div class="pncm-config-block-item">
+            <span class="pncm-config-block-label"><?php esc_html_e('Regional defaults:', 'pn-cookies-manager'); ?></span>
+            <span class="pncm-config-block-value"><?php echo !empty($regional) ? esc_html(ucfirst($regional)) : $not_set; ?></span>
+          </div>
+          <div class="pncm-config-block-item">
+            <span class="pncm-config-block-label"><?php esc_html_e('Consent Analytics:', 'pn-cookies-manager'); ?></span>
+            <span class="pncm-config-block-value"><?php echo $analytics_on ? esc_html__('Enabled', 'pn-cookies-manager') : esc_html__('Disabled', 'pn-cookies-manager'); ?></span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <?php
+  }
+
+  /**
+   * Render the auto-configure card if plugin has not been auto-configured yet.
+   *
+   * @since 1.1.0
+   */
+  private static function pn_cookies_manager_render_auto_configure_card()
+  {
+    if (get_option('pn_cookies_manager_auto_configured', false)) {
+      return;
+    }
+    ?>
+    <div class="pncm-auto-configure" id="pncm-auto-configure-card">
+      <div class="pncm-auto-configure-icon">
+        <span class="material-icons-outlined">auto_fix_high</span>
+      </div>
+      <div class="pncm-auto-configure-info">
+        <div class="pncm-auto-configure-title"><?php esc_html_e('Quick Setup', 'pn-cookies-manager'); ?></div>
+        <div class="pncm-auto-configure-desc"><?php esc_html_e('Apply recommended defaults: populate cookie presets, enable script blocking, strict privacy mode, GCM advanced, GPC, and analytics.', 'pn-cookies-manager'); ?></div>
+      </div>
+      <div class="pncm-auto-configure-action">
+        <button type="button" id="pncm-auto-configure-btn" class="pn-cookies-manager-btn pn-cookies-manager-btn-mini pn-cookies-manager-btn-transparent">
+          <?php esc_html_e('Auto-configure', 'pn-cookies-manager'); ?>
+        </button>
+      </div>
+    </div>
+    <?php
+  }
+
   public function pn_cookies_manager_options()
   {
     ?>
@@ -1273,6 +1431,8 @@ class PN_COOKIES_MANAGER_Settings
       </div>
       <?php endif; ?>
       <h1 class="pn-cookies-manager-mb-30"><?php esc_html_e('PN Cookies Manager Settings', 'pn-cookies-manager'); ?></h1>
+      <?php self::pn_cookies_manager_render_config_blocks(); ?>
+      <?php self::pn_cookies_manager_render_auto_configure_card(); ?>
       <div class="pn-cookies-manager-options-fields pn-cookies-manager-mb-30 pn-cookies-manager-settings-pb-80">
         <form action="" method="post" id="pn-cookies-manager-form-setting"
           class="pn-cookies-manager-form pn-cookies-manager-p-30">
@@ -1302,11 +1462,22 @@ class PN_COOKIES_MANAGER_Settings
     </div>
 
     <?php if ( current_user_can( 'administrator' ) ) : ?>
-    <div class="pn-cookies-manager-max-width-1000 pn-cookies-manager-margin-auto" style="margin-top:20px;">
-      <a href="<?php echo esc_url( admin_url( 'admin.php?page=pn-cookies-manager-tests' ) ); ?>"
-         class="button button-secondary">
-        <?php esc_html_e( 'Run Tests', 'pn-cookies-manager' ); ?>
-      </a>
+    <div class="pn-cookies-manager-max-width-1000 pn-cookies-manager-margin-auto" style="margin-top:5px;">
+      <div class="pncm-auto-configure">
+        <div class="pncm-auto-configure-icon" style="background:linear-gradient(135deg,#8b5cf6,#a78bfa)">
+          <span class="material-icons-outlined">science</span>
+        </div>
+        <div class="pncm-auto-configure-info">
+          <div class="pncm-auto-configure-title"><?php esc_html_e('Run Tests', 'pn-cookies-manager'); ?></div>
+          <div class="pncm-auto-configure-desc"><?php esc_html_e('Run the built-in test suite to verify that cookie scanning, consent signals, GCM integration and consent logging are working correctly.', 'pn-cookies-manager'); ?></div>
+        </div>
+        <div class="pncm-auto-configure-action">
+          <a href="<?php echo esc_url( admin_url( 'admin.php?page=pn-cookies-manager-tests' ) ); ?>"
+             class="pn-cookies-manager-btn pn-cookies-manager-btn-mini pn-cookies-manager-btn-transparent">
+            <?php esc_html_e( 'Run Tests', 'pn-cookies-manager' ); ?>
+          </a>
+        </div>
+      </div>
     </div>
     <?php endif; ?>
 
@@ -1480,6 +1651,9 @@ class PN_COOKIES_MANAGER_Settings
         'activateError' => __('Error activating plugin.', 'pn-cookies-manager'),
         'active' => __('Active', 'pn-cookies-manager'),
         'activate' => __('Activate', 'pn-cookies-manager'),
+        'confirmAutoConfigure' => __('Apply recommended defaults? This will populate cookie presets and enable privacy features.', 'pn-cookies-manager'),
+        'configuring' => __('Configuring…', 'pn-cookies-manager'),
+        'autoConfigure' => __('Auto-configure', 'pn-cookies-manager'),
       ],
     ]);
     ?>
